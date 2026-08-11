@@ -1,43 +1,101 @@
-# Astro Starter Kit: Minimal
+<p align="center">
+  <img src="docs/assets/basalt-logo.png" alt="Basalt" width="360">
+</p>
+
+<h2 align="center">Basalt Website</h2>
+
+<p align="center">
+  <strong>The official site of the Basalt project, served at <a href="https://basaltmc.org">basaltmc.org</a>.</strong>
+</p>
+
+<p align="center">
+  <img alt="Astro" src="https://img.shields.io/badge/Astro-7.2-FF5D01?logo=astro&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white">
+  <img alt="Node" src="https://img.shields.io/badge/Node-%E2%89%A522.12-5FA04E?logo=nodedotjs&logoColor=white">
+  <img alt="Output" src="https://img.shields.io/badge/output-static-62B47A">
+  <img alt="Deploy" src="https://img.shields.io/badge/deploy-on%20push%20to%20main-62B47A?logo=githubactions&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
+</p>
+
+> ⚠️ **Placeholder.** The site is a scaffold with a single page. It grows as the
+> server does, and there is not much to see here yet.
+
+## Overview
+
+A static site built with [Astro](https://astro.build). Pages are rendered at
+build time into plain HTML, so there is no backend, no database and no CMS
+behind it.
+
+It is the web component of the **Basalt** project, a Minecraft server rewritten
+from scratch in Kotlin/Native, with no JVM anywhere in the runtime.
+
+| | |
+|---|---|
+| Framework | Astro 7, static output |
+| Language | TypeScript, strict |
+| Routing | File based, from `src/pages` |
+| Hosting | Self hosted, behind a `systemd` user service |
+| Deploys | Automatically, on every push to `main` |
+| License | MIT |
+
+## Getting started
+
+Requires Node 22.12 or newer.
 
 ```sh
-npm create astro@latest -- --template minimal
+git clone https://github.com/BasaltProject/Website.git
+cd Website
+npm install
+npm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The dev server runs at `http://localhost:4321` with hot reloading.
 
-## 🚀 Project Structure
+| Command | Action |
+| :--- | :--- |
+| `npm install` | Install dependencies |
+| `npm run dev` | Start the dev server at `localhost:4321` |
+| `npm run build` | Build the production site into `./dist/` |
+| `npm run preview` | Serve the built site, exactly as production does |
+| `npm run astro check` | Type check the project |
+| `npm run astro -- --help` | Astro CLI help |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Project structure
 
 ```text
 /
-├── public/
+├── docs/assets/          Images used by this README
+├── public/               Static files, served as they are
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   └── pages/            One route per file
+└── astro.config.mjs
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deployment
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Every push to `main` publishes. A GitHub Actions workflow runs on a self hosted
+runner on the machine that serves the site, which pulls the new commit, installs
+with `npm ci`, builds, and restarts the service:
 
-Any static assets, like images, can be placed in the `public/` directory.
+```sh
+git pull --ff-only && npm ci && npm run build
+systemctl --user restart basalt-web.service
+```
 
-## 🧞 Commands
+Because the site is served by `astro preview` rather than a plain file server,
+every hostname it answers on has to be listed under `vite.preview.allowedHosts`
+in `astro.config.mjs`.
 
-All commands are run from the root of the project, from a terminal:
+## Related repositories
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+| Repository | What it is |
+|---|---|
+| [Server](https://github.com/BasaltProject/Server) | The Minecraft server itself, in Kotlin/Native |
+| [Proxy](https://github.com/BasaltProject/Proxy) | The proxy component |
 
-## 👀 Want to learn more?
+## License
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+The Basalt website is distributed under the [MIT License](LICENSE).
+
+Basalt is not affiliated with Mojang Studios or Microsoft. Minecraft is a
+trademark of Mojang Studios.
