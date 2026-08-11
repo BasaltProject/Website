@@ -51,7 +51,6 @@ npm run dev
 | `npm run dev` | Start the dev server at `localhost:4321` |
 | `npm run build` | Build the production site into `./dist/` |
 | `npm run preview` | Serve the built site locally |
-| `npm run astro check` | Type check the project |
 | `npm run astro -- --help` | Astro CLI help |
 
 ## Project structure
