@@ -17,9 +17,6 @@
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
-> ⚠️ **Placeholder.** The site is a scaffold with a single page. It grows as the
-> server does, and there is not much to see here yet.
-
 ## Overview
 
 A static site built with [Astro](https://astro.build). Pages are rendered at
@@ -34,7 +31,6 @@ from scratch in Kotlin/Native, with no JVM anywhere in the runtime.
 | Framework | Astro 7, static output |
 | Language | TypeScript, strict |
 | Routing | File based, from `src/pages` |
-| Hosting | Self hosted, behind a `systemd` user service |
 | Deploys | Automatically, on every push to `main` |
 | License | MIT |
 
@@ -49,14 +45,12 @@ npm install
 npm run dev
 ```
 
-The dev server runs at `http://localhost:4321` with hot reloading.
-
 | Command | Action |
 | :--- | :--- |
 | `npm install` | Install dependencies |
 | `npm run dev` | Start the dev server at `localhost:4321` |
 | `npm run build` | Build the production site into `./dist/` |
-| `npm run preview` | Serve the built site, exactly as production does |
+| `npm run preview` | Serve the built site locally |
 | `npm run astro check` | Type check the project |
 | `npm run astro -- --help` | Astro CLI help |
 
@@ -70,21 +64,6 @@ The dev server runs at `http://localhost:4321` with hot reloading.
 │   └── pages/            One route per file
 └── astro.config.mjs
 ```
-
-## Deployment
-
-Every push to `main` publishes. A GitHub Actions workflow runs on a self hosted
-runner on the machine that serves the site, which pulls the new commit, installs
-with `npm ci`, builds, and restarts the service:
-
-```sh
-git pull --ff-only && npm ci && npm run build
-systemctl --user restart basalt-web.service
-```
-
-Because the site is served by `astro preview` rather than a plain file server,
-every hostname it answers on has to be listed under `vite.preview.allowedHosts`
-in `astro.config.mjs`.
 
 ## Related repositories
 
