@@ -7,20 +7,13 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, basalt]
     steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: |
-            set -e
-            cd /srv/apps/basaltmc/repo/Website
-            git pull --ff-only
-            npm ci
-            npm run build
-            export XDG_RUNTIME_DIR=/run/user/$(id -u)
-            systemctl --user restart basalt-web.service
+      - name: Pull, build and restart
+        run: |
+          set -e
+          cd /srv/apps/basaltmc/repo/Website
+          git pull --ff-only
+          npm ci
+          npm run build
+          systemctl --user restart basalt-web.service
