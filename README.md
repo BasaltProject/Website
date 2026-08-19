@@ -1,68 +1,38 @@
-<p align="center">
-  <img src="docs/assets/basalt-logo.png" alt="Basalt" width="360">
-</p>
+<p align="center"><img src="docs/assets/basalt-logo.png" alt="Basalt" width="360"></p>
 
 <h2 align="center">Basalt Website</h2>
 
-<p align="center">
-  <strong>The official site of the Basalt project, served at <a href="https://basaltmc.org">basaltmc.org</a>.</strong>
-</p>
+<p align="center"><strong>The official site of the Basalt project, served at <a href="https://basaltmc.org">basaltmc.org</a>.</strong></p>
 
 <p align="center">
-  <img alt="Astro" src="https://img.shields.io/badge/Astro-7.2-FF5D01?logo=astro&logoColor=white">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white">
-  <img alt="Node" src="https://img.shields.io/badge/Node-%E2%89%A522.12-5FA04E?logo=nodedotjs&logoColor=white">
-  <img alt="Output" src="https://img.shields.io/badge/output-static-62B47A">
+  <img alt="Laravel" src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white">
+  <img alt="Livewire" src="https://img.shields.io/badge/Livewire-4-FB70A9?logo=livewire&logoColor=white">
+  <img alt="PHP" src="https://img.shields.io/badge/PHP-%E2%89%A58.3-777BB4?logo=php&logoColor=white">
   <img alt="Deploy" src="https://img.shields.io/badge/deploy-on%20push%20to%20main-62B47A?logo=githubactions&logoColor=white">
-  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
 ## Overview
 
-A static site built with [Astro](https://astro.build). Pages are rendered at
-build time into plain HTML, so there is no backend, no database and no CMS
-behind it.
-
-It is the web component of the **Basalt** project, a Minecraft server rewritten
-from scratch in Kotlin/Native, with no JVM anywhere in the runtime.
-
-| | |
-|---|---|
-| Framework | Astro 7, static output |
-| Language | TypeScript, strict |
-| Routing | File based, from `src/pages` |
-| Deploys | Automatically, on every push to `main` |
-| License | MIT |
+The Basalt website is built with Laravel, Blade and Livewire. Every push to
+`main` is deployed automatically by a self-hosted GitHub Actions runner.
 
 ## Getting started
 
-Requires Node 22.12 or newer.
+Requires PHP 8.3 or newer, Composer and Node.js.
 
 ```sh
 git clone https://github.com/BasaltProject/Website.git
 cd Website
-npm install
-npm run dev
+composer setup
+composer dev
 ```
 
 | Command | Action |
 | :--- | :--- |
-| `npm install` | Install dependencies |
-| `npm run dev` | Start the dev server at `localhost:4321` |
-| `npm run build` | Build the production site into `./dist/` |
-| `npm run preview` | Serve the built site locally |
-| `npm run astro -- --help` | Astro CLI help |
-
-## Project structure
-
-```text
-/
-├── docs/assets/          Images used by this README
-├── public/               Static files, served as they are
-├── src/
-│   └── pages/            One route per file
-└── astro.config.mjs
-```
+| `composer dev` | Start Laravel and Vite for development |
+| `composer test` | Run the automated test suite |
+| `npm run build` | Build production frontend assets |
+| `vendor/bin/pint` | Format PHP files |
 
 ## Related repositories
 
@@ -76,4 +46,4 @@ npm run dev
 The Basalt website is distributed under the [MIT License](LICENSE).
 
 Basalt is not affiliated with Mojang Studios or Microsoft. Minecraft is a
-trademark of Mojang Studios.
+trademark of Microsoft.

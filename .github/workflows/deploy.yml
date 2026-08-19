@@ -9,11 +9,13 @@ jobs:
   deploy:
     runs-on: [self-hosted, basalt]
     steps:
-      - name: Pull, build and restart
+      - name: Pull and deploy
         run: |
           set -e
           cd /srv/apps/basaltmc/repo/Website
           git pull --ff-only
+          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
           npm ci
           npm run build
-          systemctl --user restart basalt-web.service
+          php artisan migrate --force
+          php artisan optimize
