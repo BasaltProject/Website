@@ -14,6 +14,7 @@ jobs:
           set -e
           cd /srv/apps/basaltmc/repo/Website
           git pull --ff-only
+          git submodule update --init --recursive
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
           npm ci
           npm run build
