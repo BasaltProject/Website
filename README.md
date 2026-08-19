@@ -1,8 +1,12 @@
-<p align="center"><img src="docs/assets/basalt-logo.png" alt="Basalt" width="360"></p>
+<p align="center">
+  <img src="docs/assets/basalt-logo.png" alt="Basalt" width="360">
+</p>
 
 <h2 align="center">Basalt Website</h2>
 
-<p align="center"><strong>The official site of the Basalt project, served at <a href="https://basaltmc.org">basaltmc.org</a>.</strong></p>
+<p align="center">
+  <strong>The official site of the Basalt project, served at <a href="https://basaltmc.org">basaltmc.org</a>.</strong>
+</p>
 
 <p align="center">
   <img alt="Laravel" src="https://img.shields.io/badge/Laravel-13-FF2D20?logo=laravel&logoColor=white">
