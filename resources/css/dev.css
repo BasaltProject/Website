@@ -1,0 +1,311 @@
+@import "tailwindcss";
+
+@theme {
+    --color-base: #08080a;
+    --color-ink: #e8e8ea;
+    --color-slate: #5c6676;
+    --color-stone: #544840;
+    --color-ash: #7e848e;
+    --color-deep: #2e3644;
+
+    --font-sans: "Instrument Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, monospace;
+}
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        color-scheme: dark;
+    }
+
+    body {
+        background: var(--color-base);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+    }
+
+    ::selection {
+        background: rgba(126, 132, 142, .35);
+    }
+
+    /* The scrollbar is part of the surface, not a system artefact bolted on top. */
+    ::-webkit-scrollbar { width: 10px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: rgba(255, 255, 255, .14); background-clip: content-box; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .24); background-clip: content-box; }
+
+    :focus-visible { outline: 2px solid rgba(158, 170, 190, .7); outline-offset: 3px; }
+}
+
+/* The blur merges five ovals into one field, and isolates the blend modes so
+   they composite once instead of against the page backdrop. The overscan hides
+   the transparency a blur that size pulls in from beyond the edges. */
+.mesh { position: fixed; inset: -18%; z-index: -2; overflow: hidden; isolation: isolate; filter: blur(72px); }
+.mesh::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, .72) 100%); }
+.blob { position: absolute; border-radius: 50%; mix-blend-mode: screen; will-change: transform; }
+.blob-1 { top: -32%; left: -22%; width: 92vmax; height: 70vmax; background: radial-gradient(ellipse, rgba(92, 102, 118, .5), transparent 62%); animation: drift-1 19s ease-in-out infinite; }
+.blob-2 { top: -14%; right: -26%; width: 74vmax; height: 88vmax; background: radial-gradient(ellipse, rgba(84, 72, 64, .46), transparent 62%); animation: drift-2 23s ease-in-out infinite; }
+.blob-3 { bottom: -34%; left: 6%; width: 100vmax; height: 66vmax; background: radial-gradient(ellipse, rgba(126, 132, 142, .28), transparent 60%); animation: drift-3 29s ease-in-out infinite; }
+.blob-4 { right: -18%; bottom: -26%; width: 84vmax; height: 82vmax; background: radial-gradient(ellipse, rgba(46, 54, 68, .55), transparent 64%); animation: drift-4 31s ease-in-out infinite; }
+.blob-5 { top: 16%; left: 22%; width: 70vmax; height: 58vmax; background: radial-gradient(ellipse, rgba(158, 160, 166, .18), transparent 58%); animation: drift-5 37s ease-in-out infinite; }
+
+.grain { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: .15; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+@keyframes drift-1 { 33% { transform: translate(34%, 22%) rotate(38deg) scale(1.25); } 66% { transform: translate(12%, 40%) rotate(-22deg) scale(.92); } }
+@keyframes drift-2 { 33% { transform: translate(-30%, 30%) rotate(-34deg) scale(1.18); } 66% { transform: translate(-46%, 4%) rotate(24deg) scale(.95); } }
+@keyframes drift-3 { 33% { transform: translate(28%, -34%) rotate(30deg) scale(1.22); } 66% { transform: translate(-16%, -14%) rotate(-28deg) scale(1); } }
+@keyframes drift-4 { 33% { transform: translate(-38%, -26%) rotate(-30deg) scale(1.15); } 66% { transform: translate(-10%, -44%) rotate(26deg) scale(.9); } }
+@keyframes drift-5 { 33% { transform: translate(-34%, 32%) rotate(42deg) scale(1.35); } 66% { transform: translate(26%, 18%) rotate(-18deg) scale(1.1); } }
+
+/* The page fade is driven from the layout's inline script. Nothing here may set
+   an opacity or a transition on `main` or it will fight it. */
+
+/* Glass. A faint fill, a hairline edge, and a lit top edge so the panel reads as a facet. */
+.glass {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 1rem;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025));
+    backdrop-filter: blur(16px) saturate(140%);
+}
+
+.glass::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent);
+}
+
+/* A faint veil so page text cannot read through the bar where the blur is
+   missing. Keep it light: the blur is what makes it read as glass. */
+.glass-nav {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025)),
+        rgba(11, 11, 14, .2);
+    transition: background .4s ease;
+}
+
+[data-nav].is-scrolled .glass-nav {
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, .07), rgba(255, 255, 255, .025)),
+        rgba(11, 11, 14, .36);
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .4rem .9rem;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .05);
+    backdrop-filter: blur(12px);
+    color: rgba(232, 232, 234, .74);
+    font-size: .74rem;
+    font-weight: 500;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+}
+
+/* Cards lift and catch a highlight from the pointer, the way a cut face would. */
+.card {
+    position: relative;
+    transition: transform .45s cubic-bezier(.2, .7, .2, 1), border-color .45s ease, background .45s ease;
+}
+
+.card::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, .1), transparent 65%);
+    transition: opacity .45s ease;
+    pointer-events: none;
+    /* Clipped to the card's own shape now that the card itself does not clip. */
+    -webkit-mask-image: radial-gradient(#000, #000);
+    mask-image: radial-gradient(#000, #000);
+}
+
+.card:hover { transform: translateY(-4px); border-color: rgba(255, 255, 255, .17); }
+.card:hover::after { opacity: 1; }
+/* Lift the whole card while a tooltip inside it is open, so later cards cannot cover it. */
+.card:hover, .card:focus-within { z-index: 20; }
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    padding: .8rem 1.5rem;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 999px;
+    font-size: .92rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: transform .3s cubic-bezier(.2, .7, .2, 1), border-color .3s ease, background .3s ease, color .3s ease;
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0); }
+
+.btn-primary {
+    position: relative;
+    overflow: hidden;
+    border-color: rgba(255, 255, 255, .2);
+    background: linear-gradient(135deg, rgba(158, 168, 186, .95), rgba(120, 128, 142, .88));
+    color: #0a0a0c;
+}
+
+.btn-primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-120%);
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .55) 50%, transparent 70%);
+}
+
+.btn-primary:hover::after { animation: sheen 1.1s cubic-bezier(.3, .6, .3, 1); }
+
+@keyframes sheen { to { transform: translateX(120%); } }
+
+/* Tier colour. Both stops arrive from config as custom properties, so a new
+   tier is a config entry. After .btn-primary to override its fill. */
+.btn-tier {
+    border-color: rgba(255, 255, 255, .24);
+    background: linear-gradient(135deg, var(--tier-from), var(--tier-to));
+}
+
+.tier-name { color: var(--tier-from); }
+
+.amount-selected {
+    border-color: color-mix(in srgb, var(--tier-from) 60%, transparent);
+    background: color-mix(in srgb, var(--tier-from) 14%, transparent);
+    color: #fff;
+}
+
+.btn-ghost {
+    background: rgba(255, 255, 255, .05);
+    color: rgba(232, 232, 234, .9);
+    backdrop-filter: blur(12px);
+}
+
+.btn-ghost:hover { border-color: rgba(255, 255, 255, .24); background: rgba(255, 255, 255, .09); }
+
+.btn:disabled, .btn[aria-disabled="true"] {
+    cursor: not-allowed;
+    transform: none;
+    border-color: rgba(255, 255, 255, .07);
+    background: rgba(255, 255, 255, .03);
+    color: rgba(232, 232, 234, .38);
+}
+
+/* Headline text takes a cool-to-warm sweep rather than flat white. */
+.text-crystal {
+    background: linear-gradient(150deg, #ffffff 0%, #cfd4dc 42%, #9aa0aa 72%, #7d7469 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.rule { height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .14), transparent); }
+
+/* Scroll reveal. Elements start hidden only once JS confirms it can restore them. */
+.js .reveal { opacity: 0; transform: translateY(22px); }
+.js .reveal.is-visible { opacity: 1; transform: none; transition: opacity .8s cubic-bezier(.2, .7, .2, 1), transform .8s cubic-bezier(.2, .7, .2, 1); }
+/* Shown without its own transition, so the page fade is the only motion. */
+.js .reveal.is-instant { transition: none; }
+
+.status-dot { width: .5rem; height: .5rem; border-radius: 999px; flex: none; }
+.status-working { background: #7fcf9b; box-shadow: 0 0 12px rgba(127, 207, 155, .55); }
+.status-progress { background: #d8c07a; box-shadow: 0 0 12px rgba(216, 192, 122, .5); }
+.status-none { background: rgba(255, 255, 255, .22); }
+
+/* Long-form documentation body. */
+.prose-basalt { color: rgba(232, 232, 234, .76); line-height: 1.75; }
+.prose-basalt > * + * { margin-top: 1.15rem; }
+.prose-basalt h2 { margin-top: 2.75rem; color: var(--color-ink); font-size: 1.45rem; font-weight: 600; letter-spacing: -.01em; }
+.prose-basalt h3 { margin-top: 2rem; color: var(--color-ink); font-size: 1.12rem; font-weight: 600; }
+.prose-basalt a { color: #b9c2d0; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(185, 194, 208, .4); }
+.prose-basalt a:hover { text-decoration-color: rgba(185, 194, 208, .9); }
+.prose-basalt code { padding: .15rem .4rem; border: 1px solid rgba(255, 255, 255, .08); border-radius: .35rem; background: rgba(255, 255, 255, .06); color: #d8dde5; font-family: var(--font-mono); font-size: .86em; }
+.prose-basalt pre code { padding: 0; border: 0; background: none; }
+.prose-basalt ul, .prose-basalt ol { padding-left: 1.35rem; }
+.prose-basalt ul { list-style: disc; }
+.prose-basalt ol { list-style: decimal; }
+.prose-basalt li + li { margin-top: .45rem; }
+.prose-basalt blockquote { padding-left: 1.1rem; border-left: 2px solid rgba(255, 255, 255, .16); color: rgba(232, 232, 234, .62); }
+.prose-basalt table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.prose-basalt th, .prose-basalt td { padding: .6rem .8rem; border-bottom: 1px solid rgba(255, 255, 255, .08); text-align: left; }
+.prose-basalt th { color: var(--color-ink); font-weight: 600; }
+
+
+.soon-pill { display: inline-block; white-space: nowrap; padding: .7rem 1.6rem; border: 1px solid rgba(255, 255, 255, .1); border-radius: 999px; background: rgba(255, 255, 255, .06); backdrop-filter: blur(12px); color: rgba(232, 232, 234, .72); font-size: clamp(.72rem, 1.5vw, .86rem); font-weight: 500; letter-spacing: .34em; text-indent: .34em; text-transform: uppercase; }
+
+/* Code blocks. One presentation whether they come from MDX or from a page. */
+.code-block { position: relative; margin: 1.5rem 0; border: 1px solid rgba(255, 255, 255, .09); border-radius: .9rem; background: rgba(6, 6, 8, .66); backdrop-filter: blur(10px); }
+.code-block pre { overflow-x: auto; margin: 0; padding: 1.2rem 1.3rem; }
+.code-block code { display: block; color: #ccd2dc; font-family: var(--font-mono); font-size: .84rem; line-height: 1.7; white-space: pre; }
+.code-lang { position: absolute; top: .6rem; right: .85rem; color: rgba(232, 232, 234, .26); font-family: var(--font-mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; }
+/* A file name is read, not skimmed like a language tag, so it gets more weight. */
+.code-file { color: rgba(232, 232, 234, .4); letter-spacing: .04em; text-transform: none; }
+
+/* Muted, desaturated tokens: enough separation to read, not a rainbow. */
+.tok-comment { color: rgba(232, 232, 234, .3); font-style: italic; }
+.tok-string { color: #b0c3a4; }
+.tok-number { color: #d3bf9a; }
+.tok-keyword { color: #a6b5d1; }
+.tok-function { color: #d7dde7; }
+.tok-property { color: #b6bcc7; }
+.tok-variable, .tok-flag, .tok-section { color: #c6b69c; }
+.tok-operator { color: rgba(232, 232, 234, .45); }
+
+/* Callouts inside documentation. */
+.callout-body > *:first-child { margin-top: 0; }
+.callout-body > *:last-child { margin-bottom: 0; }
+.callout-body { color: rgba(232, 232, 234, .68); font-size: .94rem; line-height: 1.7; }
+.callout-body > * + * { margin-top: .85rem; }
+.callout-body code { padding: .12rem .38rem; border: 1px solid rgba(255, 255, 255, .08); border-radius: .3rem; background: rgba(255, 255, 255, .06); color: #d8dde5; font-family: var(--font-mono); font-size: .86em; }
+.callout-body a { color: #b9c2d0; text-decoration: underline; text-underline-offset: 3px; }
+
+/* The "?" marker that explains a caveat without spending a paragraph on it. */
+.info { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; border: 1px solid rgba(255, 255, 255, .22); border-radius: 999px; background: rgba(255, 255, 255, .05); color: rgba(232, 232, 234, .55); font-size: .7rem; font-weight: 600; line-height: 1; cursor: help; vertical-align: 15%; transition: color .3s ease, border-color .3s ease; }
+.info:hover, .info:focus-visible { border-color: rgba(255, 255, 255, .5); color: rgba(232, 232, 234, .95); }
+.info-text {
+    position: absolute;
+    bottom: calc(100% + .6rem);
+    left: 50%;
+    z-index: 30;
+    width: max-content;
+    max-width: 17rem;
+    padding: .7rem .85rem;
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: .6rem;
+    background: rgba(14, 14, 17, .96);
+    backdrop-filter: blur(14px);
+    color: rgba(232, 232, 234, .8);
+    font-size: .76rem;
+    font-weight: 400;
+    line-height: 1.55;
+    text-align: left;
+    letter-spacing: 0;
+    text-transform: none;
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    transition: opacity .25s ease, transform .25s ease;
+    pointer-events: none;
+}
+.info:hover .info-text, .info:focus-visible .info-text { opacity: 1; transform: translate(-50%, 0); }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .blob { animation: none; }
+
+    .js .reveal { opacity: 1; transform: none; }
+    .btn:hover, .card:hover { transform: none; }
+    .info-text { transition: none; }
+    .btn-primary:hover::after { animation: none; }
+}
