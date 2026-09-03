@@ -23,15 +23,13 @@ return [
         'protocol' => '776',
     ],
 
-    'kotlin' => '2.4.10',
-
     // `icon` names a brand in resources/views/components/icon/brand.blade.php.
     'platforms' => [
-        ['target' => 'macosArm64', 'label' => 'macOS', 'arch' => 'Apple silicon', 'icon' => 'apple'],
-        ['target' => 'macosX64', 'label' => 'macOS', 'arch' => 'Intel', 'icon' => 'apple'],
-        ['target' => 'linuxX64', 'label' => 'Linux', 'arch' => 'x86_64', 'icon' => 'linux'],
-        ['target' => 'linuxArm64', 'label' => 'Linux', 'arch' => 'aarch64', 'icon' => 'linux'],
-        ['target' => 'mingwX64', 'label' => 'Windows', 'arch' => 'x86_64', 'icon' => 'windows'],
+        ['target' => 'macOS-arm64', 'label' => 'macOS', 'arch' => 'Apple silicon', 'icon' => 'apple'],
+        ['target' => 'macOS-x64', 'label' => 'macOS', 'arch' => 'Intel', 'icon' => 'apple'],
+        ['target' => 'Linux-x64', 'label' => 'Linux', 'arch' => 'x86_64', 'icon' => 'linux'],
+        ['target' => 'Linux-arm64', 'label' => 'Linux', 'arch' => 'aarch64', 'icon' => 'linux'],
+        ['target' => 'Windows-x64', 'label' => 'Windows', 'arch' => 'x86_64', 'icon' => 'windows'],
     ],
 
     // `url` is where every button on the donate page sends people.

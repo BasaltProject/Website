@@ -41,7 +41,7 @@ new #[Title('Donate')] class extends Component
         <div class="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
             @foreach ([
                 ['Development time', 'The parity work is slow by nature: every system is checked against what the official server actually does, not against what seems reasonable.'],
-                ['Build and test machines', 'Kotlin/Native does not cross-compile between host families, so every platform needs a host of its own to build on and be tested on.'],
+                ['Build and test machines', 'A binary is only proven on the platform it runs on, so every platform needs a host of its own to build on and be tested on.'],
                 ['Everything stays free', 'No paid edition, no licence, no feature behind a tier. Donating buys the project time, never you an advantage.'],
             ] as $index => [$heading, $copy])
                 <article class="glass card p-7 reveal" data-reveal-delay="{{ $index * 90 }}">

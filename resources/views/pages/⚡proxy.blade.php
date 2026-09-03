@@ -24,7 +24,7 @@ new #[Title('Basalt Proxy')] class extends Component
                 <p class="mt-6 text-lg leading-relaxed text-white/55">
                     Basalt Proxy sits in front of a set of Minecraft servers and gives players
                     one address to connect to, moving them between backends without a
-                    reconnect. Written entirely in Kotlin/Native, shipped as a native binary
+                    reconnect. Written entirely in C++23, shipped as a native binary
                     per platform.
                 </p>
 
@@ -114,7 +114,7 @@ default = "lobby"
 
                 <dl class="glass reveal divide-y divide-white/6 self-start overflow-hidden rounded-2xl text-sm">
                     @foreach ([
-                        ['Language', 'Kotlin/Native, 100 %'],
+                        ['Language', 'C++23, 100 %'],
                         ['Minecraft', config('basalt.minecraft.current').' native, older versions supported'],
                         ['Clients', 'Java Edition and Bedrock Edition'],
                         ['Backends', 'Any Minecraft server, Basalt or not'],

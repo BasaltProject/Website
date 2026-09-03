@@ -42,7 +42,7 @@ composer dev
 
 | Repository | What it is |
 |---|---|
-| [Server](https://github.com/BasaltProject/Server) | The Minecraft server itself, in Kotlin/Native |
+| [Server](https://github.com/BasaltProject/Server) | The Minecraft server itself, in C++23 |
 | [Proxy](https://github.com/BasaltProject/Proxy) | The proxy component |
 
 ## License

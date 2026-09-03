@@ -23,7 +23,7 @@ new #[Title('Basalt Server')] class extends Component
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-white/55">
                     A complete reimplementation of the Minecraft server, written entirely in
-                    Kotlin/Native and shipped as a native binary for each platform. It plays
+                    C++23 and shipped as a native binary for each platform. It plays
                     exactly like vanilla, starts in milliseconds, and never pauses to collect
                     garbage.
                 </p>
@@ -101,7 +101,7 @@ new #[Title('Basalt Server')] class extends Component
 
                 <dl class="glass reveal divide-y divide-white/6 self-start overflow-hidden rounded-2xl text-sm">
                     @foreach ([
-                        ['Language', 'Kotlin/Native, 100 %'],
+                        ['Language', 'C++23, 100 %'],
                         ['Minecraft', config('basalt.minecraft.current').' native, older versions supported'],
                         ['Clients', 'Java Edition and Bedrock Edition'],
                         ['Distribution', 'Native binaries per platform'],
@@ -136,9 +136,9 @@ new #[Title('Basalt Server')] class extends Component
                             plugin cannot take the server down.
                         </p>
                         <p class="mt-4 leading-relaxed text-white/55">
-                            The Lua runtime is BlueLuaK, a Kotlin Multiplatform implementation,
-                            so it is the same runtime everywhere Basalt runs with no native Lua
-                            dependency to install and no per-platform build of your plugin.
+                            The Lua runtime is the official Lua 5.5.1, built from source into
+                            the binary, so it is the same runtime everywhere Basalt runs with no
+                            Lua to install alongside it and no per-platform build of your plugin.
                         </p>
                     </div>
 

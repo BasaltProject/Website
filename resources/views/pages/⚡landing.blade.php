@@ -44,14 +44,14 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
 <div>
     <section class="px-4">
         <div class="mx-auto flex max-w-4xl flex-col items-center pt-10 pb-24 text-center md:pt-16 md:pb-32">
-            <span class="pill reveal">Kotlin/Native, zero JVM</span>
+            <span class="pill reveal">C++23, zero JVM</span>
 
             <h1 class="text-crystal reveal mt-8 text-[clamp(2.6rem,7vw,4.9rem)] leading-[1.04] font-semibold tracking-[-.035em]" data-reveal-delay="80">
                 A Minecraft server<br>rewritten from scratch.
             </h1>
 
             <p class="reveal mt-7 max-w-2xl text-[clamp(1rem,2.1vw,1.18rem)] leading-relaxed text-white/55" data-reveal-delay="160">
-                Written entirely in Kotlin/Native and shipped as one native binary per
+                Written entirely in C++23 and shipped as one native binary per
                 platform. No bundled JRE, no embedded VM, no hidden Java process. It starts
                 in milliseconds, never pauses to collect garbage, and Java and Bedrock
                 players share the same world.

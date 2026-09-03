@@ -1,6 +1,6 @@
 @props([
     'title' => null,
-    'description' => 'Basalt is a Minecraft: Java Edition server and proxy rewritten from scratch in Kotlin/Native, with no JVM at runtime.',
+    'description' => 'Basalt is a Minecraft: Java Edition server and proxy rewritten from scratch in C++23, with no JVM at runtime.',
 ])
 
 @php
@@ -153,7 +153,7 @@
                     <img src="/basalt-logo.png" alt="Basalt" width="452" height="172" class="mb-5 w-36">
                     <p class="text-sm leading-relaxed text-white/45">
                         A Minecraft: Java Edition server and proxy rewritten from scratch in
-                        Kotlin/Native. No JVM at runtime.
+                        C++23. No JVM at runtime.
                     </p>
                     <a href="{{ route('dev.donate') }}" wire:navigate class="mt-5 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white/85">
                         <x-icon.heart />
