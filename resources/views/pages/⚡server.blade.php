@@ -166,17 +166,16 @@ end)
             <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
                 <div class="reveal">
                     <span class="pill">Bukkit</span>
-                    <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Keep your plugins<x-info class="ml-3" label="Bukkit support: how it works">Optional, and it runs in a separate JVM process that talks to the core. The Basalt binary itself never links or starts a JVM, and never looks for Java when the feature is off.</x-info></h2>
+                    <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Keep your plugins<x-info class="ml-3" label="Bukkit support: how it works">Optional, and powered by Basalt Shim talking to the core over IPC. The Basalt binary itself never links a host JVM, and never looks for Java when the feature is off.</x-info></h2>
                     <p class="mt-5 leading-relaxed text-white/55">
                         Most of the ecosystem is Bukkit, Spigot and Paper plugins that will
-                        never be rewritten. Basalt runs them, in a separate process that talks
-                        to the core, so the server binary stays free of a JVM.
+                        never be rewritten. Basalt aims to run them via Basalt Shim,
+                        keeping the server binary clean and free of an external JVM requirement.
                     </p>
                     <p class="mt-4 leading-relaxed text-white/55">
-                        Turning it on means you supply the JVM and accept the memory and
-                        startup time it costs. It is a trade you make deliberately, in
-                        exchange for plugins your server is already built on. Off by default,
-                        and off means absent.
+                        Execution is powered by Basalt Shim, so there is no need to configure
+                        a host Java binary path or install an external JDK. Off by default,
+                        and off means completely absent.
                     </p>
                     <a href="{{ route('dev.docs.show', ['section' => 'server', 'slug' => 'bukkit-plugins']) }}" wire:navigate class="btn btn-ghost mt-8 py-2.5 text-sm">How it works</a>
                 </div>
@@ -185,7 +184,6 @@ end)
                     <x-code lang="toml" file="config/server.toml">
 [bukkit]
 enabled = true
-java = "/usr/lib/jvm/java-21/bin/java"
 memory = "2G"
                     </x-code>
                     <div class="glass mt-4 overflow-hidden rounded-2xl">
