@@ -19,8 +19,8 @@ return [
     // Basalt tracks the newest release: `current` is what the core speaks today,
     // and every other client reaches it through translation at the edge.
     'minecraft' => [
-        'current' => '26.2',
-        'protocol' => '776',
+        'current' => '26.3',
+        'protocol' => '777',
     ],
 
     // `icon` names a brand in resources/views/components/icon/brand.blade.php.
