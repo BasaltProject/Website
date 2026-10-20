@@ -21,7 +21,7 @@ new #[Title('Projects')] class extends Component
                 'name' => 'Basalt Proxy',
                 'tagline' => 'One address in front of many servers.',
                 'body' => 'A native proxy project sharing Wire with the server. Current development
-                    builds provide command-line help and version information.',
+                    builds validate configuration and serve local server-list status.',
                 'route' => 'dev.projects.proxy',
                 'repo' => config('basalt.repos.proxy'),
             ],

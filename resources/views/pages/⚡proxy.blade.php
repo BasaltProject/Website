@@ -46,7 +46,7 @@ new #[Title('Basalt Proxy')] class extends Component
             <div class="reveal">
                 <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Download</h2>
                 <p class="mt-4 max-w-2xl leading-relaxed text-white/50">
-                    Native development builds with command-line help and version information.
+                    Native development builds with TOML configuration and local server-list status.
                 </p>
             </div>
             <div class="mt-9">
@@ -60,8 +60,9 @@ new #[Title('Basalt Proxy')] class extends Component
             <div class="reveal max-w-3xl">
                 <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">In development</h2>
                 <p class="mt-5 leading-relaxed text-white/55">
-                    The current executable prints its banner and version, accepts command-line
-                    arguments and exits. Player connections, routing and plugins are being developed.
+                    The current executable validates TOML configuration and serves local status
+                    and ping requests through a native listener. Player authentication, routing
+                    and plugins are being developed.
                 </p>
                 <p class="mt-4 leading-relaxed text-white/55">
                     The goal is one address for Minecraft backends, Java and Bedrock support,
