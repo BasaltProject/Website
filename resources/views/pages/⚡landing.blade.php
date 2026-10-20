@@ -16,7 +16,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                     included. Then a plugin platform on top of it.',
                 'points' => [
                     'Lua plugins in .bspkg packages, sandboxed',
-                    'Bukkit plugins in a separate process, optional',
+                    'Bukkit adapter planned after Shim',
                     'Linear regions, Anvil worlds converted on load',
                 ],
                 'route' => 'dev.projects.server',
@@ -25,13 +25,12 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
             [
                 'name' => 'Basalt Proxy',
                 'tagline' => 'One address in front of many servers.',
-                'body' => 'Routing, backends and moving players between them without a
-                    reconnect. It speaks the standard protocol, so vanilla, Paper, Spigot
-                    and Fabric all sit behind it.',
+                'body' => 'A native proxy project sharing Wire with the server. Current development
+                    builds provide command-line help and version information.',
                 'points' => [
-                    'Lua plugins in .bppkg packages, sandboxed',
-                    'Velocity and BungeeCord plugins, optional',
-                    'Translation handed to the backend when it can be',
+                    'Native Lua plugins planned in .bppkg packages',
+                    'Velocity and BungeeCord adapters planned after Shim',
+                    'Configurable translation and routing in development',
                 ],
                 'route' => 'dev.projects.proxy',
                 'repo' => 'basalt.repos.proxy',
@@ -44,7 +43,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
 <div>
     <section class="px-4">
         <div class="mx-auto flex max-w-4xl flex-col items-center pt-10 pb-24 text-center md:pt-16 md:pb-32">
-            <span class="pill reveal">C++23, zero JVM</span>
+            <span class="pill reveal">C++23, no external JVM</span>
 
             <h1 class="text-crystal reveal mt-8 text-[clamp(2.6rem,7vw,4.9rem)] leading-[1.04] font-semibold tracking-[-.035em]" data-reveal-delay="80">
                 A Minecraft server<br>rewritten from scratch.
@@ -121,9 +120,9 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                             'info' => null,
                         ],
                         [
-                            'title' => 'Runs the plugins you already know',
-                            'body' => 'Bukkit, Spigot and Paper on the server. Velocity and BungeeCord on the proxy. Migration is not all or nothing: they keep working while you move the ones that matter across to Lua.',
-                            'info' => 'Optional on both, and they run in a separate JVM process that talks to the core. Neither binary links or starts a JVM, and neither looks for Java when the feature is off. You supply the JVM and accept the memory it costs.',
+                            'title' => 'Building on the plugin ecosystem',
+                            'body' => 'Future Server modules will implement Bukkit compatibility, and Proxy modules will implement Velocity and BungeeCord APIs once Shim is complete.',
+                            'info' => 'Shim provides Java bytecode execution through a JVM in C++. Server and Proxy provide their own plugin API adapters. This integration is planned, requires no external JVM installation and will be optional.',
                         ],
                         [
                             'title' => 'One binary to deploy',

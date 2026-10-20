@@ -14,7 +14,7 @@ class Docs
     /** Sections in navigation order. The key is the directory name. */
     public const SECTIONS = [
         'server' => ['title' => 'Basalt Server', 'summary' => 'Running, configuring and extending the server.'],
-        'proxy' => ['title' => 'Basalt Proxy', 'summary' => 'Routing, backends and player forwarding.'],
+        'proxy' => ['title' => 'Basalt Proxy', 'summary' => 'Building and invoking the native executable.'],
     ];
 
     public static function path(): string

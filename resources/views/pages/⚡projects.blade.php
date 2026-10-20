@@ -20,8 +20,8 @@ new #[Title('Projects')] class extends Component
             [
                 'name' => 'Basalt Proxy',
                 'tagline' => 'One address in front of many servers.',
-                'body' => 'Routing, backends and moving players between them without a
-                    reconnect. It sits in front of any Minecraft server, Basalt or not.',
+                'body' => 'A native proxy project sharing Wire with the server. Current development
+                    builds provide command-line help and version information.',
                 'route' => 'dev.projects.proxy',
                 'repo' => config('basalt.repos.proxy'),
             ],
