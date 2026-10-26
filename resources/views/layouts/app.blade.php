@@ -21,8 +21,9 @@
     <meta name="description" content="{{ $description }}">
     {{-- The whole /dev tree is a work in progress and must stay out of search results. --}}
     <meta name="robots" content="noindex, nofollow">
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="apple-touch-icon" href="/favicon.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <title>{{ $title ? $title.' - Basalt' : 'Basalt' }}</title>
     @vite(['resources/css/dev.css', 'resources/js/dev.js'])
     @livewireStyles
@@ -94,7 +95,7 @@
     <header class="fixed inset-x-0 top-0 z-40 px-4 pt-4" data-nav>
         <nav class="glass glass-nav mx-auto flex max-w-6xl items-center gap-3 rounded-full py-2.5 pr-2.5 pl-6">
             <a href="{{ route('dev.home') }}" wire:navigate class="shrink-0" aria-label="Basalt home">
-                <img src="/basalt-logo.png" alt="Basalt" width="452" height="172" class="h-7 w-auto">
+                <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-7 w-auto">
             </a>
 
             <ul class="ml-3 hidden items-center gap-1 md:flex">
@@ -150,7 +151,7 @@
             <div class="rule mb-10"></div>
             <div class="flex flex-col gap-10 md:flex-row md:justify-between">
                 <div class="max-w-sm">
-                    <img src="/basalt-logo.png" alt="Basalt" width="452" height="172" class="mb-5 w-36">
+                    <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="mb-5 w-36">
                     <p class="text-sm leading-relaxed text-white/45">
                         A Minecraft: Java Edition server and proxy rewritten from scratch in
                         C++23. No JVM at runtime.

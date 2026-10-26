@@ -17,7 +17,7 @@ new class extends Component
     </div>
     <div class="grain" aria-hidden="true"></div>
     <main>
-        <img class="logo" src="/basalt-logo.png" alt="Basalt" width="452" height="172" fetchpriority="high">
+        <img class="logo" src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" fetchpriority="high">
         <p class="soon">Coming Soon</p>
     </main>
 </div>
