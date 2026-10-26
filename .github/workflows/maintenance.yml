@@ -1,0 +1,87 @@
+name: Production maintenance
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Inspect production or resync a reviewed clean checkout
+        required: true
+        default: inspect
+        type: choice
+        options:
+          - inspect
+          - resync
+      expected_head:
+        description: Reviewed current production commit (required for resync)
+        required: false
+        type: string
+      expected_target:
+        description: Reviewed origin/main commit (required for resync)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: basalt-production
+  cancel-in-progress: false
+
+jobs:
+  maintenance:
+    runs-on: [self-hosted, basalt]
+    timeout-minutes: 10
+    steps:
+      - name: Inspect checkout without exposing application secrets
+        run: |
+          set -euo pipefail
+          cd /srv/apps/basaltmc/repo/Website
+          git fetch --no-recurse-submodules origin main
+          echo "Branch: $(git branch --show-current)"
+          echo "HEAD: $(git rev-parse HEAD)"
+          echo "TARGET: $(git rev-parse origin/main)"
+          echo 'Tracked changes:'
+          git status --short --untracked-files=no
+          echo 'Local-only / remote-only commit counts:'
+          git rev-list --left-right --count HEAD...origin/main
+          echo 'Patch-equivalent history:'
+          git log --left-right --cherry-mark --oneline --max-count=40 HEAD...origin/main
+          echo 'Tree differences from target:'
+          git diff --stat origin/main HEAD
+          echo 'Submodule state:'
+          git submodule status --recursive
+          echo 'Protected files are not tracked:'
+          for file in .env database/database.sqlite; do
+            if git ls-files --error-unmatch "$file" >/dev/null 2>&1; then
+              echo "ERROR: protected file is tracked: $file"
+              exit 1
+            fi
+            if git cat-file -e "origin/main:$file" 2>/dev/null; then
+              echo "ERROR: target tracks protected file: $file"
+              exit 1
+            fi
+          done
+      - name: Back up branch and resync reviewed clean checkout
+        if: inputs.operation == 'resync'
+        env:
+          EXPECTED_HEAD: ${{ inputs.expected_head }}
+          EXPECTED_TARGET: ${{ inputs.expected_target }}
+          MAINTENANCE_RUN_ID: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          cd /srv/apps/basaltmc/repo/Website
+          [[ "$EXPECTED_HEAD" =~ ^[0-9a-f]{40}$ ]]
+          [[ "$EXPECTED_TARGET" =~ ^[0-9a-f]{40}$ ]]
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test "$(git rev-parse origin/main)" = "$EXPECTED_TARGET"
+          test "$(git branch --show-current)" = main
+          test -z "$(git status --porcelain --untracked-files=no)"
+          backup="backup/deploy-before-sync-$MAINTENANCE_RUN_ID"
+          git branch -m "$backup"
+          if ! git switch --no-overwrite-ignore -c main --track origin/main; then
+            git branch -m main
+            exit 1
+          fi
+          test "$(git rev-parse HEAD)" = "$EXPECTED_TARGET"
+          echo "Backup retained: $backup at $EXPECTED_HEAD"
+          echo 'Application environment, database and uploaded files were not deleted.'
