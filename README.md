@@ -22,15 +22,18 @@
 
 ## Overview
 
-The Basalt website is built with Laravel, Blade and Livewire. Every push to
-`main` is deployed automatically by a self-hosted GitHub Actions runner.
+The Basalt website is built with Laravel, Blade and Livewire, and styled with
+Tailwind CSS. The documentation pages are read from the
+[Documentation](https://github.com/BasaltProject/Documentation) repository, which is
+a submodule at `documentation/`. Every push to `main` is deployed automatically by a
+self-hosted GitHub Actions runner.
 
 ## Getting started
 
 Requires PHP 8.3 or newer, Composer and Node.js.
 
 ```sh
-git clone https://github.com/BasaltProject/Website.git
+git clone --recurse-submodules https://github.com/BasaltProject/Website.git
 cd Website
 composer setup
 composer dev
@@ -42,13 +45,6 @@ composer dev
 | `composer test` | Run the automated test suite |
 | `npm run build` | Build production frontend assets |
 | `vendor/bin/pint` | Format PHP files |
-
-## Related repositories
-
-| Repository | What it is |
-|---|---|
-| [Server](https://github.com/BasaltProject/Server) | The Minecraft server itself, in C++23 |
-| [Proxy](https://github.com/BasaltProject/Proxy) | The proxy component |
 
 ## License
 
