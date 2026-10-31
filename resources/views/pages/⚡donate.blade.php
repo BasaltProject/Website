@@ -24,7 +24,7 @@ new #[Title('Donate')] class extends Component
                         Basalt is GPL-3.0 and always will be. There is no paid tier, no
                         licence to buy and nothing held back for people who give. What
                         donations buy is time: the hours that go into a server rewritten from
-                        scratch instead of forked, and the machines that build and test it on
+                        scratch instead of forked, and the machines that test it on
                         five platforms.
                     </p>
 
@@ -41,7 +41,7 @@ new #[Title('Donate')] class extends Component
         <div class="mx-auto grid max-w-6xl gap-4 md:grid-cols-3">
             @foreach ([
                 ['Development time', 'The parity work is slow by nature: every system is checked against what the official server actually does, not against what seems reasonable.'],
-                ['Build and test machines', 'A binary is only proven on the platform it runs on, so every platform needs a host of its own to build on and be tested on.'],
+                ['Test machines', 'A binary is only proven on the platform it runs on, so every platform needs a host of its own to be tested on.'],
                 ['Everything stays free', 'No paid edition, no licence, no feature behind a tier. Donating buys the project time, never you an advantage.'],
             ] as $index => [$heading, $copy])
                 <article class="glass card p-7 reveal" data-reveal-delay="{{ $index * 90 }}">
@@ -89,7 +89,7 @@ new #[Title('Donate')] class extends Component
                     <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Building something on Basalt?</h2>
                     <p class="mt-5 leading-relaxed text-white/55">
                         Hosts, networks and studios that depend on it can sponsor the work
-                        directly, through the same sponsorship page.
+                        directly.
                     </p>
                     <p class="mt-4 leading-relaxed text-white/55">
                         It does not buy influence over the roadmap or a feature nobody else
@@ -111,7 +111,7 @@ new #[Title('Donate')] class extends Component
                     Thank you, genuinely.
                 </h2>
                 <p class="mx-auto mt-5 max-w-xl leading-relaxed text-white/50">
-                    Donations go through GitHub Sponsors.
+                    Every contribution goes into the work.
                 </p>
                 <div class="mt-9 flex flex-wrap justify-center gap-3">
                     <a href="{{ config('basalt.donate.url') }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
