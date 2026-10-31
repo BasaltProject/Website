@@ -14,7 +14,7 @@ class Docs
     /** Sections in navigation order. The key is the directory name. */
     public const SECTIONS = [
         'server' => ['title' => 'Basalt Server', 'summary' => 'Running, configuring and extending the server.'],
-        'proxy' => ['title' => 'Basalt Proxy', 'summary' => 'Building and invoking the native executable.'],
+        'proxy' => ['title' => 'Basalt Proxy', 'summary' => 'Running, configuring and extending the proxy.'],
     ];
 
     public static function path(): string
@@ -127,6 +127,7 @@ class Docs
             'slug' => $slug,
             'title' => $matter['title'] ?? Str::headline($slug),
             'description' => $matter['description'] ?? '',
+            'group' => $matter['group'] ?? '',
             'source' => $body,
             'text' => Mdx::toText($body),
             'url' => route('dev.docs.show', ['section' => $section, 'slug' => $slug]),
