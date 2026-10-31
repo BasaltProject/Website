@@ -5,10 +5,10 @@
 
 @php
     $nav = [
-        ['route' => 'dev.home', 'label' => 'Home', 'pattern' => 'dev.home'],
-        ['route' => 'dev.projects', 'label' => 'Projects', 'pattern' => 'dev.projects*'],
-        ['route' => 'dev.docs', 'label' => 'Docs', 'pattern' => 'dev.docs*'],
-        ['route' => 'dev.plugins', 'label' => 'Plugins', 'pattern' => 'dev.plugins'],
+        ['route' => 'home', 'label' => 'Home', 'pattern' => 'home'],
+        ['route' => 'projects', 'label' => 'Projects', 'pattern' => 'projects*'],
+        ['route' => 'docs', 'label' => 'Docs', 'pattern' => 'docs*'],
+        ['route' => 'plugins', 'label' => 'Plugins', 'pattern' => 'plugins'],
     ];
 @endphp
 
@@ -19,8 +19,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#08080a">
     <meta name="description" content="{{ $description }}">
-    {{-- The whole /dev tree is a work in progress and must stay out of search results. --}}
-    <meta name="robots" content="noindex, nofollow">
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -94,7 +92,7 @@
 
     <header class="fixed inset-x-0 top-0 z-40 px-4 pt-4" data-nav>
         <nav class="glass glass-nav mx-auto flex max-w-6xl items-center gap-3 rounded-full py-2.5 pr-2.5 pl-6">
-            <a href="{{ route('dev.home') }}" wire:navigate class="shrink-0" aria-label="Basalt home">
+            <a href="{{ route('home') }}" wire:navigate class="shrink-0" aria-label="Basalt home">
                 <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-7 w-auto">
             </a>
 
@@ -112,10 +110,10 @@
             </ul>
 
             <div class="ml-auto flex items-center gap-2">
-                <a href="{{ route('dev.donate') }}" wire:navigate
+                <a href="{{ route('donate') }}" wire:navigate
                    @class([
                        'btn btn-ghost px-4 py-2 text-sm',
-                       'border-white/24 bg-white/10 text-white' => request()->routeIs('dev.donate'),
+                       'border-white/24 bg-white/10 text-white' => request()->routeIs('donate'),
                    ])>
                     <x-icon.heart />
                     <span class="hidden sm:inline">Donate</span>
@@ -156,7 +154,7 @@
                         A Minecraft: Java Edition server and proxy rewritten from scratch in
                         C++23. No JVM at runtime.
                     </p>
-                    <a href="{{ route('dev.donate') }}" wire:navigate class="mt-5 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white/85">
+                    <a href="{{ route('donate') }}" wire:navigate class="mt-5 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white/85">
                         <x-icon.heart />
                         Support the project
                     </a>
@@ -166,17 +164,17 @@
                     <div>
                         <h3 class="mb-3.5 text-[.72rem] font-semibold tracking-[.16em] text-white/85 uppercase">Projects</h3>
                         <ul class="space-y-2.5 text-sm text-white/45">
-                            <li><a href="{{ route('dev.projects.server') }}" wire:navigate class="transition-colors hover:text-white/85">Basalt Server</a></li>
-                            <li><a href="{{ route('dev.projects.proxy') }}" wire:navigate class="transition-colors hover:text-white/85">Basalt Proxy</a></li>
-                            <li><a href="{{ route('dev.plugins') }}" wire:navigate class="transition-colors hover:text-white/85">Plugins</a></li>
+                            <li><a href="{{ route('projects.server') }}" wire:navigate class="transition-colors hover:text-white/85">Basalt Server</a></li>
+                            <li><a href="{{ route('projects.proxy') }}" wire:navigate class="transition-colors hover:text-white/85">Basalt Proxy</a></li>
+                            <li><a href="{{ route('plugins') }}" wire:navigate class="transition-colors hover:text-white/85">Plugins</a></li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="mb-3.5 text-[.72rem] font-semibold tracking-[.16em] text-white/85 uppercase">Learn</h3>
                         <ul class="space-y-2.5 text-sm text-white/45">
-                            <li><a href="{{ route('dev.docs') }}" wire:navigate class="transition-colors hover:text-white/85">Documentation</a></li>
-                            <li><a href="{{ route('dev.docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-white/85">Server docs</a></li>
-                            <li><a href="{{ route('dev.docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-white/85">Proxy docs</a></li>
+                            <li><a href="{{ route('docs') }}" wire:navigate class="transition-colors hover:text-white/85">Documentation</a></li>
+                            <li><a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-white/85">Server docs</a></li>
+                            <li><a href="{{ route('docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-white/85">Proxy docs</a></li>
                         </ul>
                     </div>
                     <div>

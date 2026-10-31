@@ -130,7 +130,7 @@ class Docs
             'group' => $matter['group'] ?? '',
             'source' => $body,
             'text' => Mdx::toText($body),
-            'url' => route('dev.docs.show', ['section' => $section, 'slug' => $slug]),
+            'url' => route('docs.show', ['section' => $section, 'slug' => $slug]),
             'edit_url' => config('basalt.docs.edit_base')."/{$section}/{$name}.mdx",
         ];
     }

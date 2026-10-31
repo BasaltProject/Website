@@ -80,7 +80,7 @@ new #[Title('Donate')] class extends Component
                             <x-icon.github />
                             Browse the source
                         </a>
-                        <a href="{{ route('dev.docs') }}" wire:navigate class="btn btn-ghost py-2.5 text-sm">Documentation</a>
+                        <a href="{{ route('docs') }}" wire:navigate class="btn btn-ghost py-2.5 text-sm">Documentation</a>
                     </div>
                 </div>
 

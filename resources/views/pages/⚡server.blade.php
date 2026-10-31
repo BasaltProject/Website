@@ -11,7 +11,7 @@ new #[Title('Basalt Server')] class extends Component
 <div>
     <section class="px-4">
         <div class="mx-auto max-w-6xl pt-10 pb-16">
-            <a href="{{ route('dev.projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
+            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 All projects
             </a>
@@ -33,7 +33,7 @@ new #[Title('Basalt Server')] class extends Component
                         Download
                         <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>
                     </a>
-                    <a href="{{ route('dev.docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="btn btn-ghost">Documentation</a>
+                    <a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="btn btn-ghost">Documentation</a>
                     <a href="{{ config('basalt.repos.server') }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
                         <x-icon.github />
                         Repository
@@ -177,7 +177,7 @@ end)
                         a host Java binary path or install an external JDK. Off by default,
                         and off means completely absent.
                     </p>
-                    <a href="{{ route('dev.docs.show', ['section' => 'server', 'slug' => 'bukkit-plugins']) }}" wire:navigate class="btn btn-ghost mt-8 py-2.5 text-sm">How it works</a>
+                    <a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'bukkit-plugins']) }}" wire:navigate class="btn btn-ghost mt-8 py-2.5 text-sm">How it works</a>
                 </div>
 
                 <div class="reveal self-center" data-reveal-delay="100">
@@ -569,7 +569,7 @@ config/
                         </svg>
                         Download Basalt Server
                     </a>
-                    <a href="{{ route('dev.docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="btn btn-ghost">Read the docs</a>
+                    <a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="btn btn-ghost">Read the docs</a>
                 </div>
             </div>
         </div>

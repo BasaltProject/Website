@@ -63,7 +63,7 @@ new class extends Component
 <div class="px-4">
     <div class="mx-auto grid max-w-6xl gap-12 pt-6 pb-16 lg:grid-cols-[15rem_1fr]">
         <aside class="lg:sticky lg:top-28 lg:self-start">
-            <a href="{{ route('dev.docs') }}" wire:navigate class="mb-7 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
+            <a href="{{ route('docs') }}" wire:navigate class="mb-7 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 Documentation
             </a>

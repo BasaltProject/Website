@@ -19,7 +19,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                     'Bukkit adapter planned after Shim',
                     'Linear regions, Anvil worlds converted on load',
                 ],
-                'route' => 'dev.projects.server',
+                'route' => 'projects.server',
                 'repo' => 'basalt.repos.server',
             ],
             [
@@ -32,7 +32,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                     'Velocity and BungeeCord adapters planned after Shim',
                     'Configurable translation and routing in development',
                 ],
-                'route' => 'dev.projects.proxy',
+                'route' => 'projects.proxy',
                 'repo' => 'basalt.repos.proxy',
             ],
         ];
@@ -57,13 +57,13 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
             </p>
 
             <div class="reveal mt-10 flex flex-wrap items-center justify-center gap-3" data-reveal-delay="240">
-                <a href="{{ route('dev.projects') }}" wire:navigate class="btn btn-primary">
+                <a href="{{ route('projects') }}" wire:navigate class="btn btn-primary">
                     Download Basalt
                     <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <path d="M8 2v9M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/>
                     </svg>
                 </a>
-                <a href="{{ route('dev.docs') }}" wire:navigate class="btn btn-ghost">Read the docs</a>
+                <a href="{{ route('docs') }}" wire:navigate class="btn btn-ghost">Read the docs</a>
             </div>
 
             <dl class="reveal mt-20 grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/8 bg-white/8 sm:grid-cols-4" data-reveal-delay="320">
@@ -201,7 +201,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                             Text is authored in MiniMessage and rendered through the component
                             model, never through legacy colour codes.
                         </p>
-                        <a href="{{ route('dev.docs') }}" wire:navigate class="btn btn-ghost mt-8 py-2.5 text-sm">Plugin documentation</a>
+                        <a href="{{ route('docs') }}" wire:navigate class="btn btn-ghost mt-8 py-2.5 text-sm">Plugin documentation</a>
                     </div>
 
                     <div class="self-center">
@@ -231,7 +231,7 @@ end)
                     somewhere else.
                 </p>
                 <div class="mt-9 flex flex-wrap justify-center gap-3">
-                    <a href="{{ route('dev.projects') }}" wire:navigate class="btn btn-primary">Download Basalt</a>
+                    <a href="{{ route('projects') }}" wire:navigate class="btn btn-primary">Download Basalt</a>
                     <a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
                         <x-icon.github />
                         Browse the source

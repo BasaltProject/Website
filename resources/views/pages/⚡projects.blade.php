@@ -14,7 +14,7 @@ new #[Title('Projects')] class extends Component
                 'body' => 'A complete reimplementation of the Minecraft server. Vanilla
                     parity, a native Lua plugin API, and the Bukkit ecosystem alongside it
                     when you need it.',
-                'route' => 'dev.projects.server',
+                'route' => 'projects.server',
                 'repo' => config('basalt.repos.server'),
             ],
             [
@@ -22,7 +22,7 @@ new #[Title('Projects')] class extends Component
                 'tagline' => 'One address in front of many servers.',
                 'body' => 'A native proxy project sharing Wire with the server. Current development
                     builds validate configuration and serve local server-list status.',
-                'route' => 'dev.projects.proxy',
+                'route' => 'projects.proxy',
                 'repo' => config('basalt.repos.proxy'),
             ],
         ];

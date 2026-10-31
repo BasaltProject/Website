@@ -16,17 +16,16 @@ class PublicPagesTest extends TestCase
     public static function publicPaths(): array
     {
         return [
-            'landing' => ['/'],
             'health' => ['/up'],
-            'home' => ['/dev'],
-            'projects' => ['/dev/projects'],
-            'server' => ['/dev/projects/server'],
-            'proxy' => ['/dev/projects/proxy'],
-            'docs' => ['/dev/docs'],
-            'server documentation' => ['/dev/docs/server/introduction'],
-            'proxy documentation' => ['/dev/docs/proxy/introduction'],
-            'donations' => ['/dev/donate'],
-            'plugins' => ['/dev/plugins'],
+            'home' => ['/'],
+            'projects' => ['/projects'],
+            'server' => ['/projects/server'],
+            'proxy' => ['/projects/proxy'],
+            'docs' => ['/docs'],
+            'server documentation' => ['/docs/server/introduction'],
+            'proxy documentation' => ['/docs/proxy/introduction'],
+            'donations' => ['/donate'],
+            'plugins' => ['/plugins'],
         ];
     }
 }

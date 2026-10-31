@@ -11,7 +11,7 @@ new #[Title('Basalt Proxy')] class extends Component
 <div>
     <section class="px-4">
         <div class="mx-auto max-w-6xl pt-10 pb-16">
-            <a href="{{ route('dev.projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
+            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 All projects
             </a>
@@ -31,7 +31,7 @@ new #[Title('Basalt Proxy')] class extends Component
                         Download
                         <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>
                     </a>
-                    <a href="{{ route('dev.docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="btn btn-ghost">Documentation</a>
+                    <a href="{{ route('docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="btn btn-ghost">Documentation</a>
                     <a href="{{ config('basalt.repos.proxy') }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">
                         <x-icon.github />
                         Repository
