@@ -38,6 +38,8 @@ new #[Title('Basalt Server')] class extends Component
                         Repository
                     </a>
                 </div>
+
+                <x-early-development product="Basalt Server" />
             </div>
         </div>
     </section>

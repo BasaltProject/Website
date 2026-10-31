@@ -37,6 +37,8 @@ new #[Title('Basalt Proxy')] class extends Component
                         Repository
                     </a>
                 </div>
+
+                <x-early-development product="Basalt Proxy" />
             </div>
         </div>
     </section>
