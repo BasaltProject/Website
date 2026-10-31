@@ -76,7 +76,7 @@ new class extends Component
                             @foreach ($section['pages'] as $page)
                                 @php $active = $page['section'] === $this->section && $page['slug'] === $this->slug; @endphp
                                 @if ($page['group'] !== '' && $page['group'] !== ($section['pages'][$loop->index - 1]['group'] ?? null))
-                                    <li class="-ml-px pt-4 pb-1 pl-4 text-[.62rem] font-semibold tracking-[.14em] text-white/25 uppercase">{{ $page['group'] }}</li>
+                                    <li class="-ml-px pt-5 pb-1.5 pl-4 text-[.66rem] font-semibold tracking-[.14em] text-white/55 uppercase">{{ $page['group'] }}</li>
                                 @endif
                                 <li>
                                     <a href="{{ $page['url'] }}" wire:navigate

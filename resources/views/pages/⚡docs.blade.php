@@ -46,6 +46,9 @@ new #[Title('Documentation')] class extends Component
 
                         <ul class="mt-7 divide-y divide-white/6 border-t border-white/6">
                             @foreach ($section['pages'] as $page)
+                                @if ($page['group'] !== '' && $page['group'] !== ($section['pages'][$loop->index - 1]['group'] ?? null))
+                                    <li class="pt-6 pb-2 text-[.66rem] font-semibold tracking-[.16em] text-white/45 uppercase">{{ $page['group'] }}</li>
+                                @endif
                                 <li>
                                     <a href="{{ $page['url'] }}" wire:navigate class="group flex items-center gap-4 py-3.5 transition-colors hover:text-white">
                                         <span class="text-sm text-white/70 transition-colors group-hover:text-white">{{ $page['title'] }}</span>
