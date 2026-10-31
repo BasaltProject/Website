@@ -89,8 +89,7 @@ new #[Title('Donate')] class extends Component
                     <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Building something on Basalt?</h2>
                     <p class="mt-5 leading-relaxed text-white/55">
                         Hosts, networks and studios that depend on it can sponsor the work
-                        directly. That covers a logo on this page and on the home page, and a
-                        way to reach the people who maintain what you are running.
+                        directly, through the same sponsorship page.
                     </p>
                     <p class="mt-4 leading-relaxed text-white/55">
                         It does not buy influence over the roadmap or a feature nobody else
@@ -112,7 +111,7 @@ new #[Title('Donate')] class extends Component
                     Thank you, genuinely.
                 </h2>
                 <p class="mx-auto mt-5 max-w-xl leading-relaxed text-white/50">
-                    Everyone who gives is listed here, unless they would rather not be.
+                    Donations go through GitHub Sponsors.
                 </p>
                 <div class="mt-9 flex flex-wrap justify-center gap-3">
                     <a href="{{ config('basalt.donate.url') }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary">

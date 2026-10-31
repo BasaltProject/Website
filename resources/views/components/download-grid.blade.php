@@ -1,8 +1,10 @@
-@props(['repo', 'artifact'])
+@props(['repo'])
+
+@php $release = \App\Support\Releases::latest($repo); @endphp
 
 <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
     @foreach (config('basalt.platforms') as $index => $platform)
-        <a href="{{ $repo }}/releases/latest/download/{{ $artifact }}-{{ $platform['target'] }}.tar.gz"
+        <a href="{{ $release['assets'][$platform['target']] ?? $repo.'/releases/latest' }}"
            class="glass card flex items-center gap-4 p-5 reveal" data-reveal-delay="{{ $index * 70 }}">
             <x-icon.brand :name="$platform['icon']" class="h-6 w-auto shrink-0 text-white/55" />
             <div class="min-w-0">
@@ -17,6 +19,12 @@
 </div>
 
 <p class="mt-5 text-sm text-white/40">
-    Every release also carries checksums and the full changelog on
-    <a href="{{ $repo }}/releases" target="_blank" rel="noopener noreferrer" class="text-white/70 underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/70">the releases page</a>.
+    @if ($release)
+        Version {{ $release['version'] }}.
+    @endif
+    Each file is the executable itself, with a SHA256SUMS file beside them. A
+    <a href="{{ $repo }}/releases/tag/nightly" target="_blank" rel="noopener noreferrer" class="text-white/70 underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/70">nightly build</a>
+    follows every change, and the
+    <a href="{{ $repo }}/releases" target="_blank" rel="noopener noreferrer" class="text-white/70 underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/70">releases page</a>
+    has the rest.
 </p>

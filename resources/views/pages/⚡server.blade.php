@@ -23,9 +23,8 @@ new #[Title('Basalt Server')] class extends Component
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-white/55">
                     A complete reimplementation of the Minecraft server, written entirely in
-                    C++23 and shipped as a native binary for each platform. It plays
-                    exactly like vanilla, starts in milliseconds, and never pauses to collect
-                    garbage.
+                    C++23 and shipped as a native binary for each platform. It aims to play
+                    exactly like vanilla, and it has no garbage collector to pause the tick.
                 </p>
 
                 <div class="mt-9 flex flex-wrap gap-3">
@@ -48,13 +47,13 @@ new #[Title('Basalt Server')] class extends Component
             <div class="reveal">
                 <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Download</h2>
                 <p class="mt-4 max-w-2xl leading-relaxed text-white/50">
-                    One binary, nothing else to install. Unpack it, make it executable and
-                    run it: the server writes its own configuration next to itself on first
-                    start.
+                    One binary, nothing else to install. Download it, make it executable
+                    (chmod +x on Linux and macOS) and run it: the server asks you to accept the
+                    EULA and writes its own configuration next to itself on first start.
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.server')" artifact="basalt" />
+                <x-download-grid :repo="config('basalt.repos.server')" />
             </div>
         </div>
     </section>
@@ -65,10 +64,10 @@ new #[Title('Basalt Server')] class extends Component
                 <div class="reveal">
                     <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Parity is the requirement</h2>
                     <p class="mt-5 leading-relaxed text-white/55">
-                        A Basalt Server with no plugins behaves exactly like the official one.
-                        Same seed, same world. Same drops, same damage, same redstone, same
-                        mobs, bugs included. Parity is the acceptance criterion for every
-                        system, not a long-term aspiration.
+                        Basalt Server is built to behave exactly like the official one with no
+                        plugins: same seed, same world, same drops, same damage, same redstone,
+                        same mobs, bugs included. Parity is the acceptance criterion for every
+                        system, and it is not finished: some mechanics are still missing.
                     </p>
                     <p class="mt-4 leading-relaxed text-white/55">
                         Anything that makes the server behave differently from vanilla is
@@ -101,13 +100,13 @@ new #[Title('Basalt Server')] class extends Component
 
                 <dl class="glass reveal divide-y divide-white/6 self-start overflow-hidden rounded-2xl text-sm">
                     @foreach ([
-                        ['Language', 'C++23, 100 %'],
+                        ['Language', 'C++23'],
                         ['Minecraft', config('basalt.minecraft.current').' native, older versions supported'],
                         ['Clients', 'Java Edition and Bedrock Edition'],
                         ['Distribution', 'Native binaries per platform'],
-                        ['World storage', 'Linear regions; Anvil converted on load'],
+                        ['World storage', 'Linear regions; Anvil regions read and converted'],
                         ['Plugin API', 'Lua, .bspkg packages'],
-                        ['Bukkit plugins', 'Optional, separate process'],
+                        ['Bukkit plugins', 'Optional, through Basalt Shim'],
                         ['Configuration', 'config/, one TOML file per domain'],
                         ['License', 'GPL-3.0'],
                     ] as [$label, $value])
@@ -132,8 +131,8 @@ new #[Title('Basalt Server')] class extends Component
                             Plugins are written in Lua and packaged as
                             <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">.bspkg</code>
                             files, each with a manifest, code, resources and metadata. They run
-                            inside a sandbox with a per-tick instruction budget, so a broken
-                            plugin cannot take the server down.
+                            inside a sandbox with a instruction budget and a memory ceiling, so a
+                            broken plugin is stopped without taking the server down.
                         </p>
                         <p class="mt-4 leading-relaxed text-white/55">
                             The Lua runtime is the official Lua 5.5.1, built from source into
@@ -166,31 +165,32 @@ end)
             <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
                 <div class="reveal">
                     <span class="pill">Bukkit</span>
-                    <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Keep your plugins<x-info class="ml-3" label="Bukkit support: how it works">Optional, and powered by Basalt Shim talking to the core over IPC. The Basalt binary itself never links a host JVM, and never looks for Java when the feature is off.</x-info></h2>
+                    <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Keep your plugins<x-info class="ml-3" label="Bukkit support: how it works">Powered by Basalt Shim, a Java machine embedded in the server binary. Nothing Java starts until a jar is in plugins/, and no JDK is needed on the host.</x-info></h2>
                     <p class="mt-5 leading-relaxed text-white/55">
                         Most of the ecosystem is Bukkit, Spigot and Paper plugins that will
-                        never be rewritten. Basalt aims to run them via Basalt Shim,
-                        keeping the server binary clean and free of an external JVM requirement.
+                        never be rewritten. Basalt runs them through Basalt Shim, without an
+                        external JVM. Compatibility is still growing: the documentation lists
+                        what is known to work.
                     </p>
                     <p class="mt-4 leading-relaxed text-white/55">
-                        Execution is powered by Basalt Shim, so there is no need to configure
-                        a host Java binary path or install an external JDK. Off by default,
-                        and off means completely absent.
+                        There is no host Java path to configure and no JDK to install. With no
+                        jar in plugins/, no Java machine starts at all.
                     </p>
                     <a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'bukkit-plugins']) }}" wire:navigate class="btn btn-ghost mt-8 py-2.5 text-sm">How it works</a>
                 </div>
 
                 <div class="reveal self-center" data-reveal-delay="100">
-                    <x-code lang="toml" file="config/server.toml">
-[bukkit]
-enabled = true
-memory = "2G"
+                    <x-code file="plugins/">
+plugins/
+  my-lua-plugin/
+  other.bspkg
+  WorldEdit.jar
                     </x-code>
                     <div class="glass mt-4 overflow-hidden rounded-2xl">
                         <ul class="divide-y divide-white/6 text-sm">
                             @foreach ([
                                 ['Maximum performance, no JVM at all', 'Native Lua plugins'],
-                                ['A plugin that already exists', 'The Bukkit bridge'],
+                                ['A plugin that already exists', 'A Bukkit jar'],
                                 ['Both at once', 'They run side by side'],
                             ] as [$want, $use])
                                 <li class="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-center sm:gap-6">
@@ -228,7 +228,7 @@ memory = "2G"
                             'Remove a table and it stops loading. The files stay put, and putting the table back loads it exactly as it was.',
                             'linked_to gives one server several complete sets of dimensions, each with its own Nether and End, portals included, with nothing rewriting portal travel.',
                             'Every world carries its own settings.toml inside its directory, so it is copied, moved and deleted along with the world it describes.',
-                            'Anvil worlds are converted on load. Migrating is copy the folder and start, never run a converter first.',
+                            'Anvil regions are read and written back as Linear. Migrating a world is copy the folder and start, never run a converter first.',
                         ] as $point)
                             <li class="flex gap-3">
                                 <x-icon.check class="mt-0.5 shrink-0 text-white/30" />
@@ -358,7 +358,7 @@ header = ["<red>STAFF</red>"]
 
                 <div class="reveal grid gap-4 sm:grid-cols-2 lg:grid-cols-1" data-reveal-delay="100">
                     @foreach ([
-                        ['One placeholder vocabulary', 'The same %basalt_server_*% and %basalt_player_*% names work in the server list, the tab list, the scoreboard, the boss bar and your own commands. Plugins register theirs into the same registry, so a plugin\'s placeholders work everywhere the built-in ones do, with nothing to install in between.'],
+                        ['One placeholder vocabulary', 'The same %basalt_server_*% and %basalt_player_*% names work in the server list, the tab list, the scoreboard, the boss bar and the messages. Plugins register theirs into the same registry, so a plugin\'s placeholders work everywhere the built-in ones do, with nothing to install in between.'],
                         ['Animations, defined once', 'A list of frames in animations.toml becomes %basalt_animation_<name>% everywhere. The frame comes from the clock, not a per-player counter, so everyone online sees the same one and a player joining halfway through does not restart it.'],
                         ['It only sends what changed', 'A redraw becomes a packet when the text it produced is actually different. A static panel costs nothing however often it is drawn.'],
                     ] as $index => [$heading, $copy])
@@ -442,9 +442,6 @@ aliases = ["tpa"]
 [commands.kill]
 enabled = false
 
-[custom.discord]
-message = ["<blue>discord.gg/example</blue>"]
-
 [messages]
 "commands.seed.success" = "<gray>Seed: %1%</gray>"
                     </x-code>
@@ -453,9 +450,8 @@ message = ["<blue>discord.gg/example</blue>"]
                 <ul class="reveal space-y-3.5 self-center text-sm text-white/55" data-reveal-delay="100">
                     @foreach ([
                         ['Point it at a permission', 'Aim a command at one your moderators already hold instead of granting a new one. commands.toml names the permission; groups.toml decides who has it, and the two read in one direction only.'],
-                        ['Turn it off properly', 'A disabled command stops being sent to clients, rather than existing and refusing when someone runs it. Its aliases go with it.'],
+                        ['Turn it off', 'A disabled command is not registered, so it does not exist rather than refusing when someone runs it.'],
                         ['Give it other names', 'Aliases on anything, including commands that already shipped with their own.'],
-                        ['Add your own', 'The /discord and /rules that would otherwise cost you a plugin are four lines. Anything with real logic in it is a plugin, and stays one.'],
                         ['Rewrite what it says', 'Replace any answer the server sends, keyed by the translation key it normally uses, with %1% and %2% for the values it was going to fill in.'],
                     ] as [$heading, $copy])
                         <li class="flex gap-3">
@@ -491,7 +487,7 @@ config/
   server.toml        network, logging, performance
   worlds.toml        which worlds load, and how
   groups.toml        permission groups
-  commands.toml      permissions, aliases, wording, your own
+  commands.toml      permissions, aliases, wording
   server_list.toml   how the server looks in the list
   tab_list.toml      the panel behind Tab
   scoreboard.toml    the panel down the side
@@ -542,7 +538,7 @@ config/
                 <p class="mt-4 leading-relaxed text-white/55">
                     Once you accept the
                     <a href="https://www.minecraft.net/en-us/eula" target="_blank" rel="noopener noreferrer" class="text-white/75 underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/70">Minecraft EULA</a>,
-                    the server downloads the official server download from Mojang, verifies
+                    the server downloads the official server archive from Mojang, verifies
                     its SHA-1 and unpacks only the data it needs into a local cache. That
                     happens once per version; later starts touch neither the network nor the
                     archive.

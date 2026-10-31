@@ -11,13 +11,13 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
             [
                 'name' => 'Basalt Server',
                 'tagline' => 'The Minecraft server itself.',
-                'body' => 'Vanilla parity is the acceptance criterion for every system:
-                    same seed, same world, same drops, same redstone, same mobs, bugs
-                    included. Then a plugin platform on top of it.',
+                'body' => 'Vanilla parity is the goal for every system: same seed, same world,
+                    same drops, same redstone, same mobs, bugs included. Then a plugin
+                    platform on top of it.',
                 'points' => [
                     'Lua plugins in .bspkg packages, sandboxed',
-                    'Bukkit adapter planned after Shim',
-                    'Linear regions, Anvil worlds converted on load',
+                    'Bukkit plugins through Basalt Shim, no Java on the host',
+                    'Linear regions; Anvil regions are read and converted',
                 ],
                 'route' => 'projects.server',
                 'repo' => 'basalt.repos.server',
@@ -25,12 +25,12 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
             [
                 'name' => 'Basalt Proxy',
                 'tagline' => 'One address in front of many servers.',
-                'body' => 'A native proxy project sharing Wire with the server. Current development
-                    builds provide command-line help and version information.',
+                'body' => 'A native proxy sharing Wire with the server: backends, forced hosts,
+                    fallback, forwarding and Java and Bedrock clients.',
                 'points' => [
-                    'Native Lua plugins planned in .bppkg packages',
-                    'Velocity and BungeeCord adapters planned after Shim',
-                    'Configurable translation and routing in development',
+                    'Lua plugins in .bppkg packages',
+                    'Velocity, BungeeCord, BungeeGuard and Basalt forwarding',
+                    'Velocity and BungeeCord plugin adapters planned after Shim',
                 ],
                 'route' => 'projects.proxy',
                 'repo' => 'basalt.repos.proxy',
@@ -51,9 +51,8 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
 
             <p class="reveal mt-7 max-w-2xl text-[clamp(1rem,2.1vw,1.18rem)] leading-relaxed text-white/55" data-reveal-delay="160">
                 Written entirely in C++23 and shipped as one native binary per
-                platform. No bundled JRE, no embedded VM, no hidden Java process. It starts
-                in milliseconds, never pauses to collect garbage, and Java and Bedrock
-                players share the same world.
+                platform. No bundled JRE and no hidden Java process. It has no garbage
+                collector to pause, and Java and Bedrock players share the same world.
             </p>
 
             <div class="reveal mt-10 flex flex-wrap items-center justify-center gap-3" data-reveal-delay="240">
@@ -101,32 +100,32 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                     $features = [
                         [
                             'title' => 'Plugins in Lua, natively',
-                            'body' => 'The plugin API is Lua, packaged and versioned, running in a sandbox with a per-tick instruction budget. No process boundary, no serialisation, no second heap.',
+                            'body' => 'The plugin API is Lua, packaged and versioned, running in a sandbox with an instruction budget and a memory ceiling. No process boundary, no serialisation, no second heap.',
                             'info' => 'This is the fast path and the official API. Native plugins talk to the server directly, so anything performance sensitive belongs here.',
                         ],
                         [
                             'title' => 'Java and Bedrock together',
-                            'body' => 'Both editions join the same world. Bedrock and older Java clients are translated at the edge, built in, with no proxy and no plugins to add.',
+                            'body' => 'Both editions join the same world. Bedrock and older Java clients are translated at the edge, built in, with no proxy and no plugins to add. Bedrock support is newer and has known limits, listed in the documentation.',
                             'info' => null,
                         ],
                         [
                             'title' => 'Vanilla parity, bugs included',
-                            'body' => 'Same seed, same world. Same drops, same damage, same redstone, same mobs. Where vanilla does something strange, Basalt does the same strange thing.',
+                            'body' => 'The goal is the same seed, the same world, the same drops, damage, redstone and mobs. Where vanilla does something strange, Basalt aims to do the same strange thing. Parity is not complete yet.',
                             'info' => null,
                         ],
                         [
-                            'title' => 'No GC pauses, ever',
-                            'body' => 'There is no heap to size and no collector to hide behind. Tick 1 and tick 1,000,000 cost the same, and no player sees a stutter you cannot explain.',
+                            'title' => 'No garbage collector',
+                            'body' => 'There is no JVM heap to size and no collector that can pause the tick. Memory is managed directly, so a stutter has a cause you can profile.',
                             'info' => null,
                         ],
                         [
-                            'title' => 'Building on the plugin ecosystem',
-                            'body' => 'Future Server modules will implement Bukkit compatibility, and Proxy modules will implement Velocity and BungeeCord APIs once Shim is complete.',
-                            'info' => 'Shim provides Java bytecode execution through a JVM in C++. Server and Proxy provide their own plugin API adapters. This integration is planned, requires no external JVM installation and will be optional.',
+                            'title' => 'Bukkit plugins, without Java',
+                            'body' => 'Drop a Bukkit, Spigot or Paper jar into plugins/ and the server runs it on Basalt Shim, a Java machine embedded in the binary. Velocity and BungeeCord adapters for the proxy are planned.',
+                            'info' => 'Shim executes Java bytecode and is built into the server. It starts only when a jar is present, and compatibility is still growing, so check the documentation for what is known to work.',
                         ],
                         [
                             'title' => 'One binary to deploy',
-                            'body' => 'A binary and a config folder. Nothing to install on the host, no runtime version to keep matched, and the same artefact on every machine.',
+                            'body' => 'A binary and a config folder. Nothing to install on the host and no runtime version to keep matched.',
                             'info' => null,
                         ],
                     ];
@@ -194,8 +193,8 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                         </h2>
                         <p class="mt-5 leading-relaxed text-white/50">
                             Plugins are packaged with a manifest, code, resources and metadata,
-                            and run inside a sandbox with a per-tick instruction budget. A
-                            broken plugin cannot take the server down.
+                            and run inside a sandbox with an instruction budget. A
+                            broken plugin is stopped without taking the server down.
                         </p>
                         <p class="mt-4 leading-relaxed text-white/50">
                             Text is authored in MiniMessage and rendered through the component
@@ -207,10 +206,8 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                     <div class="self-center">
                         <x-code lang="lua" file="hello.lua">
 
-basalt.on("player_join", function(event)
-    event.player:send(
-        "<gradient:aqua:green>Welcome!</gradient>"
-    )
+on("player.join", function(e)
+    e.player:send("<gradient:aqua:green>Welcome!</gradient>")
 end)
                         </x-code>
                     </div>

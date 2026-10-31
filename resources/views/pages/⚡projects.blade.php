@@ -12,16 +12,16 @@ new #[Title('Projects')] class extends Component
                 'name' => 'Basalt Server',
                 'tagline' => 'The Minecraft server itself.',
                 'body' => 'A complete reimplementation of the Minecraft server. Vanilla
-                    parity, a native Lua plugin API, and the Bukkit ecosystem alongside it
-                    when you need it.',
+                    parity as the goal, a native Lua plugin API, and Bukkit plugins through
+                    Basalt Shim.',
                 'route' => 'projects.server',
                 'repo' => config('basalt.repos.server'),
             ],
             [
                 'name' => 'Basalt Proxy',
                 'tagline' => 'One address in front of many servers.',
-                'body' => 'A native proxy project sharing Wire with the server. Current development
-                    builds validate configuration and serve local server-list status.',
+                'body' => 'A native proxy sharing Wire with the server. Backends, forwarding,
+                    Java and Bedrock clients and Lua plugins.',
                 'route' => 'projects.proxy',
                 'repo' => config('basalt.repos.proxy'),
             ],
@@ -71,8 +71,8 @@ new #[Title('Projects')] class extends Component
                 <h2 class="text-crystal text-[clamp(1.5rem,3vw,2rem)] font-semibold tracking-[-.025em]">Everything is on GitHub</h2>
                 <p class="mx-auto mt-5 max-w-xl leading-relaxed text-white/50">
                     The server, the proxy, the network layer they share and the documentation
-                    are separate repositories under one organisation, all GPL-3.0 except this
-                    site.
+                    are separate repositories under one organisation. The server, the proxy and
+                    Wire are GPL-3.0; the documentation and this site are MIT.
                 </p>
                 <div class="mt-8 flex flex-wrap justify-center gap-3">
                     @foreach (['server' => 'Server', 'proxy' => 'Proxy', 'wire' => 'Wire', 'documentation' => 'Documentation'] as $key => $label)

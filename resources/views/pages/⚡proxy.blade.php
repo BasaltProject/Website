@@ -22,7 +22,7 @@ new #[Title('Basalt Proxy')] class extends Component
                     One address, every server.
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-white/55">
-                    A native Minecraft proxy project written in C++23, sharing its
+                    A native Minecraft proxy written in C++23, sharing its
                     network library with Basalt Server.
                 </p>
 
@@ -46,11 +46,11 @@ new #[Title('Basalt Proxy')] class extends Component
             <div class="reveal">
                 <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Download</h2>
                 <p class="mt-4 max-w-2xl leading-relaxed text-white/50">
-                    Native development builds with TOML configuration and local server-list status.
+                    Native builds, configured with TOML. Each file is the executable itself.
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.proxy')" artifact="basalt-proxy" />
+                <x-download-grid :repo="config('basalt.repos.proxy')" />
             </div>
         </div>
     </section>
@@ -58,20 +58,20 @@ new #[Title('Basalt Proxy')] class extends Component
     <section class="px-4 py-16">
         <div class="mx-auto max-w-6xl">
             <div class="reveal max-w-3xl">
-                <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">In development</h2>
+                <h2 class="text-crystal text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">What works today</h2>
                 <p class="mt-5 leading-relaxed text-white/55">
-                    The current executable validates TOML configuration and serves local status
-                    and ping requests through a native listener. Player authentication, routing
-                    and plugins are being developed.
+                    The proxy listens on one address, authenticates players, and relays them to
+                    your backends with the identity forwarding each one expects: Basalt's own
+                    signed scheme, Velocity, BungeeCord, BungeeGuard or none. Routing, forced
+                    hosts, fallback, moving players between backends and Lua plugins are
+                    implemented.
                 </p>
                 <p class="mt-4 leading-relaxed text-white/55">
-                    The goal is one address for Minecraft backends, Java and Bedrock support,
-                    and configurable translation shared with Basalt Server through Wire.
-                </p>
-                <p class="mt-4 leading-relaxed text-white/55">
-                    Native Lua plugins will follow the server's API conventions. Future Velocity
-                    and BungeeCord adapters will use Shim for Java bytecode execution; Proxy will
-                    implement their APIs, without requiring an external JVM installation.
+                    It is young. Testing so far uses automated clients against vanilla, Paper and
+                    Basalt backends, and graphical clients are not yet part of it. Older Java
+                    clients and Bedrock are translated, with limits that the documentation lists.
+                    Velocity and BungeeCord plugin adapters are planned on top of Basalt Shim and
+                    do not exist yet.
                 </p>
             </div>
         </div>
