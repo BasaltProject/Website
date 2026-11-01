@@ -92,6 +92,26 @@
     </div>
 @endif
 
+@if ($project && config('basalt.docker.published') && config('basalt.docker.images.'.$project))
+    @php
+        $image = config('basalt.docker.images.'.$project);
+        $dockerRun = $project === 'server'
+            ? 'docker run -it -p 25565:25565 -p 19132:19132/udp -v basalt-server:/data -e EULA=1 '.$image.':latest'
+            : 'docker run -it -p 25565:25565 -v basalt-proxy:/data '.$image.':latest';
+    @endphp
+    <div class="glass mt-3 min-w-0 p-5">
+        <h3 class="flex items-center gap-2 font-medium text-ink">
+            <x-icon.docker class="h-auto w-6 shrink-0 text-soft" />
+            Docker
+        </h3>
+        <p class="mt-1 text-sm text-muted">Linux images for amd64 and arm64.</p>
+        <x-code lang="bash">{{ $dockerRun }}</x-code>
+        @if ($project === 'server')
+            <p class="text-sm text-muted">EULA=1 accepts the <a href="https://www.minecraft.net/en-us/eula" target="_blank" rel="noopener noreferrer" class="text-ink underline decoration-slate underline-offset-4 transition-colors hover:decoration-soft">Minecraft EULA</a>.</p>
+        @endif
+    </div>
+@endif
+
 <p class="mt-5 text-sm text-muted">
     @if ($release)
         Version {{ $release['version'] }}.

@@ -58,6 +58,57 @@ class ReleaseHistoryTest extends TestCase
         $this->assertSame([], Releases::history('https://github.com/BasaltProject/Server'));
     }
 
+    private const REPO = 'https://github.com/BasaltProject/Server';
+
+    public function test_rate_limited_response_is_not_cached_as_data(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response(['message' => 'rate limit exceeded'], 403)]);
+
+        $this->assertSame([], Releases::history(self::REPO));
+        $this->assertFalse(Cache::has('releases.history.BasaltProject/Server'));
+        $this->assertFalse(Cache::has('releases.history.BasaltProject/Server.stale'));
+        $this->assertNull(Releases::latest(self::REPO));
+        $this->assertFalse(Cache::has('releases.latest.BasaltProject/Server'));
+    }
+
+    public function test_backup_copy_is_served_when_github_fails_after_fresh_expires(): void
+    {
+        Http::fake(['api.github.com/*' => Http::sequence()
+            ->push([$this->release('v1.0.0', '2026-01-01T00:00:00Z')])
+            ->push([], 403)]);
+
+        $this->assertSame(['1.0.0'], array_column(Releases::history(self::REPO), 'version'));
+
+        Cache::forget('releases.history.BasaltProject/Server');
+
+        $this->assertSame(['1.0.0'], array_column(Releases::history(self::REPO), 'version'));
+    }
+
+    public function test_cooldown_prevents_repeated_requests_after_failure(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response([], 403)]);
+
+        Releases::history(self::REPO);
+        Releases::history(self::REPO);
+        Releases::history(self::REPO);
+
+        Http::assertSentCount(1);
+    }
+
+    public function test_authorization_header_only_sent_with_token(): void
+    {
+        Http::fake(['api.github.com/*' => Http::response([], 200)]);
+
+        config(['services.github.token' => null]);
+        Releases::history(self::REPO);
+        Http::assertSent(fn ($request) => ! $request->hasHeader('Authorization'));
+
+        Cache::flush();
+        config(['services.github.token' => 'test-token']);
+        Releases::history(self::REPO);
+        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer test-token'));
+    }
+
     public function test_builds_page_status_codes(): void
     {
         Http::fake(['api.github.com/*' => Http::response([], 500)]);

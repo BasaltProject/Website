@@ -2,10 +2,6 @@
 
 namespace App\Support;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Throwable;
-
 /**
  * Download links read from the latest GitHub release of a repository. Asset names
  * carry the version, so a fixed "latest/download" link cannot point at them.
@@ -17,14 +13,11 @@ class Releases
     {
         $path = trim((string) parse_url($repo, PHP_URL_PATH), '/');
 
-        $release = Cache::remember("releases.latest.$path", 600, function () use ($path) {
-            try {
-                $response = Http::timeout(3)->acceptJson()->get("https://api.github.com/repos/$path/releases/latest");
+        $release = GitHub::remember("releases.latest.$path", function () use ($path) {
+            $response = GitHub::api()->get("https://api.github.com/repos/$path/releases/latest");
+            $json = $response->successful() ? $response->json() : null;
 
-                return $response->successful() ? $response->json() : [];
-            } catch (Throwable) {
-                return [];
-            }
+            return is_array($json) && $json !== [] ? $json : null;
         });
 
         if (empty($release['assets'])) {
@@ -53,14 +46,11 @@ class Releases
     {
         $path = trim((string) parse_url($repo, PHP_URL_PATH), '/');
 
-        $releases = Cache::remember("releases.history.$path", 600, function () use ($path) {
-            try {
-                $response = Http::timeout(3)->acceptJson()->get("https://api.github.com/repos/$path/releases?per_page=100");
+        $releases = GitHub::remember("releases.history.$path", function () use ($path) {
+            $response = GitHub::api()->get("https://api.github.com/repos/$path/releases?per_page=100");
+            $json = $response->successful() ? $response->json() : null;
 
-                return $response->successful() ? $response->json() : [];
-            } catch (Throwable) {
-                return [];
-            }
+            return is_array($json) && $json !== [] ? $json : null;
         });
 
         if (! is_array($releases)) {

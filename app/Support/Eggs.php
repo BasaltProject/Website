@@ -67,49 +67,36 @@ class Eggs
             return [];
         }
 
-        $fresh = Cache::get("eggs.history.$project");
-
-        if (is_array($fresh)) {
-            return $fresh;
-        }
-
-        try {
-            $response = Http::timeout(3)->acceptJson()->get('https://api.github.com/repos/'.self::repo().'/commits', ['path' => $path, 'per_page' => 30]);
+        $history = GitHub::remember("eggs.history.$project", function () use ($path) {
+            $response = GitHub::api()->get('https://api.github.com/repos/'.self::repo().'/commits', ['path' => $path, 'per_page' => 30]);
             $items = $response->successful() ? $response->json() : null;
 
-            if (is_array($items) && $items !== []) {
-                $history = [];
-
-                foreach ($items as $item) {
-                    $sha = $item['sha'] ?? null;
-
-                    if (! is_string($sha) || ! self::validSha($sha)) {
-                        continue;
-                    }
-
-                    $history[] = [
-                        'sha' => $sha,
-                        'short' => substr($sha, 0, 7),
-                        'date' => (string) ($item['commit']['committer']['date'] ?? ''),
-                        'message' => trim(strtok((string) ($item['commit']['message'] ?? ''), "\n") ?: ''),
-                        'url' => (string) ($item['html_url'] ?? ''),
-                    ];
-                }
-
-                if ($history !== []) {
-                    Cache::put("eggs.history.$project", $history, 600);
-                    Cache::put("eggs.history.stale.$project", $history, self::STALE);
-
-                    return $history;
-                }
+            if (! is_array($items)) {
+                return null;
             }
-        } catch (Throwable) {
-            //
-        }
 
-        $stale = Cache::get("eggs.history.stale.$project");
+            $history = [];
 
-        return is_array($stale) ? $stale : [];
+            foreach ($items as $item) {
+                $sha = $item['sha'] ?? null;
+
+                if (! is_string($sha) || ! self::validSha($sha)) {
+                    continue;
+                }
+
+                $history[] = [
+                    'sha' => $sha,
+                    'short' => substr($sha, 0, 7),
+                    'date' => (string) ($item['commit']['committer']['date'] ?? ''),
+                    'message' => trim(strtok((string) ($item['commit']['message'] ?? ''), "\n") ?: ''),
+                    'url' => (string) ($item['html_url'] ?? ''),
+                ];
+            }
+
+            return $history !== [] ? $history : null;
+        });
+
+        return is_array($history) ? $history : [];
     }
 
     public static function updated(string $project): ?string

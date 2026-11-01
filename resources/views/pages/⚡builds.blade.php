@@ -75,6 +75,15 @@ new #[Title('Release history')] class extends Component
                             </div>
                         @endif
 
+                        @if (config('basalt.docker.published') && version_compare($release['version'], config('basalt.docker.since'), '>='))
+                            <div class="mt-3 flex min-w-0 items-center gap-3">
+                                <x-icon.docker class="h-5 w-auto shrink-0 text-soft" />
+                                <div class="min-w-0 flex-1 [&_.code-block]:my-0">
+                                    <x-code lang="bash">docker pull {{ config('basalt.docker.images.'.$project) }}:{{ $release['version'] }}</x-code>
+                                </div>
+                            </div>
+                        @endif
+
                         <p class="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
                             @if ($release['checksums'])
                                 <a href="{{ $release['checksums'] }}" target="_blank" rel="noopener noreferrer" class="underline decoration-slate underline-offset-4 transition-colors hover:text-ink">SHA256SUMS</a>
