@@ -14,6 +14,9 @@ class TimingReports
 {
     public const FORMAT = 'basalt-timings';
 
+    /** What can write a report. A report without a type predates the field and came from a server. */
+    public const TYPES = ['server', 'proxy'];
+
     public const MAX_BYTES = 8 * 1024 * 1024;
 
     public const RETENTION_DAYS = 30;
@@ -41,6 +44,10 @@ class TimingReports
 
         if (! is_array($data) || ($data['format'] ?? null) !== self::FORMAT) {
             return 'This is not a Basalt timings report.';
+        }
+
+        if (! in_array($data['type'] ?? 'server', self::TYPES, true)) {
+            return 'This report comes from something the viewer does not know.';
         }
 
         if (! is_int($data['version'] ?? null) || $data['version'] < 1 || $data['version'] > 3) {

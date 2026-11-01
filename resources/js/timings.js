@@ -347,7 +347,7 @@ function openFile(root, file) {
         .text()
         .then((text) => JSON.parse(text))
         .then((data) => {
-            if (data?.format !== 'basalt-timings') throw new Error(REJECTED);
+            if (data?.format !== 'basalt-timings' || !['server', 'proxy'].includes(data.type ?? 'server')) throw new Error(REJECTED);
             new Viewer(root, data).render();
             window.scrollTo({ top: 0 });
         })
@@ -437,7 +437,7 @@ class Viewer {
         const platform = this.meta.platform || {};
         this.root.innerHTML = `
             <div class="glass tv-bar" data-controls>
-                <div class="tv-title"><b>Basalt ${esc(platform.version || this.data.basalt || '')}</b> profile
+                <div class="tv-title"><b>Basalt ${this.data.type === 'proxy' ? 'Proxy' : 'Server'} ${esc(platform.version || this.data.basalt || '')}</b> profile
                     <small>${esc(user)} @ ${esc(started)}, profiled ${fmtDuration(this.meta.measured_seconds ?? this.data.measured_seconds)}</small></div>
                 <button class="tv-btn is-solo" data-act="info" aria-pressed="false">Info</button>
                 <button class="tv-btn is-solo" data-act="metrics" aria-pressed="true">Metrics</button>

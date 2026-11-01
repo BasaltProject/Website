@@ -18,6 +18,7 @@ class TimingsTest extends TestCase
     {
         return [
             'format' => 'basalt-timings',
+            'type' => 'server',
             'version' => 2,
             'basalt' => '26.3',
             'generated' => '2026-11-01_12-00-00',
@@ -86,6 +87,13 @@ class TimingsTest extends TestCase
             ->assertStatus(422);
         $this->call('PUT', '/api/timings', [], [], [], ['CONTENT_TYPE' => 'application/json'], 'not json')
             ->assertStatus(422);
+    }
+
+    public function test_it_refuses_a_report_from_an_unknown_type(): void
+    {
+        $body = json_encode(['format' => 'basalt-timings', 'type' => 'toaster', 'version' => 3]);
+
+        $this->call('PUT', '/api/timings', [], [], [], ['CONTENT_TYPE' => 'application/json'], $body)->assertStatus(422);
     }
 
     public function test_an_unknown_or_malformed_key_is_a_404(): void
