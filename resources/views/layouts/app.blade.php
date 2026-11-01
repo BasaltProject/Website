@@ -30,7 +30,7 @@
 <body class="min-h-dvh antialiased">
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-magma focus:px-4 focus:py-2 focus:text-[#14100d]">Skip to content</a>
 
-    <header class="fixed inset-x-0 top-0 z-40 border-b border-line bg-base"
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-line bg-base" style="view-transition-name: site-nav"
             x-data="{ open: false }"
             x-on:keydown.escape.window="open = false"
             x-on:livewire:navigating.window="open = false">
@@ -105,55 +105,64 @@
         </div>
     </header>
 
-    <main id="content" class="relative z-10 pt-[72px]">
+    <main id="content" wire:transition.navigate class="relative z-10 pt-[72px]">
         {{ $slot }}
     </main>
 
-    <footer class="relative z-10 mt-32 px-4 pb-12">
+    <footer class="relative z-10 mt-32 border-t-2 border-transparent bg-surface px-4 pt-14 pb-10"
+            style="border-image: linear-gradient(90deg, var(--color-magma), var(--color-warped)) 1">
         <div class="mx-auto max-w-6xl">
-            <div class="rule mb-10"></div>
-            <div class="flex flex-col gap-10 md:flex-row md:justify-between">
+            <div class="grid gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,2.7fr)]">
                 <div class="max-w-sm">
-                    <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="mb-5 w-36">
-                    <p class="text-sm leading-relaxed text-white/45">
+                    <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-12 w-auto">
+                    <p class="mt-5 text-sm leading-relaxed text-soft">
                         A Minecraft: Java Edition server and proxy rewritten from scratch in
                         C++23. No JVM at runtime.
                     </p>
-                    <a href="{{ route('donate') }}" wire:navigate class="mt-5 inline-flex items-center gap-2 text-sm text-white/50 transition-colors hover:text-white/85">
-                        <x-icon.heart />
-                        Support the project
-                    </a>
+                    <span class="mt-4 inline-block rounded-full border border-line bg-raised px-2.5 py-1 text-xs text-muted">Minecraft {{ config('basalt.minecraft.current') }}</span>
+                    <div class="mt-5 flex flex-wrap gap-2.5">
+                        <a href="{{ route('projects') }}" wire:navigate class="btn btn-primary px-3.5 py-2 text-sm">Download</a>
+                        <a href="{{ route('donate') }}" wire:navigate class="btn btn-ghost px-3.5 py-2 text-sm">Donate</a>
+                    </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-10 sm:grid-cols-3">
-                    <div>
-                        <h3 class="mb-3.5 text-[.72rem] font-semibold tracking-[.16em] text-white/85 uppercase">Projects</h3>
-                        <ul class="space-y-2.5 text-sm text-white/45">
-                            <li><a href="{{ route('projects.server') }}" wire:navigate class="transition-colors hover:text-white/85">Basalt Server</a></li>
-                            <li><a href="{{ route('projects.proxy') }}" wire:navigate class="transition-colors hover:text-white/85">Basalt Proxy</a></li>
-                            <li><a href="{{ route('plugins') }}" wire:navigate class="transition-colors hover:text-white/85">Plugins</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="mb-3.5 text-[.72rem] font-semibold tracking-[.16em] text-white/85 uppercase">Learn</h3>
-                        <ul class="space-y-2.5 text-sm text-white/45">
-                            <li><a href="{{ route('docs') }}" wire:navigate class="transition-colors hover:text-white/85">Documentation</a></li>
-                            <li><a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-white/85">Server docs</a></li>
-                            <li><a href="{{ route('docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-white/85">Proxy docs</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="mb-3.5 text-[.72rem] font-semibold tracking-[.16em] text-white/85 uppercase">Source</h3>
-                        <ul class="space-y-2.5 text-sm text-white/45">
-                            <li><a href="{{ config('basalt.repos.server') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-white/85">Server</a></li>
-                            <li><a href="{{ config('basalt.repos.proxy') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-white/85">Proxy</a></li>
-                            <li><a href="{{ config('basalt.repos.wire') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-white/85">Wire</a></li>
-                        </ul>
-                    </div>
+                <div class="grid grid-cols-2 gap-10 sm:grid-cols-4">
+                <div>
+                    <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Projects</h3>
+                    <ul class="space-y-2.5 text-[.9rem] text-soft">
+                        <li><a href="{{ route('projects.server') }}" wire:navigate class="transition-colors hover:text-magma">Basalt Server</a></li>
+                        <li><a href="{{ route('projects.proxy') }}" wire:navigate class="transition-colors hover:text-magma">Basalt Proxy</a></li>
+                        <li><a href="{{ route('plugins') }}" wire:navigate class="transition-colors hover:text-magma">Plugins</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Learn</h3>
+                    <ul class="space-y-2.5 text-[.9rem] text-soft">
+                        <li><a href="{{ route('docs') }}" wire:navigate class="transition-colors hover:text-magma">Documentation</a></li>
+                        <li><a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-magma">Server docs</a></li>
+                        <li><a href="{{ route('docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-magma">Proxy docs</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Source</h3>
+                    <ul class="space-y-2.5 text-[.9rem] text-soft">
+                        <li><a href="{{ config('basalt.repos.server') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">Server</a></li>
+                        <li><a href="{{ config('basalt.repos.proxy') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">Proxy</a></li>
+                        <li><a href="{{ config('basalt.repos.wire') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">Wire</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Support</h3>
+                    <ul class="space-y-2.5 text-[.9rem] text-soft">
+                        <li><a href="{{ route('donate') }}" wire:navigate class="transition-colors hover:text-magma">Donate</a></li>
+                        <li><a href="{{ config('basalt.donate.url') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">GitHub Sponsors</a></li>
+                        <li><a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">GitHub</a></li>
+                    </ul>
+                </div>
                 </div>
             </div>
 
-            <div class="mt-12 flex flex-col gap-2 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
+            <div class="mt-12 flex flex-col gap-2 border-t border-line pt-6 text-xs text-muted sm:flex-row sm:items-center sm:justify-between">
                 <p>Server and proxy under GPL-3.0. This site under MIT.</p>
                 <p>Not affiliated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios.</p>
             </div>

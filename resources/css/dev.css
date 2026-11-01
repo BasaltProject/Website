@@ -10,7 +10,8 @@
     --color-muted: #949aa6;
     --color-magma: #f0662f;
     --color-magma-hover: #ff7a45;
-    --color-olivine: #7fc75f;
+    --color-warped: #2dd4bf;
+    --color-gold: #f2b84b;
     --color-slate: #5c6676;
     --color-stone: #544840;
     --color-ash: #7e848e;
@@ -41,6 +42,9 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: rgba(255, 255, 255, .14); background-clip: content-box; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .24); background-clip: content-box; }
+
+    /* Grid items default to min-width:auto and grow to fit code blocks; let them shrink instead. */
+    .grid > * { min-width: 0; }
 
     [x-cloak] { display: none !important; }
 
@@ -123,6 +127,14 @@
 
 .btn-ghost:hover { border-color: #3d4350; background: var(--color-raised); }
 
+.btn-warped {
+    border-color: var(--color-warped);
+    background: var(--color-warped);
+    color: #0a1412;
+}
+
+.btn-warped:hover { border-color: #5eead4; background: #5eead4; }
+
 .btn:disabled, .btn[aria-disabled="true"] {
     cursor: not-allowed;
     border-color: var(--color-line);
@@ -136,7 +148,7 @@
 
 .status-dot { width: .5rem; height: .5rem; border-radius: 999px; flex: none; }
 .status-working { background: #7fcf9b; box-shadow: 0 0 12px rgba(127, 207, 155, .55); }
-.status-progress { background: #d8c07a; box-shadow: 0 0 12px rgba(216, 192, 122, .5); }
+.status-progress { background: var(--color-gold); box-shadow: 0 0 12px rgba(242, 184, 75, .5); }
 .status-none { background: rgba(255, 255, 255, .22); }
 
 /* Long-form documentation body. */
@@ -162,11 +174,15 @@
 
 /* Code blocks. One presentation whether they come from MDX or from a page. */
 .code-block { position: relative; margin: 1.5rem 0; border: 1px solid var(--color-line); border-radius: .9rem; background: var(--color-base); }
-.code-block pre { overflow-x: auto; margin: 0; padding: 1.2rem 1.3rem; }
+.code-block { max-width: 100%; }
+.code-block pre { max-width: 100%; overflow-x: auto; margin: 0; padding: 1.2rem 1.3rem; }
 .code-block code { display: block; color: #ccd2dc; font-family: var(--font-mono); font-size: .84rem; line-height: 1.7; white-space: pre; }
 .code-lang { position: absolute; top: .6rem; right: .85rem; color: var(--color-muted); font-family: var(--font-mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; pointer-events: none; }
 /* A file name is read, not skimmed like a language tag, so it gets more weight. */
 .code-file { color: var(--color-soft); letter-spacing: .04em; text-transform: none; }
+
+/* Long inline code (paths, file names) wraps instead of widening the page. */
+p code, li code, .prose-basalt code, .callout-body code { overflow-wrap: anywhere; }
 
 /* Muted, desaturated tokens: enough separation to read, not a rainbow. */
 .tok-comment { color: var(--color-muted); font-style: italic; }
@@ -214,6 +230,67 @@
 }
 .info:hover .info-text, .info:focus-visible .info-text { opacity: 1; transform: translate(-50%, 0); }
 
+/* On narrow screens the tooltip is pinned to the viewport, so it can never widen the page. */
+@media (max-width: 40rem) {
+    .info-text {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        left: 1rem;
+        width: auto;
+        max-width: none;
+        transform: none;
+    }
+    .info:hover .info-text, .info:focus-visible .info-text { transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .info-text { transition: none; }
+}
+
+/* Terminal window used on the home hero. */
+.terminal { overflow: hidden; border: 1px solid var(--color-line); border-radius: .9rem; background: #0b0c0f; }
+.terminal-bar { display: flex; align-items: center; gap: .4rem; padding: .7rem .9rem; border-bottom: 1px solid var(--color-line); background: var(--color-surface); }
+.terminal-dot { width: .65rem; height: .65rem; border-radius: 999px; background: var(--color-line); }
+.terminal-title { margin-left: .5rem; color: var(--color-muted); font-family: var(--font-mono); font-size: .75rem; }
+.terminal pre { overflow-x: auto; margin: 0; padding: 1.2rem 1.3rem; color: #ccd2dc; font-family: var(--font-mono); font-size: .84rem; line-height: 1.8; }
+
+/* Page transition on wire:navigate. Livewire names <main> "livewire-navigate"
+   (wire:transition.navigate); the header is pinned under its own name so it stays still. */
+html { background: var(--color-base); }
+
+::view-transition { background: var(--color-base); }
+
+::view-transition-group(site-nav) { animation: none; }
+::view-transition-old(site-nav) { display: none; }
+::view-transition-new(site-nav) { animation: none; }
+
+::view-transition-group(livewire-navigate) { animation: none; }
+
+::view-transition-old(livewire-navigate),
+::view-transition-new(livewire-navigate) {
+    mix-blend-mode: normal;
+}
+
+::view-transition-old(livewire-navigate) {
+    animation: page-out 120ms ease-out both;
+}
+
+::view-transition-new(livewire-navigate) {
+    animation: page-in 220ms cubic-bezier(.22, 1, .36, 1) 90ms both;
+}
+
+@keyframes page-out { to { opacity: 0; } }
+
+@keyframes page-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
 }
