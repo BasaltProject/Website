@@ -62,8 +62,8 @@ new class extends Component
 
 <div class="px-4">
     <div class="mx-auto grid max-w-6xl gap-12 pt-6 pb-16 lg:grid-cols-[15rem_1fr]">
-        <aside class="lg:sticky lg:top-28 lg:self-start">
-            <a href="{{ route('docs') }}" wire:navigate class="mb-7 inline-flex items-center gap-2 text-sm text-white/40 transition-colors hover:text-white/75">
+        <aside class="lg:sticky lg:top-24 lg:self-start">
+            <a href="{{ route('docs') }}" wire:navigate class="mb-7 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-white/75">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 Documentation
             </a>
@@ -71,19 +71,19 @@ new class extends Component
             <nav class="space-y-7">
                 @foreach ($this->tree as $section)
                     <div>
-                        <p class="mb-3 text-[.66rem] font-semibold tracking-[.16em] text-white/35 uppercase">{{ $section['title'] }}</p>
+                        <p class="mb-3 text-[.66rem] font-semibold tracking-[.16em] text-muted uppercase">{{ $section['title'] }}</p>
                         <ul class="space-y-0.5 border-l border-white/8">
                             @foreach ($section['pages'] as $page)
                                 @php $active = $page['section'] === $this->section && $page['slug'] === $this->slug; @endphp
                                 @if ($page['group'] !== '' && $page['group'] !== ($section['pages'][$loop->index - 1]['group'] ?? null))
-                                    <li class="-ml-px pt-5 pb-1.5 pl-4 text-[.66rem] font-semibold tracking-[.14em] text-white/55 uppercase">{{ $page['group'] }}</li>
+                                    <li class="-ml-px pt-5 pb-1.5 pl-4 text-[.66rem] font-semibold tracking-[.14em] text-soft uppercase">{{ $page['group'] }}</li>
                                 @endif
                                 <li>
                                     <a href="{{ $page['url'] }}" wire:navigate
                                        @class([
                                            '-ml-px block border-l py-1.5 pl-4 text-sm transition-colors duration-300',
                                            'border-white/70 text-white' => $active,
-                                           'border-transparent text-white/45 hover:border-white/25 hover:text-white/80' => ! $active,
+                                           'border-transparent text-muted hover:border-white/25 hover:text-white/80' => ! $active,
                                        ])>{{ $page['title'] }}</a>
                                 </li>
                             @endforeach
@@ -94,15 +94,15 @@ new class extends Component
         </aside>
 
         <article class="min-w-0">
-            <header class="reveal">
-                <span class="text-[.66rem] font-semibold tracking-[.16em] text-white/35 uppercase">
+            <header>
+                <span class="text-[.66rem] font-semibold tracking-[.16em] text-muted uppercase">
                     {{ \App\Support\Docs::SECTIONS[$this->section]['title'] }}
                 </span>
                 <h1 class="text-crystal mt-4 text-[clamp(2rem,4.5vw,3rem)] leading-[1.1] font-semibold tracking-[-.03em]">
                     {{ $this->page['title'] }}
                 </h1>
                 @if ($this->page['description'] !== '')
-                    <p class="mt-4 text-lg leading-relaxed text-white/50">{{ $this->page['description'] }}</p>
+                    <p class="mt-4 text-lg leading-relaxed text-soft">{{ $this->page['description'] }}</p>
                 @endif
                 <div class="rule mt-9"></div>
             </header>
@@ -118,7 +118,7 @@ new class extends Component
                         @if ($neighbours[$key])
                             <a href="{{ $neighbours[$key]['url'] }}" wire:navigate
                                @class(['glass card block p-5', 'sm:col-start-2 sm:text-right' => $key === 'next'])>
-                                <span class="text-[.64rem] font-medium tracking-[.16em] text-white/30 uppercase">{{ $label }}</span>
+                                <span class="text-[.64rem] font-medium tracking-[.16em] text-muted uppercase">{{ $label }}</span>
                                 <span class="mt-1.5 block font-medium text-white/85">{{ $neighbours[$key]['title'] }}</span>
                             </a>
                         @endif
@@ -126,7 +126,7 @@ new class extends Component
                 </nav>
             @endif
 
-            <p class="mt-10 text-sm text-white/30">
+            <p class="mt-10 text-sm text-muted">
                 <a href="{{ $this->page['edit_url'] }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 transition-colors hover:text-white/70">
                     <x-icon.github width="13" height="13" />
                     Edit this page

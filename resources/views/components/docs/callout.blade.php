@@ -2,10 +2,10 @@
 
 @php
     $tone = [
-        'note' => ['border-white/12', 'text-white/45'],
+        'note' => ['border-white/12', 'text-muted'],
         'tip' => ['border-[#7fcf9b]/25', 'text-[#7fcf9b]'],
         'warning' => ['border-[#d8c07a]/28', 'text-[#d8c07a]'],
-    ][$type] ?? ['border-white/12', 'text-white/45'];
+    ][$type] ?? ['border-white/12', 'text-muted'];
 @endphp
 
 <div class="callout glass my-7 rounded-xl border-l-2 p-6 {{ $tone[0] }}">

@@ -36,7 +36,7 @@ new class extends Component
             placeholder="Search the documentation"
             aria-label="Search the documentation"
             autocomplete="off"
-            class="w-full bg-transparent text-[.98rem] text-white/90 placeholder:text-white/30 focus:outline-none"
+            class="w-full bg-transparent text-[.98rem] text-white/90 placeholder:text-muted focus:outline-none"
         >
 
         <div wire:loading wire:target="query" class="shrink-0">
@@ -45,7 +45,7 @@ new class extends Component
 
         @if ($query !== '')
             <button type="button" wire:click="clear" wire:loading.remove wire:target="query"
-                    class="shrink-0 rounded-full px-2 py-1 text-xs text-white/40 transition-colors hover:text-white/85">
+                    class="shrink-0 rounded-full px-2 py-1 text-xs text-muted transition-colors hover:text-white/85">
                 Clear
             </button>
         @endif
@@ -55,8 +55,8 @@ new class extends Component
         <div class="mt-4" wire:key="results-{{ $query }}">
             @if ($this->results->isEmpty())
                 <div class="glass rounded-2xl px-6 py-8 text-center">
-                    <p class="text-sm text-white/50">Nothing matches "{{ $query }}" yet.</p>
-                    <p class="mt-2 text-xs text-white/30">Try a command, a file name or a setting.</p>
+                    <p class="text-sm text-soft">Nothing matches "{{ $query }}" yet.</p>
+                    <p class="mt-2 text-xs text-muted">Try a command, a file name or a setting.</p>
                 </div>
             @else
                 <ul class="glass divide-y divide-white/6 overflow-hidden rounded-2xl">
@@ -64,12 +64,12 @@ new class extends Component
                         <li>
                             <a href="{{ $result['url'] }}" wire:navigate class="block px-6 py-5 transition-colors hover:bg-white/5">
                                 <div class="flex items-baseline gap-3">
-                                    <span class="text-[.62rem] font-medium tracking-[.16em] text-white/30 uppercase">
+                                    <span class="text-[.62rem] font-medium tracking-[.16em] text-muted uppercase">
                                         {{ \App\Support\Docs::SECTIONS[$result['section']]['title'] }}
                                     </span>
                                 </div>
                                 <p class="mt-1.5 font-medium text-white/90">{{ $result['title'] }}</p>
-                                <p class="mt-1.5 text-sm leading-relaxed text-white/45">{{ $result['excerpt'] }}</p>
+                                <p class="mt-1.5 text-sm leading-relaxed text-muted">{{ $result['excerpt'] }}</p>
                             </a>
                         </li>
                     @endforeach

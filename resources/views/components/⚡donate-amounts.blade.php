@@ -55,7 +55,7 @@ new class extends Component
                     @class([
                         'flex-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300',
                         'bg-white/12 text-white' => $frequency === $value,
-                        'text-white/50 hover:text-white/85' => $frequency !== $value,
+                        'text-soft hover:text-white/85' => $frequency !== $value,
                     ])
                     aria-pressed="{{ $frequency === $value ? 'true' : 'false' }}">{{ $text }}</button>
         @endforeach
@@ -68,7 +68,7 @@ new class extends Component
                         'rounded-xl border px-3 py-3.5 text-base font-semibold transition-all duration-300',
                         'amount-selected' => $amount === $value && $gradient,
                         'border-white/25 bg-white/12 text-white' => $amount === $value && ! $gradient,
-                        'border-white/8 bg-white/4 text-white/60 hover:border-white/18 hover:text-white/90' => $amount !== $value,
+                        'border-white/8 bg-white/4 text-soft hover:border-white/18 hover:text-white/90' => $amount !== $value,
                     ])>{{ config('basalt.donate.currency') }}{{ $value }}</button>
         @endforeach
     </div>
@@ -85,7 +85,7 @@ new class extends Component
                 Become {{ $article }} <span class="tier-name font-semibold">{{ $this->tier['name'] }}</span> supporter
             </p>
             <div class="rule mt-3.5"></div>
-            <ul class="mt-4 space-y-2.5 text-sm text-white/55">
+            <ul class="mt-4 space-y-2.5 text-sm text-soft">
                 @foreach ($this->tier['perks'] as $perk)
                     <li class="flex gap-2.5">
                         <x-icon.check class="mt-0.5 shrink-0 text-white/35" width="13" height="13" />
@@ -95,7 +95,7 @@ new class extends Component
             </ul>
         </div>
     @elseif ($frequency === 'once')
-        <p class="mt-7 text-center text-sm leading-relaxed text-white/45">
+        <p class="mt-7 text-center text-sm leading-relaxed text-muted">
             A one-time gift carries no tier and needs no account. It just helps.
         </p>
     @endif
@@ -112,7 +112,7 @@ new class extends Component
         @endif
     </a>
 
-    <p class="mt-4 text-center text-xs leading-relaxed text-white/35">
+    <p class="mt-4 text-center text-xs leading-relaxed text-muted">
         Handled by GitHub Sponsors. Cancel a monthly gift whenever you like.
     </p>
 </div>

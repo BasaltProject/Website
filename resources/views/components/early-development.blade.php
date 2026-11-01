@@ -7,7 +7,7 @@
     </svg>
     <div>
         <p class="text-[.68rem] font-semibold tracking-[.16em] text-[#d8c07a] uppercase">Early development</p>
-        <p class="mt-1.5 text-sm leading-relaxed text-white/60">
+        <p class="mt-1.5 text-sm leading-relaxed text-soft">
             {{ $product }} is young and not finished. Expect unexpected behaviour, missing features and
             changes between releases, and keep backups of anything you care about.
         </p>

@@ -13,134 +13,99 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="en" class="scroll-pt-24">
+<html lang="en" class="scroll-pt-20">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#08080a">
+    <meta name="theme-color" content="#111216">
     <meta name="description" content="{{ $description }}">
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <title>{{ $title ? $title.' - Basalt' : 'Basalt' }}</title>
+    @fonts
     @vite(['resources/css/dev.css', 'resources/js/dev.js'])
     @livewireStyles
 </head>
 <body class="min-h-dvh antialiased">
-    {{-- Arms the scroll reveal. Inline and first because wire:navigate copies the
-         incoming <html> attributes over the current ones, dropping any class added
-         at runtime, and body scripts are re-run on every swap. --}}
-    <script>
-        document.documentElement.classList.add('js');
+    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-magma focus:px-4 focus:py-2 focus:text-[#14100d]">Skip to content</a>
 
-        // Fades the page in. Self-contained because this is the only script that
-        // reliably re-runs on a wire:navigate swap.
-        (function () {
-            var main = document.currentScript.parentElement.querySelector('main');
-            if (!main) return;
-
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-            var duration = 420;
-            var start = null;
-
-            // Opacity only: animating a transform too would composite the whole
-            // page subtree every frame.
-            main.style.opacity = '0';
-            main.style.willChange = 'opacity';
-
-            function clear() {
-                main.style.opacity = '';
-                main.style.willChange = '';
-            }
-
-            function step(now) {
-                if (start === null) start = now;
-
-                var p = Math.min((now - start) / duration, 1);
-                // Ease in and out: an ease-out curve spends half the opacity in
-                // the first frames, which reads as a flicker.
-                var eased = p < 0.5
-                    ? 4 * p * p * p
-                    : 1 - Math.pow(-2 * p + 2, 3) / 2;
-
-                main.style.opacity = String(eased);
-
-                if (p < 1) requestAnimationFrame(step);
-                else clear();
-            }
-
-            requestAnimationFrame(step);
-            // Never leave the page invisible if frames stop arriving.
-            setTimeout(function () { if (main.style.opacity !== '') clear(); }, 1500);
-        })();
-    </script>
-
-    {{-- wire:navigate replaces the whole body, so the background is persisted. --}}
-    @persist('background')
-        <div class="mesh" aria-hidden="true">
-            <span class="blob blob-1"></span>
-            <span class="blob blob-2"></span>
-            <span class="blob blob-3"></span>
-            <span class="blob blob-4"></span>
-            <span class="blob blob-5"></span>
-        </div>
-        <div class="grain" aria-hidden="true"></div>
-    @endpersist
-
-    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-full focus:bg-white focus:px-4 focus:py-2 focus:text-black">Skip to content</a>
-
-    <header class="fixed inset-x-0 top-0 z-40 px-4 pt-4" data-nav>
-        <nav class="glass glass-nav mx-auto flex max-w-6xl items-center gap-3 rounded-full py-2.5 pr-2.5 pl-6">
+    <header class="fixed inset-x-0 top-0 z-40 border-b border-line bg-base"
+            x-data="{ open: false }"
+            x-on:keydown.escape.window="open = false"
+            x-on:livewire:navigating.window="open = false">
+        <nav class="mx-auto flex h-[72px] max-w-6xl items-center gap-3 px-4" aria-label="Main">
             <a href="{{ route('home') }}" wire:navigate class="shrink-0" aria-label="Basalt home">
-                <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-7 w-auto">
+                <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-11 w-auto">
             </a>
 
-            <ul class="ml-3 hidden items-center gap-1 md:flex">
+            <ul class="ml-6 hidden items-center gap-7 md:flex">
                 @foreach ($nav as $item)
                     <li>
                         <a href="{{ route($item['route']) }}" wire:navigate
                            @class([
-                               'rounded-full px-3.5 py-1.5 text-sm transition-colors duration-300',
-                               'bg-white/10 text-white' => request()->routeIs($item['pattern']),
-                               'text-white/55 hover:text-white/90' => ! request()->routeIs($item['pattern']),
+                               'border-b-2 py-1 text-[.95rem] transition-colors duration-150',
+                               'border-magma text-ink' => request()->routeIs($item['pattern']),
+                               'border-transparent text-soft hover:text-ink' => ! request()->routeIs($item['pattern']),
                            ])>{{ $item['label'] }}</a>
                     </li>
                 @endforeach
             </ul>
 
-            <div class="ml-auto flex items-center gap-2">
-                <a href="{{ route('donate') }}" wire:navigate
+            <div class="ml-auto flex items-center gap-1.5">
+                <a href="{{ route('projects') }}" wire:navigate class="btn btn-primary px-3.5 py-2 text-sm">
+                    <svg viewBox="0 0 16 16" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg>
+                    <span>Download</span>
+                </a>
+                <a href="{{ route('donate') }}" wire:navigate aria-label="Donate"
                    @class([
-                       'btn btn-ghost px-4 py-2 text-sm',
-                       'border-white/24 bg-white/10 text-white' => request()->routeIs('donate'),
+                       'hidden size-9 items-center justify-center rounded-lg transition-colors duration-150 md:inline-flex',
+                       'text-ink' => request()->routeIs('donate'),
+                       'text-soft hover:text-ink' => ! request()->routeIs('donate'),
                    ])>
                     <x-icon.heart />
-                    <span class="hidden sm:inline">Donate</span>
                 </a>
-                <a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer"
-                   class="btn btn-ghost px-4 py-2 text-sm">
+                <a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" aria-label="GitHub"
+                   class="hidden size-9 items-center justify-center rounded-lg text-soft transition-colors duration-150 hover:text-ink md:inline-flex">
                     <x-icon.github />
-                    <span class="hidden sm:inline">GitHub</span>
                 </a>
+                <button type="button" class="inline-flex size-9 items-center justify-center rounded-lg text-soft transition-colors duration-150 hover:text-ink md:hidden"
+                        aria-label="Toggle menu" aria-controls="mobile-menu" x-bind:aria-expanded="open.toString()" aria-expanded="false"
+                        x-on:click="open = ! open">
+                    <svg x-show="! open" viewBox="0 0 16 16" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M2 4h12M2 8h12M2 12h12"/></svg>
+                    <svg x-show="open" x-cloak viewBox="0 0 16 16" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9"/></svg>
+                </button>
             </div>
         </nav>
 
-        <ul class="glass glass-nav mx-auto mt-2 flex max-w-6xl items-center justify-around rounded-full px-2 py-2 md:hidden">
-            @foreach ($nav as $item)
+        <div id="mobile-menu" x-show="open" x-cloak class="border-t border-line bg-base md:hidden">
+            <ul class="mx-auto max-w-6xl px-4 py-3">
+                @foreach ($nav as $item)
+                    <li>
+                        <a href="{{ route($item['route']) }}" wire:navigate
+                           @class([
+                               'block rounded-lg px-3 py-3 text-base',
+                               'text-ink' => request()->routeIs($item['pattern']),
+                               'text-soft' => ! request()->routeIs($item['pattern']),
+                           ])>{{ $item['label'] }}</a>
+                    </li>
+                @endforeach
                 <li>
-                    <a href="{{ route($item['route']) }}" wire:navigate
+                    <a href="{{ route('donate') }}" wire:navigate
                        @class([
-                           'rounded-full px-3 py-1.5 text-[.82rem] transition-colors duration-300',
-                           'bg-white/10 text-white' => request()->routeIs($item['pattern']),
-                           'text-white/55' => ! request()->routeIs($item['pattern']),
-                       ])>{{ $item['label'] }}</a>
+                           'block rounded-lg px-3 py-3 text-base',
+                           'text-ink' => request()->routeIs('donate'),
+                           'text-soft' => ! request()->routeIs('donate'),
+                       ])>Donate</a>
                 </li>
-            @endforeach
-        </ul>
+                <li>
+                    <a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="block rounded-lg px-3 py-3 text-base text-soft">GitHub</a>
+                </li>
+            </ul>
+        </div>
     </header>
 
-    <main id="content" class="relative z-10 pt-32 md:pt-28">
+    <main id="content" class="relative z-10 pt-[72px]">
         {{ $slot }}
     </main>
 
