@@ -73,6 +73,11 @@ class TimingsTest extends TestCase
         $this->assertSame($body, $download->getContent());
     }
 
+    public function test_the_viewer_opens_without_a_report_to_take_a_dropped_file(): void
+    {
+        $this->get('/timings')->assertOk()->assertSee('data-timings-viewer', false)->assertSee('data-local', false);
+    }
+
     public function test_it_refuses_anything_that_is_not_a_report(): void
     {
         $this->call('PUT', '/api/timings', [], [], [], ['CONTENT_TYPE' => 'application/json'], '{"hello":"world"}')

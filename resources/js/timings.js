@@ -339,9 +339,72 @@ function lineChart(host, { title, unit, series, seconds, yMax, format, note }) {
 // ---------------------------------------------------------------------------------------------------------------
 // The viewer
 
+const REJECTED = 'That file is not a Basalt timings report.';
+
+// Reads a report from a file on this machine. Nothing is uploaded: it never leaves the browser.
+function openFile(root, file) {
+    return file
+        .text()
+        .then((text) => JSON.parse(text))
+        .then((data) => {
+            if (data?.format !== 'basalt-timings') throw new Error(REJECTED);
+            new Viewer(root, data).render();
+            window.scrollTo({ top: 0 });
+        })
+        .catch((error) => {
+            const note = root.querySelector('[data-drop-error]');
+            if (note) note.textContent = error.message === REJECTED ? REJECTED : 'That file could not be read as JSON.';
+        });
+}
+
+function dropZone(root) {
+    root.innerHTML = `<label class="glass tv-drop" data-drop>
+        <svg viewBox="0 0 16 16" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 11V2M4.5 5.5 8 2l3.5 3.5M3 10v3.5h10V10"/></svg>
+        <b>Drop a timings JSON here</b>
+        <span>or click to choose one. The file is read in your browser and never uploaded.</span>
+        <span class="tv-bad" data-drop-error></span>
+        <input type="file" accept=".json,application/json" hidden>
+    </label>`;
+    root.querySelector('input').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) openFile(root, file);
+    });
+}
+
+// A file dropped anywhere on a viewer page opens in it, so a report can be swapped for another without leaving.
+let dropsBound = false;
+function bindDrops() {
+    if (dropsBound) return;
+    dropsBound = true;
+    const target = () => document.querySelector('[data-timings-viewer]');
+    window.addEventListener('dragover', (event) => {
+        if (!target() || !event.dataTransfer?.types?.includes('Files')) return;
+        event.preventDefault();
+        document.body.classList.add('tv-dragging');
+    });
+    window.addEventListener('dragleave', (event) => {
+        if (event.relatedTarget === null) document.body.classList.remove('tv-dragging');
+    });
+    window.addEventListener('drop', (event) => {
+        document.body.classList.remove('tv-dragging');
+        const root = target();
+        const file = event.dataTransfer?.files?.[0];
+        if (!root || !file) return;
+        event.preventDefault();
+        openFile(root, file);
+    });
+}
+
 export function mount(root) {
     if (root.dataset.ready) return;
     root.dataset.ready = '1';
+    bindDrops();
+
+    if (root.dataset.local !== undefined) {
+        root.classList.add('tv');
+        dropZone(root);
+        return;
+    }
 
     fetch(root.dataset.src, { headers: { Accept: 'application/json' } })
         .then((r) => {

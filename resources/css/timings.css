@@ -87,5 +87,10 @@
 .tv-frame { position: absolute; top: 0; bottom: 0; overflow: hidden; padding: 0 .35rem; border-radius: .2rem; color: #111; font-family: var(--font-mono); font-size: .68rem; line-height: 1.45rem; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
 .tv-frame:hover { filter: brightness(1.2); outline: 1px solid rgba(255, 255, 255, .6); }
 
+.tv-drop { display: flex; flex-direction: column; align-items: center; gap: .6rem; margin: 3rem auto; max-width: 36rem; padding: 3.5rem 2rem; border-style: dashed; border-color: rgba(255, 255, 255, .22); color: rgba(232, 232, 234, .6); text-align: center; cursor: pointer; transition: border-color .2s, background .2s; }
+.tv-drop b { color: rgba(232, 232, 234, .92); font-size: 1.05rem; font-weight: 600; }
+.tv-drop span { font-size: .85rem; }
+.tv-drop:hover { border-color: rgba(255, 255, 255, .45); }
+body.tv-dragging .tv-drop, body.tv-dragging [data-timings-viewer] { outline: 2px dashed rgba(147, 197, 253, .7); outline-offset: 6px; }
 .tv-note { padding: 2rem 1rem; text-align: center; color: rgba(232, 232, 234, .45); font-size: .85rem; }
 @media (max-width: 640px) { .tv-mini { display: none; } .tv-search { flex: 1 1 100%; } }

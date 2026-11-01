@@ -10,6 +10,7 @@ Route::livewire('/projects/server', 'pages::server')->name('projects.server');
 Route::livewire('/projects/proxy', 'pages::proxy')->name('projects.proxy');
 
 // Profiles uploaded by a running server. The link is printed in a console, so it lives at the root.
+Route::livewire('/timings', 'pages::timings-open')->name('timings.open');
 Route::livewire('/timings/{key}', 'pages::timings')->whereAlphaNumeric('key')->name('timings.show');
 Route::get('/timings/{key}/data', [TimingsController::class, 'data'])->whereAlphaNumeric('key')->name('timings.data');
 Route::get('/timings/{key}/download', [TimingsController::class, 'download'])->whereAlphaNumeric('key')->name('timings.download');
