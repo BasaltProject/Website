@@ -26,12 +26,16 @@ class Eggs
         return config('basalt.repos.deploy').'/blob/main/'.self::path($project);
     }
 
-    public static function json(string $project): ?string
+    public static function json(string $project, ?string $sha = null): ?string
     {
         $path = self::path($project);
 
         if ($path === null) {
             return null;
+        }
+
+        if ($sha !== null) {
+            return self::pinned($path, $project, $sha);
         }
 
         $fresh = Cache::get("eggs.json.$project");
@@ -40,19 +44,13 @@ class Eggs
             return $fresh;
         }
 
-        try {
-            $response = Http::timeout(3)->get(self::rawUrl($path));
-            $body = $response->successful() ? $response->body() : '';
-            $decoded = json_decode($body, true);
+        $body = self::fetch(self::rawUrl($path, 'main'));
 
-            if (is_array($decoded) && array_key_exists('meta', $decoded)) {
-                Cache::put("eggs.json.$project", $body, 600);
-                Cache::put("eggs.json.stale.$project", $body, self::STALE);
+        if ($body !== null) {
+            Cache::put("eggs.json.$project", $body, 600);
+            Cache::put("eggs.json.stale.$project", $body, self::STALE);
 
-                return $body;
-            }
-        } catch (Throwable) {
-            //
+            return $body;
         }
 
         $stale = Cache::get("eggs.json.stale.$project");
@@ -60,34 +58,126 @@ class Eggs
         return is_string($stale) ? $stale : null;
     }
 
-    public static function updated(string $project): ?string
+    /** Commits that touched the egg, newest first. */
+    public static function history(string $project): array
     {
         $path = self::path($project);
 
         if ($path === null) {
-            return null;
+            return [];
         }
 
-        $repo = trim((string) parse_url(config('basalt.repos.deploy'), PHP_URL_PATH), '/');
+        $fresh = Cache::get("eggs.history.$project");
 
-        $date = Cache::remember("eggs.updated.$project", 600, function () use ($repo, $path) {
-            try {
-                $response = Http::timeout(3)->acceptJson()->get("https://api.github.com/repos/$repo/commits", ['path' => $path, 'per_page' => 1]);
-                $date = $response->successful() ? $response->json('0.commit.committer.date') : null;
+        if (is_array($fresh)) {
+            return $fresh;
+        }
 
-                return is_string($date) ? $date : '';
-            } catch (Throwable) {
-                return '';
+        try {
+            $response = Http::timeout(3)->acceptJson()->get('https://api.github.com/repos/'.self::repo().'/commits', ['path' => $path, 'per_page' => 30]);
+            $items = $response->successful() ? $response->json() : null;
+
+            if (is_array($items) && $items !== []) {
+                $history = [];
+
+                foreach ($items as $item) {
+                    $sha = $item['sha'] ?? null;
+
+                    if (! is_string($sha) || ! self::validSha($sha)) {
+                        continue;
+                    }
+
+                    $history[] = [
+                        'sha' => $sha,
+                        'short' => substr($sha, 0, 7),
+                        'date' => (string) ($item['commit']['committer']['date'] ?? ''),
+                        'message' => trim(strtok((string) ($item['commit']['message'] ?? ''), "\n") ?: ''),
+                        'url' => (string) ($item['html_url'] ?? ''),
+                    ];
+                }
+
+                if ($history !== []) {
+                    Cache::put("eggs.history.$project", $history, 600);
+                    Cache::put("eggs.history.stale.$project", $history, self::STALE);
+
+                    return $history;
+                }
             }
-        });
+        } catch (Throwable) {
+            //
+        }
+
+        $stale = Cache::get("eggs.history.stale.$project");
+
+        return is_array($stale) ? $stale : [];
+    }
+
+    public static function updated(string $project): ?string
+    {
+        $date = self::history($project)[0]['date'] ?? '';
 
         return $date !== '' ? $date : null;
     }
 
-    private static function rawUrl(string $path): string
+    public static function validSha(string $sha): bool
     {
-        $repo = trim((string) parse_url(config('basalt.repos.deploy'), PHP_URL_PATH), '/');
+        return preg_match('/\A[0-9a-f]{40}\z/', $sha) === 1;
+    }
 
-        return "https://raw.githubusercontent.com/$repo/main/$path";
+    /** A commit's content never changes, so it is cached for long. */
+    private static function pinned(string $path, string $project, string $sha): ?string
+    {
+        if (! self::validSha($sha)) {
+            return null;
+        }
+
+        $key = "eggs.json.$project.$sha";
+        $cached = Cache::get($key);
+
+        if (is_string($cached)) {
+            return $cached;
+        }
+
+        $body = self::fetch(self::rawUrl($path, $sha));
+
+        if ($body !== null) {
+            Cache::put($key, $body, self::STALE);
+        }
+
+        return $body;
+    }
+
+    /** Body of the URL when it is a JSON egg, null otherwise. */
+    private static function fetch(string $url): ?string
+    {
+        try {
+            $response = Http::timeout(3)->get($url);
+            $body = $response->successful() ? $response->body() : '';
+            $decoded = json_decode($body, true);
+
+            if (is_array($decoded) && array_key_exists('meta', $decoded)) {
+                return $body;
+            }
+        } catch (Throwable) {
+            //
+        }
+
+        return null;
+    }
+
+    private static function repo(): string
+    {
+        return trim((string) parse_url(config('basalt.repos.deploy'), PHP_URL_PATH), '/');
+    }
+
+    /** Link to the egg file at a given commit on GitHub. */
+    public static function commitBlobUrl(string $project, string $sha): string
+    {
+        return config('basalt.repos.deploy').'/blob/'.$sha.'/'.self::path($project);
+    }
+
+    private static function rawUrl(string $path, string $ref): string
+    {
+        return 'https://raw.githubusercontent.com/'.self::repo().'/'.$ref.'/'.$path;
     }
 }

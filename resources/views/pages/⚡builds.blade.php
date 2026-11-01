@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\Eggs;
 use App\Support\Releases;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -22,6 +23,8 @@ new #[Title('Release history')] class extends Component
         return [
             'repo' => $repo,
             'releases' => Releases::history($repo),
+            'egg' => Eggs::history($this->project),
+            'eggFile' => Eggs::blobUrl($this->project),
             'name' => $this->project === 'proxy' ? 'Basalt Proxy' : 'Basalt Server',
             'accentText' => $this->project === 'proxy' ? 'text-warped' : 'text-magma',
         ];
@@ -88,6 +91,39 @@ new #[Title('Release history')] class extends Component
                     </div>
                 @endforelse
             </div>
+
+            <section class="mt-16" aria-labelledby="egg-heading">
+                <div class="flex items-center gap-3">
+                    <x-icon.pterodactyl class="h-6 w-auto shrink-0 {{ $accentText }}" />
+                    <h2 id="egg-heading" class="text-2xl font-semibold text-ink">Pterodactyl egg</h2>
+                </div>
+                <p class="mt-3 text-soft">The egg is updated separately from releases and installs the latest stable build by default.</p>
+
+                <div class="mt-6 grid gap-4">
+                    @forelse ($egg as $version)
+                        <article class="glass p-5 sm:p-6" wire:key="egg-{{ $version['sha'] }}">
+                            <header class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                                <a href="{{ $version['url'] }}" target="_blank" rel="noopener noreferrer" class="font-mono text-lg font-semibold text-ink underline decoration-slate underline-offset-4 transition-colors hover:decoration-soft">{{ $version['short'] }}</a>
+                                @if ($loop->first)
+                                    <span class="text-sm font-semibold {{ $accentText }}">Latest</span>
+                                @endif
+                                @if ($version['date'])
+                                    <time datetime="{{ $version['date'] }}" class="text-sm text-muted sm:ml-auto">{{ \Illuminate\Support\Carbon::parse($version['date'])->format('j M Y') }}</time>
+                                @endif
+                            </header>
+                            <div class="mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+                                <p class="min-w-0 flex-1 basis-60 text-sm break-words text-soft">{{ $version['message'] }}</p>
+                                <a href="{{ $loop->first ? route('projects.egg', $project) : route('projects.egg', [$project, 'version' => $version['sha']]) }}" download class="btn btn-ghost !px-4 !py-2 !text-sm">Download</a>
+                            </div>
+                        </article>
+                    @empty
+                        <div class="glass p-6">
+                            <p class="text-soft">Egg history is unavailable right now.</p>
+                            <a href="{{ $eggFile }}" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block text-sm text-ink underline decoration-slate underline-offset-4 transition-colors hover:decoration-soft">View the egg on GitHub</a>
+                        </div>
+                    @endforelse
+                </div>
+            </section>
         </div>
     </section>
 </div>
