@@ -5,6 +5,7 @@
     --color-surface: #191b21;
     --color-raised: #21242c;
     --color-line: #2c303a;
+    --color-line-strong: #3d4350;
     --color-ink: #f0f1f3;
     --color-soft: #b4b9c3;
     --color-muted: #949aa6;
@@ -35,14 +36,14 @@
     }
 
     ::selection {
-        background: rgba(240, 102, 47, .35);
+        background: #5f2f1f;
     }
 
     /* The scrollbar is part of the surface, not a system artefact bolted on top. */
     ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { border: 3px solid transparent; border-radius: 999px; background: rgba(255, 255, 255, .14); background-clip: content-box; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, .24); background-clip: content-box; }
+    ::-webkit-scrollbar-track { background: var(--color-base); }
+    ::-webkit-scrollbar-thumb { border: 3px solid var(--color-base); border-radius: 999px; background: var(--color-line-strong); background-clip: content-box; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--color-slate); background-clip: content-box; }
 
     /* Grid items default to min-width:auto and grow to fit code blocks; let them shrink instead. */
     .grid > * { min-width: 0; }
@@ -109,15 +110,15 @@
 /* Tier colour. Both stops arrive from config as custom properties, so a new
    tier is a config entry. After .btn-primary to override its fill. */
 .btn-tier {
-    border-color: rgba(255, 255, 255, .24);
+    border-color: color-mix(in srgb, var(--tier-from) 76%, white);
     background: linear-gradient(135deg, var(--tier-from), var(--tier-to));
 }
 
 .tier-name { color: var(--tier-from); }
 
 .amount-selected {
-    border-color: color-mix(in srgb, var(--tier-from) 60%, transparent);
-    background: color-mix(in srgb, var(--tier-from) 14%, transparent);
+    border-color: color-mix(in srgb, var(--tier-from) 60%, var(--color-surface));
+    background: color-mix(in srgb, var(--tier-from) 14%, var(--color-surface));
     color: #fff;
 }
 
@@ -145,29 +146,29 @@
 
 .text-crystal { color: var(--color-ink); }
 
-.rule { height: 1px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .14), transparent); }
+.rule { height: 1px; background: linear-gradient(90deg, var(--color-base), var(--color-line-strong), var(--color-base)); }
 
 .status-dot { width: .5rem; height: .5rem; border-radius: 999px; flex: none; }
 .status-working { background: #7fcf9b; box-shadow: 0 0 12px rgba(127, 207, 155, .55); }
 .status-progress { background: var(--color-gold); box-shadow: 0 0 12px rgba(242, 184, 75, .5); }
-.status-none { background: rgba(255, 255, 255, .22); }
+.status-none { background: #454954; }
 
 /* Long-form documentation body. */
 .prose-basalt { color: var(--color-soft); line-height: 1.75; }
 .prose-basalt > * + * { margin-top: 1.15rem; }
 .prose-basalt h2 { margin-top: 2.75rem; color: var(--color-ink); font-size: 1.45rem; font-weight: 600; letter-spacing: -.01em; }
 .prose-basalt h3 { margin-top: 2rem; color: var(--color-ink); font-size: 1.12rem; font-weight: 600; }
-.prose-basalt a { color: #ff9a6b; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255, 154, 107, .45); }
-.prose-basalt a:hover { text-decoration-color: rgba(255, 154, 107, .95); }
+.prose-basalt a { color: #ff9a6b; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #7c4f3c; }
+.prose-basalt a:hover { text-decoration-color: #f39367; }
 .prose-basalt code { padding: .15rem .4rem; border: 1px solid var(--color-line); border-radius: .35rem; background: var(--color-raised); color: #d8dde5; font-family: var(--font-mono); font-size: .86em; }
 .prose-basalt pre code { padding: 0; border: 0; background: none; }
 .prose-basalt ul, .prose-basalt ol { padding-left: 1.35rem; }
 .prose-basalt ul { list-style: disc; }
 .prose-basalt ol { list-style: decimal; }
 .prose-basalt li + li { margin-top: .45rem; }
-.prose-basalt blockquote { padding-left: 1.1rem; border-left: 2px solid rgba(255, 255, 255, .16); color: var(--color-soft); }
+.prose-basalt blockquote { padding-left: 1.1rem; border-left: 2px solid var(--color-line-strong); color: var(--color-soft); }
 .prose-basalt table { width: 100%; border-collapse: collapse; font-size: .92rem; }
-.prose-basalt th, .prose-basalt td { padding: .6rem .8rem; border-bottom: 1px solid rgba(255, 255, 255, .08); text-align: left; }
+.prose-basalt th, .prose-basalt td { padding: .6rem .8rem; border-bottom: 1px solid var(--color-line); text-align: left; }
 .prose-basalt th { color: var(--color-ink); font-weight: 600; }
 
 
@@ -205,7 +206,7 @@ p code, li code, .prose-basalt code, .callout-body code { overflow-wrap: anywher
 
 /* The "?" marker that explains a caveat without spending a paragraph on it. */
 .info { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; width: 1.15rem; height: 1.15rem; border: 1px solid #3d4350; border-radius: 999px; background: var(--color-raised); color: var(--color-soft); font-size: .7rem; font-weight: 600; line-height: 1; cursor: help; vertical-align: 15%; transition: color .15s ease, border-color .15s ease; }
-.info:hover, .info:focus-visible { border-color: rgba(255, 255, 255, .5); color: var(--color-ink); }
+.info:hover, .info:focus-visible { border-color: var(--color-muted); color: var(--color-ink); }
 .info-text {
     position: absolute;
     bottom: calc(100% + .6rem);

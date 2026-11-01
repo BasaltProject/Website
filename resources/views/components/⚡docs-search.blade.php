@@ -36,7 +36,7 @@ new class extends Component
             placeholder="Search the documentation"
             aria-label="Search the documentation"
             autocomplete="off"
-            class="w-full bg-transparent text-[.98rem] text-ink placeholder:text-muted focus:outline-none"
+            class="w-full bg-surface text-[.98rem] text-ink placeholder:text-muted focus:outline-none"
         >
 
         <div wire:loading wire:target="query" class="shrink-0">

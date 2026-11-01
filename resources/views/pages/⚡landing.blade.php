@@ -112,7 +112,7 @@ chmod +x BasaltServer-*
                 </h2>
                 <p class="mt-5 text-lg leading-relaxed text-soft">
                     They share their entire network layer through
-                    <a href="{{ config('basalt.repos.wire') }}" target="_blank" rel="noopener noreferrer" class="text-ink underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/70">Wire</a>:
+                    <a href="{{ config('basalt.repos.wire') }}" target="_blank" rel="noopener noreferrer" class="text-ink underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-soft">Wire</a>:
                     one implementation of the protocol, used by both sides.
                 </p>
             </div>
@@ -206,8 +206,8 @@ chmod +x BasaltServer-*
                     <article class="glass card p-7">
                         <span @class([
                             'mb-5 inline-flex size-10 items-center justify-center rounded-lg',
-                            'bg-magma/15 text-magma' => $index % 2 === 0,
-                            'bg-warped/15 text-warped' => $index % 2 === 1,
+                            'bg-[#392623] text-magma' => $index % 2 === 0,
+                            'bg-[#1c3739] text-warped' => $index % 2 === 1,
                         ]) aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $feature['icon'] !!}</svg>
                         </span>

@@ -46,7 +46,7 @@
                 <x-icon.brand :name="$platform['icon']" class="h-7 w-auto shrink-0" />
                 <span class="text-left">
                     <span class="block text-lg leading-tight">Download for {{ $platform['label'] }}</span>
-                    <span class="mt-0.5 block text-sm font-medium opacity-80">{{ $platform['arch'] }}@if ($release), version {{ $release['version'] }}@endif</span>
+                    <span class="mt-0.5 block text-sm font-medium">{{ $platform['arch'] }}@if ($release), version {{ $release['version'] }}@endif</span>
                 </span>
                 <svg viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="ml-2 shrink-0" aria-hidden="true">
                     <path d="M8 2v9M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/>

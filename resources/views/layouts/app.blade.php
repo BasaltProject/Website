@@ -46,7 +46,7 @@
                            @class([
                                'border-b-2 py-1 text-[.95rem] transition-colors duration-150',
                                'border-magma text-ink' => request()->routeIs($item['pattern']),
-                               'border-transparent text-soft hover:text-ink' => ! request()->routeIs($item['pattern']),
+                               'border-base text-soft hover:text-ink' => ! request()->routeIs($item['pattern']),
                            ])>{{ $item['label'] }}</a>
                     </li>
                 @endforeach
