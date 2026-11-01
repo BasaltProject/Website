@@ -88,9 +88,16 @@ function syncNavElevation() {
     if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 8);
 }
 
+// The timings viewer is a page of its own with a lot of code, so only that page loads it.
+function mountTimings() {
+    const root = document.querySelector('[data-timings-viewer]');
+    if (root && !root.dataset.ready) import('./timings.js').then((module) => module.mount(root));
+}
+
 function init(options) {
     revealOnScroll(options);
     syncNavElevation();
+    mountTimings();
 }
 
 document.addEventListener('pointermove', trackPointerOnCards, { passive: true });

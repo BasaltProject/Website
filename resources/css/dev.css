@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./timings.css";
 
 @theme {
     --color-base: #08080a;

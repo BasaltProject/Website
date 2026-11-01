@@ -27,6 +27,20 @@ class TimingsController extends Controller
         ], 201);
     }
 
+    /** The report as the server sent it, for the viewer to draw. */
+    public function data(string $key): Response
+    {
+        $raw = TimingReports::raw($key);
+
+        abort_if($raw === null, 404);
+
+        return response($raw, 200, [
+            'Content-Type' => 'application/json',
+            'Cache-Control' => 'private, max-age=300',
+            'X-Robots-Tag' => 'noindex',
+        ]);
+    }
+
     /** The report as the server sent it, as a file. */
     public function download(string $key): Response
     {

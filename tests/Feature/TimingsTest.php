@@ -62,9 +62,11 @@ class TimingsTest extends TestCase
 
         $this->get("/timings/{$key}")
             ->assertOk()
-            ->assertSee('entity.zombie')
-            ->assertSee('Server thread')
+            ->assertSee('data-timings-viewer', false)
+            ->assertSee("/timings/{$key}/data", false)
             ->assertSee('Download JSON');
+
+        $this->get("/timings/{$key}/data")->assertOk()->assertJsonPath('threads.0.name', 'Server thread');
 
         $download = $this->get("/timings/{$key}/download");
         $download->assertOk()->assertHeader('Content-Type', 'application/json');

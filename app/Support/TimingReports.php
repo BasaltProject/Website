@@ -43,7 +43,7 @@ class TimingReports
             return 'This is not a Basalt timings report.';
         }
 
-        if (! is_int($data['version'] ?? null) || $data['version'] < 1 || $data['version'] > 2) {
+        if (! is_int($data['version'] ?? null) || $data['version'] < 1 || $data['version'] > 3) {
             return 'This report version is not supported.';
         }
 
