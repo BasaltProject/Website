@@ -11,7 +11,7 @@ new #[Title('Basalt Server')] class extends Component
 <div>
     <section class="px-4">
         <div class="mx-auto max-w-6xl pt-10 pb-16">
-            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-white/75">
+            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-magma">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 All projects
             </a>
@@ -19,7 +19,7 @@ new #[Title('Basalt Server')] class extends Component
             <div class="max-w-3xl">
                 <span class="pill">Basalt Server</span>
                 <h1 class="text-crystal mt-7 text-[clamp(2.3rem,5.5vw,3.8rem)] leading-[1.06] font-semibold tracking-[-.03em]">
-                    The Minecraft server, rebuilt.
+                    The Minecraft server, <span class="text-magma">rebuilt.</span>
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-soft">
                     A complete reimplementation of the Minecraft server, written entirely in
@@ -55,7 +55,7 @@ new #[Title('Basalt Server')] class extends Component
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.server')" />
+                <x-download-grid :repo="config('basalt.repos.server')" accent="magma" />
             </div>
         </div>
     </section>
@@ -76,7 +76,7 @@ new #[Title('Basalt Server')] class extends Component
                         opt-in and labelled as such in the generated configuration comments.
                         The default path is always the vanilla one.
                     </p>
-                    <h3 class="mt-10 text-xl font-semibold tracking-tight text-white/90">Every client, one server</h3>
+                    <h3 class="mt-10 text-xl font-semibold tracking-tight text-ink">Every client, one server</h3>
                     <p class="mt-4 leading-relaxed text-soft">
                         Basalt tracks the newest Minecraft release rather than pinning a
                         version. The core speaks one protocol, the current one, and every
@@ -85,14 +85,14 @@ new #[Title('Basalt Server')] class extends Component
                     </p>
 
                     <div class="glass mt-7 overflow-hidden rounded-2xl">
-                        <ul class="divide-y divide-white/6 text-sm">
+                        <ul class="divide-y divide-line text-sm">
                             @foreach ([
                                 ['Current Java Edition', 'Direct, no translation'],
                                 ['Older Java Edition', 'Translated at the edge'],
                                 ['Bedrock Edition', 'Translated at the edge'],
                             ] as [$client, $how])
                                 <li class="flex items-center gap-4 px-6 py-3.5">
-                                    <span class="text-white/70">{{ $client }}</span>
+                                    <span class="text-soft">{{ $client }}</span>
                                     <span class="ml-auto text-muted">{{ $how }}</span>
                                 </li>
                             @endforeach
@@ -100,7 +100,7 @@ new #[Title('Basalt Server')] class extends Component
                     </div>
                 </div>
 
-                <dl class="glass divide-y divide-white/6 self-start overflow-hidden rounded-2xl text-sm">
+                <dl class="glass divide-y divide-line self-start overflow-hidden rounded-2xl text-sm">
                     @foreach ([
                         ['Language', 'C++23'],
                         ['Minecraft', config('basalt.minecraft.current').' native, older versions supported'],
@@ -114,7 +114,7 @@ new #[Title('Basalt Server')] class extends Component
                     ] as [$label, $value])
                         <div class="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-baseline sm:gap-6">
                             <dt class="shrink-0 text-muted sm:w-36">{{ $label }}</dt>
-                            <dd class="text-white/80">{{ $value }}</dd>
+                            <dd class="text-soft">{{ $value }}</dd>
                         </div>
                     @endforeach
                 </dl>
@@ -131,7 +131,7 @@ new #[Title('Basalt Server')] class extends Component
                         <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Lua, sandboxed, packaged</h2>
                         <p class="mt-5 leading-relaxed text-soft">
                             Plugins are written in Lua and packaged as
-                            <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">.bspkg</code>
+                            <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">.bspkg</code>
                             files, each with a manifest, code, resources and metadata. They run
                             inside a sandbox with a instruction budget and a memory ceiling, so a
                             broken plugin is stopped without taking the server down.
@@ -189,7 +189,7 @@ plugins/
   WorldEdit.jar
                     </x-code>
                     <div class="glass mt-4 overflow-hidden rounded-2xl">
-                        <ul class="divide-y divide-white/6 text-sm">
+                        <ul class="divide-y divide-line text-sm">
                             @foreach ([
                                 ['Maximum performance, no JVM at all', 'Native Lua plugins'],
                                 ['A plugin that already exists', 'A Bukkit jar'],
@@ -197,7 +197,7 @@ plugins/
                             ] as [$want, $use])
                                 <li class="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-center sm:gap-6">
                                     <span class="text-soft">{{ $want }}</span>
-                                    <span class="text-white/85 sm:ml-auto sm:text-right">{{ $use }}</span>
+                                    <span class="text-ink sm:ml-auto sm:text-right">{{ $use }}</span>
                                 </li>
                             @endforeach
                         </ul>
@@ -215,12 +215,12 @@ plugins/
                     <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Multi-world from the first line</h2>
                     <p class="mt-5 leading-relaxed text-soft">
                         Not a plugin bolted onto a server that assumes one save. A world
-                        here <em class="text-white/75 not-italic">is</em> a dimension, so
+                        here <em class="text-soft not-italic">is</em> a dimension, so
                         there is no folder with three dimensions buried inside it and no
                         machinery pretending otherwise.
                     </p>
                     <p class="mt-4 leading-relaxed text-soft">
-                        <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">worlds.toml</code>
+                        <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">worlds.toml</code>
                         declares what to load, and only that. It never deletes anything.
                     </p>
 
@@ -233,7 +233,7 @@ plugins/
                             'Anvil regions are read and written back as Linear. Migrating a world is copy the folder and start, never run a converter first.',
                         ] as $point)
                             <li class="flex gap-3">
-                                <x-icon.check class="mt-0.5 shrink-0 text-white/30" />
+                                <x-icon.check class="mt-0.5 shrink-0 text-magma" />
                                 <span>{{ $point }}</span>
                             </li>
                         @endforeach
@@ -260,9 +260,9 @@ type = "flat"
 seed = 42
                     </x-code>
                     <p class="mt-5 text-sm leading-relaxed text-muted">
-                        Four worlds, one file. <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.85em] text-white/70">normal</code>,
-                        <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.85em] text-white/70">flat</code> and
-                        <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.85em] text-white/70">void</code>
+                        Four worlds, one file. <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.85em] text-soft">normal</code>,
+                        <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.85em] text-soft">flat</code> and
+                        <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.85em] text-soft">void</code>
                         for the hub that should not generate terrain it will never show.
                     </p>
                 </div>
@@ -278,11 +278,11 @@ seed = 42
                         <span class="pill">Player data</span>
                         <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Your worlds are not your player database</h2>
                         <p class="mt-5 leading-relaxed text-soft">
-                            Vanilla keeps <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">playerdata/&lt;uuid&gt;.dat</code>
+                            Vanilla keeps <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">playerdata/&lt;uuid&gt;.dat</code>
                             inside the world folder, which is why resetting a map has always
                             been more dangerous than it sounds. Basalt keeps
-                            <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">players.db</code>
-                            beside <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">worlds/</code>,
+                            <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">players.db</code>
+                            beside <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">worlds/</code>,
                             never inside one.
                         </p>
                         <p class="mt-4 leading-relaxed text-soft">
@@ -293,9 +293,9 @@ seed = 42
                     </div>
 
                     <div class="self-center">
-                        <div class="mb-6 rounded-2xl border border-white/8 bg-white/4 p-6">
+                        <div class="mb-6 rounded-2xl border border-line bg-raised p-6">
                             <p class="text-[.68rem] font-semibold tracking-[.16em] text-muted uppercase">The rule that decides it</p>
-                            <p class="mt-3 text-lg leading-snug text-white/85">
+                            <p class="mt-3 text-lg leading-snug text-ink">
                                 Configuration is what the operator writes. State is what the
                                 server writes.
                             </p>
@@ -307,7 +307,7 @@ seed = 42
                                 'groups.toml says what a group is. players.db says who is in it.',
                             ] as $point)
                                 <li class="flex gap-3">
-                                    <x-icon.check class="mt-0.5 shrink-0 text-white/30" />
+                                    <x-icon.check class="mt-0.5 shrink-0 text-magma" />
                                     <span>{{ $point }}</span>
                                 </li>
                             @endforeach
@@ -327,7 +327,7 @@ seed = 42
                 </h2>
                 <p class="mt-5 text-lg leading-relaxed text-soft">
                     The things every server ends up installing three plugins for are files
-                    in <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.85em] text-white/70">config/</code>,
+                    in <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.85em] text-soft">config/</code>,
                     and they all speak the same language.
                 </p>
             </div>
@@ -365,7 +365,7 @@ header = ["<red>STAFF</red>"]
                         ['It only sends what changed', 'A redraw becomes a packet when the text it produced is actually different. A static panel costs nothing however often it is drawn.'],
                     ] as $index => [$heading, $copy])
                         <article class="glass card p-6">
-                            <h3 class="font-semibold tracking-tight text-white/90">{{ $heading }}</h3>
+                            <h3 class="font-semibold tracking-tight text-ink">{{ $heading }}</h3>
                             <p class="mt-2.5 text-sm leading-relaxed text-soft">{{ $copy }}</p>
                         </article>
                     @endforeach
@@ -374,7 +374,7 @@ header = ["<red>STAFF</red>"]
 
             <div class="glass mt-5 rounded-2xl p-7">
                 <p class="text-sm leading-relaxed text-soft">
-                    <span class="font-medium text-white/85">The defaults have an opinion.</span>
+                    <span class="font-medium text-ink">The defaults have an opinion.</span>
                     The tab list ships on, because a header and a footer are decoration and
                     cannot get in the way. The scoreboard and the boss bar ship off, because
                     they cover part of the screen and that is the operator's call to make,
@@ -394,9 +394,9 @@ header = ["<red>STAFF</red>"]
                     <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Groups that do what they read like</h2>
                     <p class="mt-5 leading-relaxed text-soft">
                         Dotted names, a trailing
-                        <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">*</code>
+                        <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">*</code>
                         to match everything below, a leading
-                        <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">-</code>
+                        <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">-</code>
                         to deny. The most specific rule wins no matter what order they are
                         written in, and anything nobody grants is denied.
                     </p>
@@ -457,8 +457,8 @@ enabled = false
                         ['Rewrite what it says', 'Replace any answer the server sends, keyed by the translation key it normally uses, with %1% and %2% for the values it was going to fill in.'],
                     ] as [$heading, $copy])
                         <li class="flex gap-3">
-                            <x-icon.check class="mt-0.5 shrink-0 text-white/30" />
-                            <span><span class="text-white/85">{{ $heading }}.</span> {{ $copy }}</span>
+                            <x-icon.check class="mt-0.5 shrink-0 text-magma" />
+                            <span><span class="text-ink">{{ $heading }}.</span> {{ $copy }}</span>
                         </li>
                     @endforeach
                 </ul>
@@ -466,7 +466,7 @@ enabled = false
 
             <div class="glass mt-5 rounded-2xl p-7">
                 <p class="text-sm leading-relaxed text-soft">
-                    <span class="font-medium text-white/85">Worth knowing before you reword anything.</span>
+                    <span class="font-medium text-ink">Worth knowing before you reword anything.</span>
                     By default the server sends the translation key and every client renders
                     it in its own language. Override one and it becomes literal text, the
                     same for everyone, in whatever language you wrote it. That is the trade,
@@ -499,7 +499,7 @@ config/
                     </div>
                     <p class="mt-5 leading-relaxed text-soft">
                         Generated with comments and vanilla defaults on first start. A
-                        <code class="rounded border border-white/8 bg-white/5 px-1.5 py-0.5 font-mono text-[.8em] text-white/70">server.properties</code>
+                        <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">server.properties</code>
                         found on first start is imported once, so moving an existing server
                         across is a copy.
                     </p>
@@ -539,7 +539,7 @@ config/
                 </p>
                 <p class="mt-4 leading-relaxed text-soft">
                     Once you accept the
-                    <a href="https://www.minecraft.net/en-us/eula" target="_blank" rel="noopener noreferrer" class="text-white/75 underline decoration-white/25 underline-offset-4 transition-colors hover:decoration-white/70">Minecraft EULA</a>,
+                    <a href="https://www.minecraft.net/en-us/eula" target="_blank" rel="noopener noreferrer" class="text-soft underline decoration-slate underline-offset-4 transition-colors hover:decoration-soft">Minecraft EULA</a>,
                     the server downloads the official server archive from Mojang, verifies
                     its SHA-1 and unpacks only the data it needs into a local cache. That
                     happens once per version; later starts touch neither the network nor the

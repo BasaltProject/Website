@@ -47,13 +47,15 @@ new #[Title('Projects')] class extends Component
 
             <div class="mt-14 grid gap-5 lg:grid-cols-2">
                 @foreach ($this->projects() as $index => $project)
-                    <article class="glass card flex flex-col p-8 md:p-10">
-                        <h2 class="text-2xl font-semibold tracking-tight text-white/95">{{ $project['name'] }}</h2>
+                    @php $proxy = $index === 1; @endphp
+                    <article class="glass card flex flex-col overflow-hidden p-8 md:p-10">
+                        <span class="absolute inset-x-0 top-0 h-0.5 {{ $proxy ? 'bg-warped' : 'bg-magma' }}" aria-hidden="true"></span>
+                        <h2 class="text-2xl font-semibold tracking-tight text-ink">{{ $project['name'] }}</h2>
                         <p class="mt-1.5 text-sm text-muted">{{ $project['tagline'] }}</p>
                         <p class="mt-6 leading-relaxed text-soft">{{ $project['body'] }}</p>
 
                         <div class="mt-auto flex flex-wrap gap-3 pt-9">
-                            <a href="{{ route($project['route']) }}" wire:navigate class="btn btn-primary py-2.5 text-sm">Downloads</a>
+                            <a href="{{ route($project['route']) }}" wire:navigate class="btn {{ $proxy ? 'btn-warped' : 'btn-primary' }} py-2.5 text-sm">Downloads</a>
                             <a href="{{ $project['repo'] }}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost py-2.5 text-sm">
                                 <x-icon.github />
                                 Source

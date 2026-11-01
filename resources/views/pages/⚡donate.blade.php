@@ -14,7 +14,7 @@ new #[Title('Donate')] class extends Component
             <div class="grid gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
                 <div>
                     <span class="pill">
-                        <x-icon.heart class="text-white/50" />
+                        <x-icon.heart class="text-muted" />
                         Donate
                     </span>
                     <h1 class="text-crystal mt-7 text-[clamp(2.3rem,5.5vw,3.8rem)] leading-[1.06] font-semibold tracking-[-.03em]">
@@ -45,7 +45,7 @@ new #[Title('Donate')] class extends Component
                 ['Everything stays free', 'No paid edition, no licence, no feature behind a tier. Donating buys the project time, never you an advantage.'],
             ] as $index => [$heading, $copy])
                 <article class="glass card p-7">
-                    <h2 class="font-semibold tracking-tight text-white/90">{{ $heading }}</h2>
+                    <h2 class="font-semibold tracking-tight text-ink">{{ $heading }}</h2>
                     <p class="mt-3 text-sm leading-relaxed text-soft">{{ $copy }}</p>
                 </article>
             @endforeach
@@ -70,7 +70,7 @@ new #[Title('Donate')] class extends Component
                             'Run it, and say what broke.',
                         ] as $point)
                             <li class="flex gap-3">
-                                <x-icon.check class="mt-0.5 shrink-0 text-white/30" />
+                                <x-icon.check class="mt-0.5 shrink-0 text-muted" />
                                 <span>{{ $point }}</span>
                             </li>
                         @endforeach

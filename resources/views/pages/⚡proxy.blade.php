@@ -11,7 +11,7 @@ new #[Title('Basalt Proxy')] class extends Component
 <div>
     <section class="px-4">
         <div class="mx-auto max-w-6xl pt-10 pb-16">
-            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-white/75">
+            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-warped">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 All projects
             </a>
@@ -19,7 +19,7 @@ new #[Title('Basalt Proxy')] class extends Component
             <div class="max-w-3xl">
                 <span class="pill">Basalt Proxy</span>
                 <h1 class="text-crystal mt-7 text-[clamp(2.3rem,5.5vw,3.8rem)] leading-[1.06] font-semibold tracking-[-.03em]">
-                    One address, every server.
+                    One address, <span class="text-warped">every server.</span>
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-soft">
                     A native Minecraft proxy written in C++23, sharing its
@@ -27,7 +27,7 @@ new #[Title('Basalt Proxy')] class extends Component
                 </p>
 
                 <div class="mt-9 flex flex-wrap gap-3">
-                    <a href="#downloads" class="btn btn-primary">
+                    <a href="#downloads" class="btn btn-warped">
                         Download
                         <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v9M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/></svg>
                     </a>
@@ -52,7 +52,7 @@ new #[Title('Basalt Proxy')] class extends Component
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.proxy')" />
+                <x-download-grid :repo="config('basalt.repos.proxy')" accent="warped" />
             </div>
         </div>
     </section>
