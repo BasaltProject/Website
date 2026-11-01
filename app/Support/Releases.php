@@ -43,4 +43,76 @@ class Releases
 
         return ['version' => ltrim((string) ($release['tag_name'] ?? ''), 'v'), 'assets' => $assets];
     }
+
+    /**
+     * Every stable release, newest first. Nightly, prereleases and drafts are left out.
+     *
+     * @return list<array{version: string, tag: string, date: ?string, url: ?string, checksums: ?string, assets: list<array{label: string, arch: string, icon: string, url: string, size: int}>}>
+     */
+    public static function history(string $repo): array
+    {
+        $path = trim((string) parse_url($repo, PHP_URL_PATH), '/');
+
+        $releases = Cache::remember("releases.history.$path", 600, function () use ($path) {
+            try {
+                $response = Http::timeout(3)->acceptJson()->get("https://api.github.com/repos/$path/releases?per_page=100");
+
+                return $response->successful() ? $response->json() : [];
+            } catch (Throwable) {
+                return [];
+            }
+        });
+
+        if (! is_array($releases)) {
+            return [];
+        }
+
+        $history = [];
+
+        foreach ($releases as $release) {
+            $tag = (string) ($release['tag_name'] ?? '');
+
+            if ($tag === '' || strtolower($tag) === 'nightly' || ! empty($release['prerelease']) || ! empty($release['draft'])) {
+                continue;
+            }
+
+            $assets = [];
+            $checksums = null;
+
+            foreach ($release['assets'] ?? [] as $asset) {
+                $name = (string) ($asset['name'] ?? '');
+
+                if ($name === 'SHA256SUMS') {
+                    $checksums = $asset['browser_download_url'] ?? null;
+
+                    continue;
+                }
+
+                foreach (config('basalt.platforms') as $platform) {
+                    if (str_contains($name, '-'.$platform['target']) && ! isset($assets[$platform['target']])) {
+                        $assets[$platform['target']] = [
+                            'label' => $platform['label'],
+                            'arch' => $platform['arch'],
+                            'icon' => $platform['icon'],
+                            'url' => $asset['browser_download_url'],
+                            'size' => (int) ($asset['size'] ?? 0),
+                        ];
+                    }
+                }
+            }
+
+            $history[] = [
+                'version' => ltrim($tag, 'v'),
+                'tag' => $tag,
+                'date' => $release['published_at'] ?? null,
+                'url' => $release['html_url'] ?? null,
+                'checksums' => $checksums,
+                'assets' => array_values($assets),
+            ];
+        }
+
+        usort($history, fn ($a, $b) => strcmp((string) $b['date'], (string) $a['date']));
+
+        return $history;
+    }
 }

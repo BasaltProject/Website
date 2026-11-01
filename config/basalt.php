@@ -14,6 +14,13 @@ return [
         'wire' => 'https://github.com/BasaltProject/Wire',
         'documentation' => 'https://github.com/BasaltProject/Documentation',
         'website' => 'https://github.com/BasaltProject/Website',
+        'deploy' => 'https://github.com/BasaltProject/Deploy',
+    ],
+
+    // Pterodactyl eggs, as paths inside the deploy repository's main branch.
+    'eggs' => [
+        'server' => 'pterodactyl/egg-basalt-server.json',
+        'proxy' => 'pterodactyl/egg-basalt-proxy.json',
     ],
 
     // Basalt tracks the newest release: `current` is what the core speaks today,

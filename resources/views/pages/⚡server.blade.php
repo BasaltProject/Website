@@ -55,7 +55,7 @@ new #[Title('Basalt Server')] class extends Component
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.server')" accent="magma" />
+                <x-download-grid :repo="config('basalt.repos.server')" project="server" accent="magma" />
             </div>
         </div>
     </section>

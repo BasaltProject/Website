@@ -52,7 +52,7 @@ new #[Title('Basalt Proxy')] class extends Component
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.proxy')" accent="warped" />
+                <x-download-grid :repo="config('basalt.repos.proxy')" project="proxy" accent="warped" />
             </div>
         </div>
     </section>

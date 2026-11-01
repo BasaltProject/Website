@@ -1,4 +1,4 @@
-@props(['repo', 'accent' => 'magma'])
+@props(['repo', 'accent' => 'magma', 'project' => null])
 
 @php
     $release = \App\Support\Releases::latest($repo);
@@ -73,9 +73,31 @@
     @endforeach
 </div>
 
+@if ($project)
+    @php $eggUpdated = \App\Support\Eggs::updated($project); @endphp
+    <div class="glass mt-3 flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div class="min-w-0">
+            <h3 class="flex items-center gap-2 font-medium text-ink">
+                <x-icon.pterodactyl class="h-auto w-6 shrink-0 text-soft" />
+                Pterodactyl egg
+            </h3>
+            <p class="mt-1 text-sm text-muted">Install Basalt {{ ucfirst($project) }} from a Pterodactyl panel.@if ($eggUpdated) Updated {{ \Illuminate\Support\Carbon::parse($eggUpdated)->format('j M Y') }}.@endif</p>
+        </div>
+        <a href="{{ route('projects.egg', $project) }}" download class="btn btn-ghost shrink-0 justify-center">
+            <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 {{ $accentText }}" aria-hidden="true">
+                <path d="M8 2v9M4.5 7.5 8 11l3.5-3.5M3 13.5h10"/>
+            </svg>
+            Download egg
+        </a>
+    </div>
+@endif
+
 <p class="mt-5 text-sm text-muted">
     @if ($release)
         Version {{ $release['version'] }}.
+    @endif
+    @if ($project)
+        <a href="{{ route('projects.builds', ['project' => $project]) }}" wire:navigate class="font-medium {{ $accentText }} underline underline-offset-4 transition-colors">All releases</a>.
     @endif
     Each file is the executable itself, with a SHA256SUMS file beside them. A
     <a href="{{ $repo }}/releases/tag/nightly" target="_blank" rel="noopener noreferrer" class="text-ink underline decoration-slate underline-offset-4 transition-colors hover:decoration-soft">nightly build</a>
