@@ -309,3 +309,9 @@
     .info-text { transition: none; }
     .btn-primary:hover::after { animation: none; }
 }
+
+/* Timings viewer: the caret turns when a frame is open, and the native marker stays out of the way. */
+.timings-row > summary::-webkit-details-marker, summary.timings-row::-webkit-details-marker { display: none; }
+details[open] > summary .timings-caret { transform: rotate(90deg); }
+.timings-caret { transition: transform .2s ease; }
+[x-cloak] { display: none !important; }
