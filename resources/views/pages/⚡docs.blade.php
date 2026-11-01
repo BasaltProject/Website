@@ -39,24 +39,39 @@ new #[Title('Documentation')] class extends Component
     <section class="px-4 pb-16">
         <div class="mx-auto max-w-6xl">
             <div class="grid gap-5 lg:grid-cols-2">
-                @foreach ($this->tree as $index => $section)
-                    <article class="glass card flex flex-col p-8 md:p-10">
-                        <h2 class="text-2xl font-semibold tracking-tight text-ink">{{ $section['title'] }}</h2>
-                        <p class="mt-1.5 text-sm text-muted">{{ $section['summary'] }}</p>
+                @foreach ($this->tree as $section)
+                    @php
+                        $accent = $section['key'] === 'proxy' ? ['bar' => 'bg-warped', 'link' => 'hover:border-warped'] : ['bar' => 'bg-magma', 'link' => 'hover:border-magma'];
+                        $intro = $section['pages']->first();
+                    @endphp
+                    <article class="overflow-hidden rounded-xl border border-line bg-surface">
+                        <div class="h-0.5 {{ $accent['bar'] }}"></div>
+                        <div class="p-7 md:p-8">
+                            <h2 class="text-xl font-semibold tracking-tight text-ink">{{ $section['title'] }}</h2>
+                            <p class="mt-1.5 text-sm text-muted">{{ $section['summary'] }}</p>
 
-                        <ul class="mt-7 divide-y divide-line border-t border-line">
-                            @foreach ($section['pages'] as $page)
-                                @if ($page['group'] !== '' && $page['group'] !== ($section['pages'][$loop->index - 1]['group'] ?? null))
-                                    <li class="pt-6 pb-2 text-[.66rem] font-semibold tracking-[.16em] text-muted uppercase">{{ $page['group'] }}</li>
-                                @endif
-                                <li>
-                                    <a href="{{ $page['url'] }}" wire:navigate class="group flex items-center gap-4 py-3.5 transition-colors hover:text-white">
-                                        <span class="text-sm text-soft transition-colors group-hover:text-white">{{ $page['title'] }}</span>
-                                        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="ml-auto shrink-0 text-line-strong transition-all duration-300 group-hover:translate-x-0.5 group-hover:text-soft" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
-                                    </a>
-                                </li>
-                            @endforeach
-                        </ul>
+                            <a href="{{ $intro['url'] }}" wire:navigate class="mt-6 flex items-center justify-between gap-4 rounded-lg border border-line bg-raised px-4 py-3 text-sm font-medium text-ink transition-colors {{ $accent['link'] }}">
+                                Start with the introduction
+                                <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true"><path d="m6 3 5 5-5 5"/></svg>
+                            </a>
+
+                            <div class="mt-8 gap-x-8 sm:columns-2">
+                                @foreach (\App\Support\Docs::groups($section['key']) as $group)
+                                    <div class="mb-6 break-inside-avoid">
+                                        @if ($group['title'] !== '')
+                                            <h3 class="mb-2 text-[.92rem] font-semibold text-ink">{{ $group['title'] }}</h3>
+                                        @endif
+                                        <ul>
+                                            @foreach ($group['pages'] as $page)
+                                                <li>
+                                                    <a href="{{ $page['url'] }}" wire:navigate class="block py-1 text-sm text-soft transition-colors hover:text-ink">{{ $page['title'] }}</a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
                     </article>
                 @endforeach
             </div>

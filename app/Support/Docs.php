@@ -58,6 +58,40 @@ class Docs
             ->values();
     }
 
+    /** Pages of one section in reading order. */
+    public static function section(string $section): Collection
+    {
+        return self::all()->where('section', $section)->values();
+    }
+
+    /** The first page of a section, where its tab in the sidebar leads. */
+    public static function first(string $section): ?array
+    {
+        return self::section($section)->first();
+    }
+
+    /**
+     * A section's pages split into runs that share a group, in file order.
+     *
+     * @return Collection<int, array{title: string, pages: Collection}>
+     */
+    public static function groups(string $section): Collection
+    {
+        $groups = collect();
+
+        foreach (self::section($section) as $page) {
+            $last = $groups->count() - 1;
+
+            if ($last >= 0 && $groups[$last]['title'] === $page['group']) {
+                $groups[$last]['pages']->push($page);
+            } else {
+                $groups->push(['title' => $page['group'], 'pages' => collect([$page])]);
+            }
+        }
+
+        return $groups;
+    }
+
     public static function find(string $section, string $slug): ?array
     {
         return self::all()->first(

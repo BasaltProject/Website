@@ -22,7 +22,40 @@ class Mdx
             ['html_input' => 'allow', 'allow_unsafe_links' => false],
         );
 
-        return self::restoreCodeBlocks($html, $blocks);
+        $html = self::restoreCodeBlocks($html, $blocks);
+
+        // Wide tables scroll inside their own box instead of widening the page.
+        return str_replace(['<table>', '</table>'], ['<div class="table-wrap"><table>', '</table></div>'], $html);
+    }
+
+    /**
+     * Rendered page with an id and a hover link on every h2 and h3, plus the
+     * list of those headings for the "On this page" index.
+     *
+     * @return array{html: string, headings: array<int, array{id: string, text: string, level: int}>}
+     */
+    public static function renderWithHeadings(string $source): array
+    {
+        $headings = [];
+        $used = [];
+
+        $html = preg_replace_callback('/<h([23])>(.*?)<\/h\1>/s', function (array $m) use (&$headings, &$used) {
+            $text = trim(html_entity_decode(strip_tags($m[2]), ENT_QUOTES | ENT_HTML5));
+            $base = Str::slug($text) ?: 'section';
+            $id = $base;
+
+            for ($n = 2; isset($used[$id]); $n++) {
+                $id = $base.'-'.$n;
+            }
+
+            $used[$id] = true;
+            $headings[] = ['id' => $id, 'text' => $text, 'level' => (int) $m[1]];
+
+            return '<h'.$m[1].' id="'.$id.'">'.$m[2]
+                .'<a class="heading-anchor" href="#'.$id.'" aria-label="Link to '.e($text).'">#</a></h'.$m[1].'>';
+        }, self::render($source));
+
+        return ['html' => $html ?? '', 'headings' => $headings];
     }
 
     /** Plain text of a page, for search indexing and excerpts. */
