@@ -58,7 +58,7 @@ class TimingsTest extends TestCase
 
         $response->assertCreated()->assertJsonStructure(['key', 'url']);
         $key = $response->json('key');
-        $this->assertSame(route('timings.show', ['key' => $key]), $response->json('url'));
+        $this->assertSame(rtrim(config('app.url'), '/')."/timings/{$key}", $response->json('url'));
 
         $this->get("/timings/{$key}")
             ->assertOk()

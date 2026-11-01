@@ -22,7 +22,8 @@ class TimingsController extends Controller
 
         return response()->json([
             'key' => $key,
-            'url' => route('timings.show', ['key' => $key]),
+            // From APP_URL, not the request: behind a TLS-terminating proxy the request scheme reads as http.
+            'url' => rtrim(config('app.url'), '/').route('timings.show', ['key' => $key], false),
         ], 201);
     }
 
