@@ -101,12 +101,19 @@ function mountTimings() {
 // old page when navigating from below. Shift it by the scroll difference so it stays in place.
 let scrollBefore = 0;
 let fromHistory = false;
+let instantNav = false;
+const isDocPage = (path) => /^\/docs\/[^/]+\/.+/.test(path);
 
 document.addEventListener('livewire:navigate', (event) => {
     fromHistory = Boolean(event.detail?.history);
+    // Reading the docs should feel like one page.
+    instantNav = isDocPage(window.location.pathname) && isDocPage(new URL(event.detail.url, window.location.origin).pathname);
+    document.documentElement.classList.toggle('instant-nav', instantNav);
 });
 
 document.addEventListener('livewire:navigated', () => {
+    // Livewire replaces the attributes of <html> during the swap.
+    document.documentElement.classList.toggle('instant-nav', instantNav);
     // Normal navigation ends at 0 but window.scrollY is not reset yet here; history has it restored.
     const target = fromHistory ? window.scrollY : 0;
     document.documentElement.style.setProperty('--vt-offset', `${target - scrollBefore}px`);

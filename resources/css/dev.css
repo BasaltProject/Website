@@ -305,6 +305,12 @@ html { background: var(--color-base); scrollbar-gutter: stable; }
 ::view-transition-old(site-footer) { display: none; }
 ::view-transition-new(site-footer) { animation: page-in 220ms cubic-bezier(.22, 1, .36, 1) 90ms both; }
 
+/* Moving between documentation pages swaps the content at once. */
+html.instant-nav::view-transition-old(livewire-navigate),
+html.instant-nav::view-transition-old(site-footer) { display: none; }
+html.instant-nav::view-transition-new(livewire-navigate),
+html.instant-nav::view-transition-new(site-footer) { animation: none; }
+
 ::view-transition-group(livewire-navigate) { animation: none; }
 
 ::view-transition-old(livewire-navigate),
