@@ -14,6 +14,25 @@ return [
         'wire' => 'https://github.com/BasaltProject/Wire',
         'documentation' => 'https://github.com/BasaltProject/Documentation',
         'website' => 'https://github.com/BasaltProject/Website',
+        'deploy' => 'https://github.com/BasaltProject/Deploy',
+    ],
+
+    // Pterodactyl eggs, as paths inside the deploy repository's main branch.
+    'eggs' => [
+        'server' => 'pterodactyl/egg-basalt-server.json',
+        'proxy' => 'pterodactyl/egg-basalt-proxy.json',
+    ],
+
+    // Container images. Hidden on the site until they are published: set
+    // BASALT_DOCKER=true to announce them.
+    'docker' => [
+        'published' => env('BASALT_DOCKER', false),
+        // First release that has an image; earlier ones were never published.
+        'since' => '26.3.1',
+        'images' => [
+            'server' => 'ghcr.io/basaltproject/server',
+            'proxy' => 'ghcr.io/basaltproject/proxy',
+        ],
     ],
 
     // Basalt tracks the newest release: `current` is what the core speaks today,

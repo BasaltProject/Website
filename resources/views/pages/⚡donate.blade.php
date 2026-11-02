@@ -12,15 +12,15 @@ new #[Title('Donate')] class extends Component
     <section class="px-4">
         <div class="mx-auto max-w-6xl pt-10 pb-16">
             <div class="grid gap-14 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)]">
-                <div class="reveal">
+                <div>
                     <span class="pill">
-                        <x-icon.heart class="text-white/50" />
+                        <x-icon.heart class="text-muted" />
                         Donate
                     </span>
                     <h1 class="text-crystal mt-7 text-[clamp(2.3rem,5.5vw,3.8rem)] leading-[1.06] font-semibold tracking-[-.03em]">
                         Pay for the work,<br>not for the software.
                     </h1>
-                    <p class="mt-6 text-lg leading-relaxed text-white/55">
+                    <p class="mt-6 text-lg leading-relaxed text-soft">
                         Basalt is GPL-3.0 and always will be. There is no paid tier, no
                         licence to buy and nothing held back for people who give. What
                         donations buy is time: the hours that go into a server rewritten from
@@ -30,7 +30,7 @@ new #[Title('Donate')] class extends Component
 
                 </div>
 
-                <div class="reveal lg:sticky lg:top-28 lg:self-start" data-reveal-delay="120">
+                <div class="lg:sticky lg:top-24 lg:self-start">
                     <livewire:donate-amounts />
                 </div>
             </div>
@@ -44,9 +44,9 @@ new #[Title('Donate')] class extends Component
                 ['Test machines', 'A binary is only proven on the platform it runs on, so every platform needs a host of its own to be tested on.'],
                 ['Everything stays free', 'No paid edition, no licence, no feature behind a tier. Donating buys the project time, never you an advantage.'],
             ] as $index => [$heading, $copy])
-                <article class="glass card p-7 reveal" data-reveal-delay="{{ $index * 90 }}">
-                    <h2 class="font-semibold tracking-tight text-white/90">{{ $heading }}</h2>
-                    <p class="mt-3 text-sm leading-relaxed text-white/50">{{ $copy }}</p>
+                <article class="glass card p-7">
+                    <h2 class="font-semibold tracking-tight text-ink">{{ $heading }}</h2>
+                    <p class="mt-3 text-sm leading-relaxed text-soft">{{ $copy }}</p>
                 </article>
             @endforeach
         </div>
@@ -55,14 +55,14 @@ new #[Title('Donate')] class extends Component
     <section class="px-4 py-16">
         <div class="mx-auto max-w-6xl">
             <div class="grid gap-12 lg:grid-cols-2">
-                <div class="reveal">
+                <div>
                     <span class="pill">Other ways</span>
                     <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Money is not the only thing that helps</h2>
-                    <p class="mt-5 leading-relaxed text-white/55">
+                    <p class="mt-5 leading-relaxed text-soft">
                         A parity bug reported with the steps to reproduce it is worth a great
                         deal, because finding one is most of the work of fixing it.
                     </p>
-                    <ul class="mt-7 space-y-3.5 text-sm text-white/55">
+                    <ul class="mt-7 space-y-3.5 text-sm text-soft">
                         @foreach ([
                             'Report anything that behaves differently from the official server, with the steps that showed it.',
                             'Send a patch. The server, the proxy, the network layer and this site are all public.',
@@ -70,7 +70,7 @@ new #[Title('Donate')] class extends Component
                             'Run it, and say what broke.',
                         ] as $point)
                             <li class="flex gap-3">
-                                <x-icon.check class="mt-0.5 shrink-0 text-white/30" />
+                                <x-icon.check class="mt-0.5 shrink-0 text-muted" />
                                 <span>{{ $point }}</span>
                             </li>
                         @endforeach
@@ -84,14 +84,14 @@ new #[Title('Donate')] class extends Component
                     </div>
                 </div>
 
-                <div class="reveal" data-reveal-delay="100">
+                <div>
                     <span class="pill">Companies</span>
                     <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Building something on Basalt?</h2>
-                    <p class="mt-5 leading-relaxed text-white/55">
+                    <p class="mt-5 leading-relaxed text-soft">
                         Hosts, networks and studios that depend on it can sponsor the work
                         directly.
                     </p>
-                    <p class="mt-4 leading-relaxed text-white/55">
+                    <p class="mt-4 leading-relaxed text-soft">
                         It does not buy influence over the roadmap or a feature nobody else
                         gets. Vanilla parity is the acceptance criterion whoever is asking.
                     </p>
@@ -106,11 +106,11 @@ new #[Title('Donate')] class extends Component
 
     <section class="px-4 pt-8 pb-20">
         <div class="mx-auto max-w-4xl">
-            <div class="glass reveal rounded-3xl p-8 text-center md:p-14">
+            <div class="glass rounded-3xl p-8 text-center md:p-14">
                 <h2 class="text-crystal text-[clamp(1.7rem,3.4vw,2.4rem)] leading-tight font-semibold tracking-[-.025em]">
                     Thank you, genuinely.
                 </h2>
-                <p class="mx-auto mt-5 max-w-xl leading-relaxed text-white/50">
+                <p class="mx-auto mt-5 max-w-xl leading-relaxed text-soft">
                     Every contribution goes into the work.
                 </p>
                 <div class="mt-9 flex flex-wrap justify-center gap-3">

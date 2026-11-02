@@ -18,7 +18,7 @@ new #[Title('Timings report')] class extends Component
 ?>
 
 <div class="px-3">
-    <div class="mx-auto max-w-[96rem] pb-16">
+    <div class="mx-auto max-w-[96rem] pt-10 pb-16">
         <div class="mb-3 flex flex-wrap items-center justify-between gap-3 px-1">
             <span class="pill">Timings report</span>
             <a href="{{ route('timings.download', ['key' => $key]) }}" class="btn btn-ghost px-4 py-2 text-sm" download>
@@ -29,9 +29,9 @@ new #[Title('Timings report')] class extends Component
 
         {{-- The viewer builds everything inside this node, so Livewire must leave it alone. --}}
         <div wire:ignore data-timings-viewer data-src="{{ route('timings.data', ['key' => $key]) }}">
-            <p class="py-24 text-center text-sm text-white/40">Loading the report...</p>
+            <p class="py-24 text-center text-sm text-muted">Loading the report...</p>
         </div>
 
-        <p class="mt-12 px-1 text-xs text-white/30">Reports are kept for {{ \App\Support\TimingReports::RETENTION_DAYS }} days. Anyone with the link can read this one.</p>
+        <p class="mt-12 px-1 text-xs text-muted">Reports are kept for {{ \App\Support\TimingReports::RETENTION_DAYS }} days. Anyone with the link can read this one.</p>
     </div>
 </div>

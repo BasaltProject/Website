@@ -49,13 +49,13 @@ new class extends Component
 
 <div class="glass scroll-mt-28 rounded-3xl p-7 md:p-9" id="support"
      @if ($gradient) style="--tier-from: {{ $gradient[0] }}; --tier-to: {{ $gradient[1] }};" @endif>
-    <div class="flex rounded-full border border-white/8 bg-white/4 p-1" role="group" aria-label="Donation frequency">
+    <div class="flex rounded-full border border-line bg-base p-1" role="group" aria-label="Donation frequency">
         @foreach (['monthly' => 'Monthly', 'once' => 'One-time'] as $value => $text)
             <button type="button" wire:click="$set('frequency', '{{ $value }}')"
                     @class([
-                        'flex-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300',
-                        'bg-white/12 text-white' => $frequency === $value,
-                        'text-white/50 hover:text-white/85' => $frequency !== $value,
+                        'flex-1 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150',
+                        'bg-raised text-ink' => $frequency === $value,
+                        'text-soft hover:text-ink' => $frequency !== $value,
                     ])
                     aria-pressed="{{ $frequency === $value ? 'true' : 'false' }}">{{ $text }}</button>
         @endforeach
@@ -65,10 +65,10 @@ new class extends Component
         @foreach ($this->amounts() as $value)
             <button type="button" wire:click="$set('amount', {{ $value }})"
                     @class([
-                        'rounded-xl border px-3 py-3.5 text-base font-semibold transition-all duration-300',
+                        'rounded-xl border px-3 py-3.5 text-base font-semibold transition-all duration-150',
                         'amount-selected' => $amount === $value && $gradient,
-                        'border-white/25 bg-white/12 text-white' => $amount === $value && ! $gradient,
-                        'border-white/8 bg-white/4 text-white/60 hover:border-white/18 hover:text-white/90' => $amount !== $value,
+                        'border-muted bg-base text-ink' => $amount === $value && ! $gradient,
+                        'border-line bg-raised text-soft hover:border-slate hover:text-ink' => $amount !== $value,
                     ])>{{ config('basalt.donate.currency') }}{{ $value }}</button>
         @endforeach
     </div>
@@ -81,21 +81,21 @@ new class extends Component
                 // Ash and Obsidian take "an", Slate and Magma take "a".
                 $article = str_contains('aeiou', strtolower($this->tier['name'][0])) ? 'an' : 'a';
             @endphp
-            <p class="text-center text-white/70">
+            <p class="text-center text-soft">
                 Become {{ $article }} <span class="tier-name font-semibold">{{ $this->tier['name'] }}</span> supporter
             </p>
             <div class="rule mt-3.5"></div>
-            <ul class="mt-4 space-y-2.5 text-sm text-white/55">
+            <ul class="mt-4 space-y-2.5 text-sm text-soft">
                 @foreach ($this->tier['perks'] as $perk)
                     <li class="flex gap-2.5">
-                        <x-icon.check class="mt-0.5 shrink-0 text-white/35" width="13" height="13" />
+                        <x-icon.check class="mt-0.5 shrink-0 text-muted" width="13" height="13" />
                         <span>{{ $perk }}</span>
                     </li>
                 @endforeach
             </ul>
         </div>
     @elseif ($frequency === 'once')
-        <p class="mt-7 text-center text-sm leading-relaxed text-white/45">
+        <p class="mt-7 text-center text-sm leading-relaxed text-muted">
             A one-time gift carries no tier and needs no account. It just helps.
         </p>
     @endif
@@ -112,7 +112,7 @@ new class extends Component
         @endif
     </a>
 
-    <p class="mt-4 text-center text-xs leading-relaxed text-white/35">
+    <p class="mt-4 text-center text-xs leading-relaxed text-muted">
         Handled by GitHub Sponsors. Cancel a monthly gift whenever you like.
     </p>
 </div>

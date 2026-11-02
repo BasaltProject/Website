@@ -1,91 +1,93 @@
-// Progressive enhancement only: without JS every element stays visible and static.
-document.documentElement.classList.add('js');
+// Documentation enhancements. Everything re-runs on livewire:navigated, because
+// wire:navigate swaps the page without reloading this module.
 
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+let savedSidebar = null;
 
-let observer = null;
+function addCopyButtons() {
+    document.querySelectorAll('.code-block').forEach((block) => {
+        if (block.querySelector('.code-copy')) return;
 
-// @persist keeps the same node, but re-attaching it restarts its CSS animations.
-// Saving the offsets and putting them back is what keeps the background going.
-let blobOffsets = [];
-
-function backgroundAnimations() {
-    if (typeof Element.prototype.getAnimations !== 'function') return [];
-
-    return Array.from(document.querySelectorAll('.blob'))
-        .map((el) => el.getAnimations()[0])
-        .filter(Boolean);
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'code-copy';
+        button.textContent = 'Copy';
+        button.setAttribute('aria-label', 'Copy code to clipboard');
+        block.appendChild(button);
+    });
 }
 
-function storeBackgroundProgress() {
-    blobOffsets = backgroundAnimations().map((animation) => animation.currentTime);
-}
+document.addEventListener('click', async (event) => {
+    const button = event.target.closest?.('.code-copy');
+    if (!button) return;
 
-function restoreBackgroundProgress() {
-    if (!blobOffsets.length) return;
+    const code = button.closest('.code-block')?.querySelector('pre');
+    if (!code) return;
 
-    const apply = () => {
-        const animations = backgroundAnimations();
-        animations.forEach((animation, index) => {
-            if (blobOffsets[index] != null) animation.currentTime = blobOffsets[index];
-        });
-
-        return animations.length > 0;
-    };
-
-    // The re-attached node may not have had its animations created yet.
-    if (!apply()) requestAnimationFrame(apply);
-}
-
-function revealOnScroll({ instant = false } = {}) {
-    const targets = document.querySelectorAll('.reveal:not(.is-visible)');
-
-    if (reduced.matches || !('IntersectionObserver' in window)) {
-        targets.forEach((el) => el.classList.add('is-visible'));
-        return;
+    try {
+        await navigator.clipboard.writeText(code.innerText.replace(/\n$/, ''));
+        button.textContent = 'Copied';
+        button.setAttribute('data-copied', '');
+    } catch {
+        button.textContent = 'Press Ctrl+C';
     }
 
-    observer ??= new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            // Stagger siblings so a row of cards arrives as a sequence, not a block.
-            const delay = Number(entry.target.dataset.revealDelay ?? 0);
-            setTimeout(() => entry.target.classList.add('is-visible'), delay);
-            observer.unobserve(entry.target);
-        });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.05 });
+    setTimeout(() => {
+        button.textContent = 'Copy';
+        button.removeAttribute('data-copied');
+    }, 1600);
+});
 
-    targets.forEach((el) => {
-        // On a new page, what is already on screen appears at once: staggering it
-        // would run under a <main> that is still invisible.
-        if (instant && el.getBoundingClientRect().top < window.innerHeight) {
-            el.classList.add('is-instant', 'is-visible');
-            return;
+// "On this page": the active heading is the last one whose top is above 200px.
+let spyScroll = null;
+
+function stopScrollSpy() {
+    if (spyScroll) {
+        window.removeEventListener('scroll', spyScroll);
+        window.removeEventListener('resize', spyScroll);
+        spyScroll = null;
+    }
+}
+
+function initScrollSpy() {
+    stopScrollSpy();
+
+    const links = [...document.querySelectorAll('[data-toc-link]')];
+    if (!links.length) return;
+
+    const entries = [];
+    links.forEach((link) => {
+        const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+        if (heading) entries.push(heading);
+    });
+    if (!entries.length) return;
+
+    const update = () => {
+        const atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+        let current = null;
+
+        if (atEnd) current = entries[entries.length - 1].id;
+        else for (const heading of entries) {
+            if (heading.getBoundingClientRect().top <= 200) current = heading.id;
         }
 
-        observer.observe(el);
-    });
-
-    if (instant) {
-        requestAnimationFrame(() => {
-            document.querySelectorAll('.is-instant').forEach((el) => el.classList.remove('is-instant'));
+        links.forEach((link) => {
+            if (current !== null && decodeURIComponent(link.hash.slice(1)) === current) link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
         });
-    }
-}
+    };
 
-// Cards track the pointer so the highlight reads as a reflection on the facet.
-function trackPointerOnCards(event) {
-    const card = event.target.closest?.('.card');
-    if (!card) return;
+    let frame = 0;
+    spyScroll = () => {
+        if (frame) return;
+        frame = requestAnimationFrame(() => {
+            frame = 0;
+            update();
+        });
+    };
 
-    const rect = card.getBoundingClientRect();
-    card.style.setProperty('--mx', `${event.clientX - rect.left}px`);
-    card.style.setProperty('--my', `${event.clientY - rect.top}px`);
-}
-
-function syncNavElevation() {
-    const nav = document.querySelector('[data-nav]');
-    if (nav) nav.classList.toggle('is-scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', spyScroll, { passive: true });
+    window.addEventListener('resize', spyScroll, { passive: true });
+    update();
 }
 
 // The timings viewer is a page of its own with a lot of code, so only that page loads it.
@@ -94,20 +96,81 @@ function mountTimings() {
     if (root && !root.dataset.ready) import('./timings.js').then((module) => module.mount(root));
 }
 
-function init(options) {
-    revealOnScroll(options);
-    syncNavElevation();
-    mountTimings();
+// Keep the sidebar where it was across wire:navigate; otherwise centre the active page.
+// The old snapshot is painted at the new page's scroll position, which flashes the top of the
+// old page when navigating from below. Shift it by the scroll difference so it stays in place.
+let scrollBefore = 0;
+let fromHistory = false;
+let instantNav = false;
+const isDocPage = (path) => /^\/docs\/[^/]+\/.+/.test(path);
+
+document.addEventListener('livewire:navigate', (event) => {
+    fromHistory = Boolean(event.detail?.history);
+    // Reading the docs should feel like one page.
+    instantNav = isDocPage(window.location.pathname) && isDocPage(new URL(event.detail.url, window.location.origin).pathname);
+    document.documentElement.classList.toggle('instant-nav', instantNav);
+});
+
+document.addEventListener('livewire:navigated', () => {
+    // Livewire replaces the attributes of <html> during the swap.
+    document.documentElement.classList.toggle('instant-nav', instantNav);
+    // Normal navigation ends at 0 but window.scrollY is not reset yet here; history has it restored.
+    const target = fromHistory ? window.scrollY : 0;
+    document.documentElement.style.setProperty('--vt-offset', `${target - scrollBefore}px`);
+});
+
+document.addEventListener('livewire:navigating', () => {
+    scrollBefore = window.scrollY;
+    stopScrollSpy();
+    const nav = document.querySelector('[data-sidebar-scroll]');
+    savedSidebar = nav ? { section: nav.dataset.section, top: nav.scrollTop } : null;
+});
+
+function restoreSidebar() {
+    const nav = document.querySelector('[data-sidebar-scroll]');
+
+    if (nav && savedSidebar && savedSidebar.section === nav.dataset.section) {
+        nav.scrollTop = savedSidebar.top;
+    } else if (nav) {
+        const active = nav.querySelector('[data-active]');
+        if (active) {
+            const offset = active.getBoundingClientRect().top - nav.getBoundingClientRect().top;
+            nav.scrollTop += offset - nav.clientHeight / 3;
+        }
+    }
+
+    savedSidebar = null;
 }
 
-document.addEventListener('pointermove', trackPointerOnCards, { passive: true });
-window.addEventListener('scroll', syncNavElevation, { passive: true });
+function usesMac() {
+    return /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+}
 
-document.addEventListener('livewire:navigating', storeBackgroundProgress);
-document.addEventListener('livewire:navigated', () => {
-    restoreBackgroundProgress();
-    init({ instant: true });
+function init() {
+    addCopyButtons();
+    initScrollSpy();
+    restoreSidebar();
+    mountTimings();
+
+    if (usesMac()) document.querySelectorAll('[data-kbd]').forEach((el) => (el.textContent = '⌘K'));
+}
+
+// Ctrl+K / Cmd+K focuses the docs search. On small screens the menu opens first.
+document.addEventListener('keydown', (event) => {
+    if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== 'k') return;
+
+    const inputs = [...document.querySelectorAll('[data-docs-search]')];
+    if (!inputs.length) return;
+
+    event.preventDefault();
+
+    const visible = inputs.find((input) => input.offsetParent !== null);
+    if (visible) return visible.focus();
+
+    window.dispatchEvent(new CustomEvent('docs-open-menu'));
+    setTimeout(() => inputs.find((input) => input.offsetParent !== null)?.focus(), 50);
 });
-document.addEventListener('DOMContentLoaded', () => init());
 
-init();
+document.addEventListener('livewire:navigated', init);
+if (document.readyState !== 'loading') init();
+else document.addEventListener('DOMContentLoaded', init);

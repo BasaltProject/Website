@@ -9,7 +9,7 @@ new #[Title('Open a timings report')] class extends Component
 ?>
 
 <div class="px-3">
-    <div class="mx-auto max-w-[96rem] pb-16">
+    <div class="mx-auto max-w-[96rem] pt-10 pb-16">
         <div class="mb-3 px-1">
             <span class="pill">Timings report</span>
         </div>
