@@ -22,6 +22,9 @@ class Mdx
             ['html_input' => 'allow', 'allow_unsafe_links' => false],
         );
 
+        // Internal links navigate through Livewire; done before the code comes back so blocks stay untouched.
+        $html = preg_replace('/<a href="\/(?!\/)/', '<a wire:navigate href="/', $html);
+
         $html = self::restoreCodeBlocks($html, $blocks);
 
         // Wide tables scroll inside their own box instead of widening the page.

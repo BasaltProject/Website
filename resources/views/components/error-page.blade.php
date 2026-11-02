@@ -8,8 +8,8 @@
             <p class="mt-4 max-w-md leading-relaxed text-soft">{{ $message }}</p>
 
             <div class="mt-9 flex flex-wrap justify-center gap-3">
-                <a href="{{ route('home') }}" class="btn btn-primary">Back to home</a>
-                <a href="{{ route('docs') }}" class="btn btn-ghost">Read the docs</a>
+                <a wire:navigate href="{{ route('home') }}" class="btn btn-primary">Back to home</a>
+                <a wire:navigate href="{{ route('docs') }}" class="btn btn-ghost">Read the docs</a>
             </div>
         </div>
     </section>

@@ -97,7 +97,23 @@ function mountTimings() {
 }
 
 // Keep the sidebar where it was across wire:navigate; otherwise centre the active page.
+// The old snapshot is painted at the new page's scroll position, which flashes the top of the
+// old page when navigating from below. Shift it by the scroll difference so it stays in place.
+let scrollBefore = 0;
+let fromHistory = false;
+
+document.addEventListener('livewire:navigate', (event) => {
+    fromHistory = Boolean(event.detail?.history);
+});
+
+document.addEventListener('livewire:navigated', () => {
+    // Normal navigation ends at 0 but window.scrollY is not reset yet here; history has it restored.
+    const target = fromHistory ? window.scrollY : 0;
+    document.documentElement.style.setProperty('--vt-offset', `${target - scrollBefore}px`);
+});
+
 document.addEventListener('livewire:navigating', () => {
+    scrollBefore = window.scrollY;
     stopScrollSpy();
     const nav = document.querySelector('[data-sidebar-scroll]');
     savedSidebar = nav ? { section: nav.dataset.section, top: nav.scrollTop } : null;

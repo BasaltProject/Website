@@ -293,13 +293,17 @@ p code, li code, .prose-basalt code, .callout-body code { overflow-wrap: anywher
 
 /* Page transition on wire:navigate. Livewire names <main> "livewire-navigate"
    (wire:transition.navigate); the header is pinned under its own name so it stays still. */
-html { background: var(--color-base); }
+html { background: var(--color-base); scrollbar-gutter: stable; }
 
 ::view-transition { background: var(--color-base); }
 
 ::view-transition-group(site-nav) { animation: none; }
 ::view-transition-old(site-nav) { display: none; }
 ::view-transition-new(site-nav) { animation: none; }
+
+::view-transition-group(site-footer) { animation: none; }
+::view-transition-old(site-footer) { display: none; }
+::view-transition-new(site-footer) { animation: page-in 220ms cubic-bezier(.22, 1, .36, 1) 90ms both; }
 
 ::view-transition-group(livewire-navigate) { animation: none; }
 
@@ -316,7 +320,10 @@ html { background: var(--color-base); }
     animation: page-in 220ms cubic-bezier(.22, 1, .36, 1) 90ms both;
 }
 
-@keyframes page-out { to { opacity: 0; } }
+@keyframes page-out {
+    from { transform: translateY(var(--vt-offset, 0px)); }
+    to { opacity: 0; transform: translateY(var(--vt-offset, 0px)); }
+}
 
 @keyframes page-in {
     from { opacity: 0; transform: translateY(8px); }

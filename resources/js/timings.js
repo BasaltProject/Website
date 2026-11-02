@@ -262,7 +262,7 @@ function sourceEntries(profile) {
 // ---------------------------------------------------------------------------------------------------------------
 // Charts
 
-function lineChart(host, { title, unit, series, seconds, yMax, format, note }) {
+function lineChart(host, { title, unit, series, seconds, yMax, format, note, average }) {
     const wrap = document.createElement('div');
     wrap.className = 'glass tv-chart';
     const points = seconds.length;
@@ -297,20 +297,35 @@ function lineChart(host, { title, unit, series, seconds, yMax, format, note }) {
     }
     const cursor = svg('line', { y1: 0, y2: H, stroke: '#949aa6', 'vector-effect': 'non-scaling-stroke', visibility: 'hidden' });
     el.appendChild(cursor);
-    wrap.appendChild(el);
+    const plot = document.createElement('div');
+    plot.className = 'tv-plot';
+    plot.appendChild(el);
+    plot.insertAdjacentHTML('beforeend', `<span class="tv-y tv-y-top">${esc(format(top))}</span><span class="tv-y tv-y-bottom">${esc(format(0))}</span>`);
+    wrap.appendChild(plot);
 
     const axis = document.createElement('div');
     axis.className = 'tv-legend tv-mono';
     axis.style.justifyContent = 'space-between';
-    axis.innerHTML = `<span>${fmtClock(seconds[0])}</span><span>0 - ${format(top)}</span><span>${fmtClock(seconds[points - 1])}</span>`;
+    axis.style.paddingLeft = '3.75rem';
+    axis.innerHTML = `<span>${fmtClock(seconds[0])}</span><span>${fmtClock(seconds[points - 1])}</span>`;
     wrap.appendChild(axis);
     const legend = document.createElement('div');
     legend.className = 'tv-legend';
     legend.innerHTML = live.map((s) => `<span><i style="background:${s.color}"></i>${esc(s.name)}</span>`).join('');
     wrap.appendChild(legend);
 
-    const last = live.map((s) => format(s.values[points - 1] ?? 0)).join(' / ');
-    wrap.querySelector('[data-now]').textContent = last;
+    const lastOf = (s) => format(s.values[points - 1] ?? 0);
+    let head;
+    if (live.length === 1) {
+        head = `last ${lastOf(live[0])}`;
+        if (average) {
+            const avg = mean(live[0].values.filter((v) => v != null));
+            if (avg != null) head = `avg ${format(avg)} · ${head}`;
+        }
+    } else {
+        head = `last: ${live.map((s) => `${s.name} ${lastOf(s)}`).join(' · ')}`;
+    }
+    wrap.querySelector('[data-now]').textContent = head;
 
     const tip = document.createElement('div');
     tip.className = 'tv-tip';
@@ -422,7 +437,7 @@ class Viewer {
         this.root = root;
         this.data = data;
         this.profile = new Profile(data);
-        this.state = { view: 'all', label: 'percent', selfMode: false, query: '', info: false, tab: 'platform', metrics: true, flame: null };
+        this.state = { view: 'all', query: '', section: 'summary', flame: null };
         this.meta = data.metadata || {};
         this.server = data.server || {};
         this.system = data.system || {};
@@ -439,21 +454,33 @@ class Viewer {
             <div class="glass tv-bar" data-controls>
                 <div class="tv-title"><b>Basalt ${this.data.type === 'proxy' ? 'Proxy' : 'Server'} ${esc(platform.version || this.data.basalt || '')}</b> profile
                     <small>${esc(user)} @ ${esc(started)}, profiled ${fmtDuration(this.meta.measured_seconds ?? this.data.measured_seconds)}</small></div>
-                <button class="tv-btn is-solo" data-act="info" aria-pressed="false">Info</button>
-                <button class="tv-btn is-solo" data-act="metrics" aria-pressed="true">Metrics</button>
                 <div class="tv-group">
-                    <button class="tv-btn" data-view="all" aria-pressed="true">All</button>
-                    <button class="tv-btn" data-view="flat" aria-pressed="false">Flat</button>
-                    <button class="tv-btn" data-view="plugins" aria-pressed="false">Plugins</button>
-                    <button class="tv-btn" data-view="flame" aria-pressed="false">Flame</button>
+                    <button class="tv-btn" data-section="summary" aria-pressed="true">Summary</button>
+                    <button class="tv-btn" data-section="profiler" aria-pressed="false">Profiler</button>
+                    <button class="tv-btn" data-section="server" aria-pressed="false">${this.data.type === 'proxy' ? 'Proxy' : 'Server'}</button>
                 </div>
-                <input class="tv-search" type="search" placeholder="Search frames" data-search>
             </div>
-            <div class="tv-widgets" data-widgets style="margin-top:.75rem"></div>
-            <div data-info hidden style="margin-top:.75rem"></div>
-            <div data-metrics style="margin-top:.75rem"></div>
-            <div data-windows style="margin-top:.75rem"></div>
-            <div data-profile></div>`;
+            <div data-section-body="summary">
+                <div class="tv-widgets" data-widgets style="margin-top:.75rem"></div>
+                <p class="tv-scale" data-scale hidden></p>
+                <div data-metrics style="margin-top:.75rem"></div>
+            </div>
+            <div data-section-body="profiler" hidden>
+                <div data-windows style="margin-top:.75rem"></div>
+                <div class="glass tv-bar" data-profile-bar style="margin-top:.75rem">
+                    <div class="tv-group">
+                        <button class="tv-btn" data-view="all" aria-pressed="true">All</button>
+                        <button class="tv-btn" data-view="flat" aria-pressed="false">Flat</button>
+                        <button class="tv-btn" data-view="plugins" aria-pressed="false">Plugins</button>
+                        <button class="tv-btn" data-view="flame" aria-pressed="false">Flame</button>
+                    </div>
+                    <input class="tv-search" type="search" placeholder="Search frames" data-search>
+                </div>
+                <div data-profile></div>
+            </div>
+            <div data-section-body="server" hidden>
+                <div data-info style="margin-top:.75rem"></div>
+            </div>`;
         this.widgets();
         this.info();
         this.charts();
@@ -465,23 +492,19 @@ class Viewer {
     bind() {
         const root = this.root;
         root.querySelector('[data-controls]').addEventListener('click', (event) => {
-            const button = event.target.closest('button');
+            const button = event.target.closest('[data-section]');
             if (!button) return;
-            if (button.dataset.view) {
-                this.state.view = button.dataset.view;
-                this.state.flame = null;
-                root.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
-                this.profileView();
-            } else if (button.dataset.act === 'info') {
-                this.state.info = !this.state.info;
-                button.setAttribute('aria-pressed', String(this.state.info));
-                root.querySelector('[data-info]').hidden = !this.state.info;
-            } else if (button.dataset.act === 'metrics') {
-                this.state.metrics = !this.state.metrics;
-                button.setAttribute('aria-pressed', String(this.state.metrics));
-                root.querySelector('[data-metrics]').hidden = !this.state.metrics;
-                root.querySelector('[data-windows]').hidden = !this.state.metrics;
-            }
+            this.state.section = button.dataset.section;
+            root.querySelectorAll('[data-section]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+            root.querySelectorAll('[data-section-body]').forEach((b) => (b.hidden = b.dataset.sectionBody !== this.state.section));
+        });
+        root.querySelector('[data-profile-bar]').addEventListener('click', (event) => {
+            const button = event.target.closest('[data-view]');
+            if (!button) return;
+            this.state.view = button.dataset.view;
+            this.state.flame = null;
+            root.querySelectorAll('[data-view]').forEach((b) => b.setAttribute('aria-pressed', String(b === button)));
+            this.profileView();
         });
         let timer;
         root.querySelector('[data-search]').addEventListener('input', (event) => {
@@ -549,34 +572,17 @@ class Viewer {
             .filter(Boolean)
             .join('');
         this.root.querySelector('[data-widgets]').innerHTML = html;
+        const scale = this.root.querySelector('[data-scale]');
+        scale.hidden = !html;
+        scale.innerHTML = html
+            ? '<span class="tv-good">Good</span>: TPS ≥ 19, MSPT ≤ 35 ms, usage &lt; 60%. <span class="tv-warn">Warning</span>: TPS ≥ 15, MSPT ≤ 50 ms, usage &lt; 85%. <span class="tv-bad">Critical</span>: anything worse.'
+            : '';
     }
 
     // -- info panel ---------------------------------------------------------------------------------------------
 
     info() {
         const host = this.root.querySelector('[data-info]');
-        const tabs = [
-            ['platform', 'Platform'],
-            ['system', 'System'],
-            ['world', 'Worlds'],
-            ['config', 'Configuration'],
-            ['plugins', `Plugins (${(this.data.plugins || []).length})`],
-        ];
-        host.innerHTML = `<div class="glass tv-panel"><div class="tv-tabs">${tabs
-            .map(([id, label]) => `<button class="tv-btn ${id === this.state.tab ? 'is-on' : ''}" data-tab="${id}">${label}</button>`)
-            .join('')}</div><div data-tab-body></div></div>`;
-        host.addEventListener('click', (event) => {
-            const tab = event.target.closest('[data-tab]');
-            if (!tab) return;
-            this.state.tab = tab.dataset.tab;
-            host.querySelectorAll('[data-tab]').forEach((b) => b.classList.toggle('is-on', b === tab));
-            this.tabBody();
-        });
-        this.tabBody();
-    }
-
-    tabBody() {
-        const body = this.root.querySelector('[data-tab-body]');
         const kv = (rows) =>
             `<dl class="tv-kv">${rows
                 .filter(([, v]) => v != null && v !== '')
@@ -590,41 +596,39 @@ class Viewer {
         const s = this.system;
         const sv = this.server;
 
-        if (this.state.tab === 'platform') {
-            body.innerHTML = kv([
-                ['Server', `${platform.brand || 'Basalt'} ${platform.version || ''}`],
-                ['Minecraft', platform.minecraft ? `${platform.minecraft} (protocol ${platform.protocol})` : null],
-                ['Uptime', sv.uptime_seconds != null ? fmtDuration(sv.uptime_seconds) : null],
-                ['Players', sv.players_online != null ? `${sv.players_online} / ${sv.players_max}` : null],
-                ['Profiled by', user],
-                ['Profiled for', fmtDuration(this.meta.measured_seconds)],
-                ['Window size', `${this.meta.window_seconds || 10}s`],
-                ['Chunks loaded', sv.chunks_loaded != null ? num(sv.chunks_loaded) : null],
-                ['Chunk data in memory', sv.chunk_bytes != null ? fmtBytes(sv.chunk_bytes) : null],
-                ['Region cache', sv.region_cache_bytes != null ? fmtBytes(sv.region_cache_bytes) : null],
-                ['Block entities', sv.chunk_block_entities != null ? num(sv.chunk_block_entities) : null],
-                ['Scheduled ticks', sv.chunk_scheduled_ticks != null ? num(sv.chunk_scheduled_ticks) : null],
-                ['Worldgen templates', sv.worldgen_templates ? `${num(sv.worldgen_templates)} (${num(sv.worldgen_template_blocks)} blocks)` : null],
-            ]);
-        } else if (this.state.tab === 'system') {
-            body.innerHTML =
-                kv([
-                    ['Operating system', [s.os, s.os_version].filter(Boolean).join(' ')],
-                    ['Architecture', s.arch],
-                    ['CPU', s.cpu_model],
-                    ['Threads', s.cpu_threads],
-                    ['Process CPU', sv.cpu_process_percent != null ? `${fixed(sv.cpu_process_percent)}% of the machine` : null],
-                    ['Process memory', sv.process_resident_bytes != null ? fmtBytes(sv.process_resident_bytes) : null],
-                ]) +
-                meter('Physical memory', s.memory_used, s.memory_total) +
-                meter('Swap', s.swap_used, s.swap_total) +
-                meter('Disk', s.disk_used, s.disk_total);
-        } else if (this.state.tab === 'world') {
-            const ws = this.data.world_statistics || {};
-            const worlds = ws.worlds || [];
-            const counts = Object.entries(ws.entity_counts || {}).sort((a, b) => b[1] - a[1]);
-            const top = counts[0]?.[1] || 1;
-            body.innerHTML = `<div class="tv-split"><div>
+        const platformHtml = kv([
+            ['Server', `${platform.brand || 'Basalt'} ${platform.version || ''}`],
+            ['Minecraft', platform.minecraft ? `${platform.minecraft} (protocol ${platform.protocol})` : null],
+            ['Uptime', sv.uptime_seconds != null ? fmtDuration(sv.uptime_seconds) : null],
+            ['Players', sv.players_online != null ? `${sv.players_online} / ${sv.players_max}` : null],
+            ['Profiled by', user],
+            ['Profiled for', fmtDuration(this.meta.measured_seconds)],
+            ['Window size', `${this.meta.window_seconds || 10}s`],
+            ['Chunks loaded', sv.chunks_loaded != null ? num(sv.chunks_loaded) : null],
+            ['Chunk data in memory', sv.chunk_bytes != null ? fmtBytes(sv.chunk_bytes) : null],
+            ['Region cache', sv.region_cache_bytes != null ? fmtBytes(sv.region_cache_bytes) : null],
+            ['Block entities', sv.chunk_block_entities != null ? num(sv.chunk_block_entities) : null],
+            ['Scheduled ticks', sv.chunk_scheduled_ticks != null ? num(sv.chunk_scheduled_ticks) : null],
+            ['Worldgen templates', sv.worldgen_templates ? `${num(sv.worldgen_templates)} (${num(sv.worldgen_template_blocks)} blocks)` : null],
+        ]);
+        const systemHtml =
+            kv([
+                ['Operating system', [s.os, s.os_version].filter(Boolean).join(' ')],
+                ['Architecture', s.arch],
+                ['CPU', s.cpu_model],
+                ['Threads', s.cpu_threads],
+                ['Process CPU', sv.cpu_process_percent != null ? `${fixed(sv.cpu_process_percent)}% of the machine` : null],
+                ['Process memory', sv.process_resident_bytes != null ? fmtBytes(sv.process_resident_bytes) : null],
+            ]) +
+            meter('Physical memory', s.memory_used, s.memory_total) +
+            meter('Swap', s.swap_used, s.swap_total) +
+            meter('Disk', s.disk_used, s.disk_total);
+
+        const ws = this.data.world_statistics || {};
+        const worlds = ws.worlds || [];
+        const counts = Object.entries(ws.entity_counts || {}).sort((a, b) => b[1] - a[1]);
+        const top = counts[0]?.[1] || 1;
+        const worldsHtml = `<div class="tv-split"><div>
                 <h4 class="tv-h">Worlds (${num(ws.total_entities)} entities)</h4>
                 <table class="tv-table"><thead><tr><th>World</th><th>Chunks</th><th>Entities</th><th>Block entities</th><th>Players</th></tr></thead><tbody>${
                     worlds
@@ -637,30 +641,37 @@ class Viewer {
                         .map(([name, n]) => `<span class="name">${esc(name)}</span><span class="num">${num(n)}</span><div class="track"><i style="width:${(n / top) * 100}%"></i></div>`)
                         .join('') || '<span class="name tv-dim">No entities</span>'
                 }</div></div></div>`;
-        } else if (this.state.tab === 'config') {
-            const entries = Object.entries(this.data.configuration || {});
-            body.innerHTML = entries.length ? kv(entries) : '<p class="tv-note">No configuration was included.</p>';
-        } else {
-            const plugins = this.data.plugins || [];
-            body.innerHTML = plugins.length
-                ? `<table class="tv-table"><thead><tr><th>Plugin</th><th>Id</th><th>Version</th><th>Errors</th></tr></thead><tbody>${plugins
-                      .map((p) => `<tr><td>${esc(p.name)}${p.disabled ? ' <span class="tv-bad">(disabled)</span>' : ''}</td><td>${esc(p.id)}</td><td>${esc(p.version)}</td><td>${num(p.errors)}</td></tr>`)
-                      .join('')}</tbody></table>`
-                : '<p class="tv-note">No plugins loaded.</p>';
-        }
+
+        const entries = Object.entries(this.data.configuration || {});
+        const configHtml = entries.length ? kv(entries) : '<p class="tv-note">No configuration was included.</p>';
+
+        const plugins = this.data.plugins || [];
+        const pluginsHtml = plugins.length
+            ? `<table class="tv-table"><thead><tr><th>Plugin</th><th>Id</th><th>Version</th><th>Errors</th></tr></thead><tbody>${plugins
+                  .map((p) => `<tr><td>${esc(p.name)}${p.disabled ? ' <span class="tv-bad">(disabled)</span>' : ''}</td><td>${esc(p.id)}</td><td>${esc(p.version)}</td><td>${num(p.errors)}</td></tr>`)
+                  .join('')}</tbody></table>`
+            : '<p class="tv-note">No plugins loaded.</p>';
+
+        host.innerHTML = `<div class="tv-server-grid">
+                <div class="glass tv-panel"><h4 class="tv-h">Platform</h4>${platformHtml}</div>
+                <div class="glass tv-panel"><h4 class="tv-h">System</h4>${systemHtml}</div>
+                <div class="glass tv-panel"><h4 class="tv-h">Configuration</h4>${configHtml}</div>
+            </div>
+            <div class="glass tv-panel" style="margin-top:.75rem">${worldsHtml}</div>
+            <div class="glass tv-panel" style="margin-top:.75rem"><h4 class="tv-h">Plugins (${plugins.length})</h4>${pluginsHtml}</div>`;
     }
 
     // -- metric charts ------------------------------------------------------------------------------------------
 
     charts() {
         const host = this.root.querySelector('[data-metrics]');
-        host.innerHTML = '<div class="tv-charts"></div>';
-        const grid = host.firstChild;
+        host.innerHTML = '<div class="tv-charts is-large"></div><div class="tv-charts is-medium"></div><div class="tv-charts is-small"></div>';
+        const [large, medium, small] = host.children;
         const m = this.metrics;
         const seconds = m.seconds || [];
         const col = (key) => m[key] || [];
-        lineChart(grid, { title: 'TPS', seconds, yMax: 20, format: (v) => fixed(v, 1), series: [{ name: 'TPS', color: '#6ee7b7', values: col('tps') }] });
-        lineChart(grid, {
+        lineChart(large, { title: 'TPS', seconds, yMax: 20, average: true, format: (v) => fixed(v, 1), series: [{ name: 'TPS', color: '#6ee7b7', values: col('tps') }] });
+        lineChart(large, {
             title: 'MSPT',
             seconds,
             format: (v) => `${fixed(v, 1)} ms`,
@@ -670,7 +681,7 @@ class Viewer {
                 { name: 'max', color: '#fb7185', values: col('mspt_max') },
             ],
         });
-        lineChart(grid, {
+        lineChart(medium, {
             title: 'CPU',
             seconds,
             yMax: 100,
@@ -680,15 +691,15 @@ class Viewer {
                 { name: 'system', color: '#c4b5fd', values: col('cpu_system') },
             ],
         });
-        lineChart(grid, {
+        lineChart(medium, {
             title: 'Memory',
             seconds,
             format: fmtBytes,
             series: [{ name: 'resident', color: '#93c5fd', values: col('memory_resident') }],
         });
-        lineChart(grid, { title: 'Players', seconds, format: (v) => fixed(v, 0), series: [{ name: 'players', color: '#6ee7b7', values: col('players') }] });
-        lineChart(grid, { title: 'Entities', seconds, format: (v) => num(Math.round(v)), series: [{ name: 'entities', color: '#fcd34d', values: col('entities') }] });
-        lineChart(grid, { title: 'Chunks', seconds, format: (v) => num(Math.round(v)), series: [{ name: 'loaded chunks', color: '#c4b5fd', values: col('chunks') }] });
+        lineChart(small, { title: 'Players', seconds, format: (v) => fixed(v, 0), series: [{ name: 'players', color: '#6ee7b7', values: col('players') }] });
+        lineChart(small, { title: 'Entities', seconds, format: (v) => num(Math.round(v)), series: [{ name: 'entities', color: '#fcd34d', values: col('entities') }] });
+        lineChart(small, { title: 'Chunks', seconds, format: (v) => num(Math.round(v)), series: [{ name: 'loaded chunks', color: '#c4b5fd', values: col('chunks') }] });
     }
 
     // -- window selection ---------------------------------------------------------------------------------------
@@ -710,7 +721,7 @@ class Viewer {
         host.innerHTML = `<div class="glass tv-windows">
             <div style="display:flex;justify-content:space-between;gap:1rem;margin-bottom:.4rem">
                 <b style="font-size:.78rem;letter-spacing:.06em">Refine profile</b>
-                <span class="tv-dim" style="font-size:.74rem" data-range>Drag across the graph to look at part of the run. Time in ${esc(busiest.name)} per second.</span>
+                <span class="tv-dim" style="font-size:.75rem" data-range>Drag across the graph to look at part of the run. Time in ${esc(busiest.name)} per second.</span>
                 <button class="tv-btn is-solo" data-reset hidden>Reset</button></div>
             <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"></svg></div>`;
         const el = host.querySelector('svg');
@@ -781,26 +792,16 @@ class Viewer {
             return;
         }
 
-        const labelButton = `<button class="tv-btn is-solo" data-label>${this.state.label === 'percent' ? 'Label: percentage' : 'Label: time'}</button>`;
-        const selfButton = view === 'flat' || view === 'flame' ? '' : `<button class="tv-btn is-solo" data-self aria-pressed="${this.state.selfMode}">Self time</button>`;
         const expand =
             view === 'flame' ? '' : '<button class="tv-btn is-solo" data-expand>Expand all</button><button class="tv-btn is-solo" data-collapse>Collapse all</button>';
         host.innerHTML = `<div class="tv-profile-head"><h2>${titles[0]}</h2><p>${titles[1]}</p>
-            <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem">${view === 'flame' ? '' : labelButton}${selfButton}${expand}</div></div>
+            ${expand ? `<div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.8rem">${expand}</div>` : ''}</div>
             <div class="glass ${view === 'flame' ? 'tv-flame' : 'tv-tree'}" data-tree></div>`;
 
         const tree = host.querySelector('[data-tree]');
         if (view === 'flame') this.flame(tree);
         else this.tree(tree, view);
 
-        host.querySelector('[data-label]')?.addEventListener('click', () => {
-            this.state.label = this.state.label === 'percent' ? 'time' : 'percent';
-            this.profileView();
-        });
-        host.querySelector('[data-self]')?.addEventListener('click', () => {
-            this.state.selfMode = !this.state.selfMode;
-            this.profileView();
-        });
         host.querySelector('[data-expand]')?.addEventListener('click', () => this.setAll(tree, true));
         host.querySelector('[data-collapse]')?.addEventListener('click', () => this.setAll(tree, false));
     }
@@ -833,7 +834,47 @@ class Viewer {
             tree.innerHTML = '<p class="tv-note">Nothing to show for this selection.</p>';
             return;
         }
-        for (const v of roots) tree.appendChild(this.nodeEl(v, 0, view));
+        const columns =
+            view === 'flat'
+                ? [
+                      ['Self %', 'Share of the total profile time spent in the frame itself, excluding what it calls.'],
+                      ['Self time', 'Time spent in the frame itself. For a caller row, the time it contributed to the frame above.'],
+                      ['Total time', 'Time spent in the frame including everything it calls.'],
+                      ['Calls', 'How many times the frame ran.'],
+                  ]
+                : [
+                      ['Total %', 'Share of the thread or view spent in the frame, including everything it calls.'],
+                      ['Self %', 'Share spent in the frame itself, excluding what it calls.'],
+                      ['Time', 'Time spent in the frame, including everything it calls.'],
+                      ['Calls', 'How many times the frame ran.'],
+                  ];
+        const inner = document.createElement('div');
+        inner.className = 'tv-inner';
+        inner.innerHTML = `<div class="tv-head"><span class="tv-caret"></span><span class="tv-main" title="Frame name">Name</span>${columns
+            .map(([name, hint]) => `<span class="tv-cell" title="${esc(hint)}">${name}</span>`)
+            .join('')}<span class="tv-mini-head" title="Bar width is the share of the thread or view; colour is the self time.">Bar</span></div>`;
+        tree.appendChild(inner);
+        this.appendNodes(inner, roots, 0, view);
+    }
+
+    // Appends rows, folding the negligible ones into one button unless a search is looking for them.
+    appendNodes(box, nodes, depth, view) {
+        const tiny = (v) => (v.denominator > 0 ? (view === 'flat' ? v.self : v.value) / v.denominator : 0) < 0.001;
+        const small = this.state.query ? [] : nodes.filter(tiny);
+        const keep = small.length > 1 ? nodes.filter((v) => !small.includes(v)) : nodes;
+        for (const v of keep) box.appendChild(this.nodeEl(v, depth, view));
+        if (small.length < 2) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'tv-more';
+        button.textContent = `${small.length} more frames under 0.1% (${fmtMs(sum(small.map((v) => v.value)))} total)`;
+        button._reveal = () => {
+            const rows = small.map((v) => this.nodeEl(v, depth, view));
+            button.replaceWith(...rows);
+            return rows.length;
+        };
+        button.addEventListener('click', () => button._reveal());
+        box.appendChild(button);
     }
 
     matches(v) {
@@ -853,23 +894,35 @@ class Viewer {
         const el = document.createElement('div');
         const kids = v.children();
         el.className = `tv-node${kids.length ? ' has-children' : ''}`;
-        const shown = this.state.selfMode && view !== 'flat' && !v.isThread && !v.label ? v.self : v.value;
-        const share = v.denominator > 0 ? shown / v.denominator : 0;
-        const heat = heatOf(share);
-        const label = this.state.label === 'percent' ? `${(share * 100).toFixed(share >= 0.1 ? 1 : 2)}%` : fmtMs(shown);
+        const share = v.denominator > 0 ? v.value / v.denominator : 0;
+        // Colour by the node's own time where it has one; threads and plugin groups keep the shown value.
+        const ownShare = v.isThread ? 0 : v.label || v.self == null ? share : v.denominator > 0 ? v.self / v.denominator : 0;
+        const heat = heatOf(ownShare);
+        const pct = (x) => `${(x * 100).toFixed(x >= 0.1 ? 1 : 2)}%`;
         const dot = v.name.lastIndexOf('.');
         const named = v.isThread || v.label ? esc(v.name) : dot > 0 ? `<em>${esc(v.name.slice(0, dot + 1))}</em>${esc(v.name.slice(dot + 1))}` : esc(v.name);
         const marked = this.matches(v) ? `<mark>${named}</mark>` : named;
-        const sub = v.label ? `<span class="tv-sub">${v.label}</span>` : v.calls ? `<span class="tv-sub">${num(v.calls)}x</span>` : '';
-        const extra = view === 'flat' && v.total != null && !v.thread ? `<span class="tv-sub">total ${fmtMs(v.total)}</span>` : '';
-        el.innerHTML = `<div class="tv-row"><span class="tv-caret">${kids.length ? '▶' : ''}</span><span class="tv-name" title="${esc(v.name)}">${marked}</span>
-            <span class="tv-badge heat-${heat}">${label}</span>${sub}${extra}<span class="tv-fill"></span>
+        const sub = v.label ? `<span class="tv-sub">${v.label}</span>` : '';
+        const hasSelf = !v.isThread && v.self != null && !(v.label && !v.self);
+        const selfText = hasSelf ? pct(v.denominator > 0 ? v.self / v.denominator : 0) : '-';
+        const selfTitle = hasSelf ? ` title="Self time: ${fmtMs(v.self)}"` : '';
+        const selfCell = `<span class="tv-cell"><span class="tv-badge heat-${heat}"${selfTitle}>${selfText}</span></span>`;
+        const cell = (text) => `<span class="tv-cell">${text}</span>`;
+        const calls = v.isThread || (v.label && !v.calls) ? '-' : num(v.calls);
+        const cells =
+            view === 'flat'
+                ? selfCell + cell(hasSelf ? fmtMs(v.self) : '-') + cell(depth === 0 && v.total != null ? fmtMs(v.total) : '-') + cell(calls)
+                : cell(pct(share)) + selfCell + cell(fmtMs(v.value)) + cell(calls);
+        el.innerHTML = `<div class="tv-row"><span class="tv-caret">${kids.length ? '▶' : ''}</span><span class="tv-main"><span class="tv-name" title="${esc(v.name)}">${marked}</span>${sub}</span>${cells}
             <div class="tv-mini"><i class="heat-${heat}" style="width:${Math.max(Math.min(share * 100, 100), share > 0 ? 1.5 : 0)}%"></i></div></div><div class="tv-kids"></div>`;
         el._v = v;
         el._depth = depth;
         el._view = view;
 
-        const shouldOpen = this.state.query ? this.below(v) : depth < 2 && share >= 0.05 && kids.length > 0;
+        const shouldOpen = this.state.query ? this.below(v)
+            : view === 'all'
+              ? depth < 4 && share >= 0.05 && kids.length > 0
+              : view === 'plugins' && depth < 2 && share >= 0.05 && kids.length > 0;
         if (shouldOpen && kids.length) this.open(el, true);
         return el;
     }
@@ -879,21 +932,33 @@ class Viewer {
         el.classList.toggle('is-open', open);
         const box = el.querySelector(':scope > .tv-kids');
         if (open && !box.childElementCount) {
-            for (const kid of el._v.children()) box.appendChild(this.nodeEl(kid, el._depth + 1, el._view));
+            this.appendNodes(box, el._v.children(), el._depth + 1, el._view);
         }
     }
 
     setAll(tree, open) {
         let budget = OPEN_LIMIT;
+        const reveal = (box) => {
+            if (!open) return;
+            for (const button of box.querySelectorAll(':scope > .tv-more')) {
+                if (budget <= 0) return;
+                budget -= button._reveal();
+            }
+        };
         const walk = (el) => {
             if (!el._v || budget <= 0) return;
             if (el._v.children().length) {
                 this.open(el, open);
                 budget--;
             }
-            for (const kid of el.querySelectorAll(':scope > .tv-kids > .tv-node')) walk(kid);
+            const box = el.querySelector(':scope > .tv-kids');
+            reveal(box);
+            for (const kid of box.querySelectorAll(':scope > .tv-node')) walk(kid);
         };
-        for (const el of tree.querySelectorAll(':scope > .tv-node')) walk(el);
+        const inner = tree.querySelector(':scope > .tv-inner');
+        if (!inner) return;
+        reveal(inner);
+        for (const el of inner.querySelectorAll(':scope > .tv-node')) walk(el);
     }
 
     flame(host) {
@@ -910,6 +975,7 @@ class Viewer {
                       const v = vnodeOf(p, t.root, p.rootValue(t));
                       v.name = t.name;
                       v.value = p.rootValue(t);
+                      v.self = 0;
                       return v;
                   });
             const bar = document.createElement('div');
@@ -945,8 +1011,9 @@ class Viewer {
                 for (const { v, left, width } of level) {
                     const f = document.createElement('div');
                     f.className = 'tv-frame';
-                    const share = v.value / (state.flame ? state.flame.value : total);
-                    f.style.cssText = `left:${left}%;width:calc(${width}% - 1px);background:hsl(${Math.max(8, 52 - Math.min(share, 1) * 50)} 78% ${62 - Math.min(share, 1) * 10}%)`;
+                    const heatShare = Math.min((v.self ?? 0) / (state.flame ? state.flame.value : total) / 0.2, 1);
+                    const dim = state.query && !this.matches(v) && !this.below(v);
+                    f.style.cssText = `left:${left}%;width:calc(${width}% - 1px);background:${dim ? '#2c303a' : `hsl(${Math.max(8, 52 - heatShare * 50)} 78% ${62 - heatShare * 10}%)`}${dim ? ';color:#949aa6' : ''}`;
                     f.textContent = v.name;
                     f.title = `${v.name}\n${fmtMs(v.value)} (${((v.value / total) * 100).toFixed(2)}% of the view)\n${num(v.calls)} calls`;
                     f.addEventListener('click', () => {

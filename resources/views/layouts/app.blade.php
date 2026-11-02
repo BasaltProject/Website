@@ -109,7 +109,7 @@
         {{ $slot }}
     </main>
 
-    <footer class="relative z-10 mt-32 bg-surface px-4 pt-[calc(max(5vw,80px)+2.5rem)] pb-10">
+    <footer style="view-transition-name: site-footer" class="relative z-10 mt-32 bg-surface px-4 pt-[calc(max(5vw,80px)+2.5rem)] pb-10">
         <x-basalt-edge />
         <div class="mx-auto max-w-6xl">
             <div class="grid gap-12 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,2.7fr)]">
