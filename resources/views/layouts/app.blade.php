@@ -28,7 +28,7 @@
     @livewireStyles
 </head>
 <body class="min-h-dvh antialiased">
-    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-magma focus:px-4 focus:py-2 focus:text-[#14100d]">Skip to content</a>
+    <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-crimson focus:px-4 focus:py-2 focus:text-[#14100d]">Skip to content</a>
 
     <header class="fixed inset-x-0 top-0 z-40 border-b border-line bg-base" style="view-transition-name: site-nav"
             x-data="{ open: false }"
@@ -45,7 +45,7 @@
                         <a href="{{ route($item['route']) }}" wire:navigate
                            @class([
                                'border-b-2 py-1 text-[.95rem] transition-colors duration-150',
-                               'border-magma text-ink' => request()->routeIs($item['pattern']),
+                               'border-crimson text-ink' => request()->routeIs($item['pattern']),
                                'border-base text-soft hover:text-ink' => ! request()->routeIs($item['pattern']),
                            ])>{{ $item['label'] }}</a>
                     </li>
@@ -130,33 +130,33 @@
                 <div>
                     <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Projects</h3>
                     <ul class="space-y-2.5 text-[.9rem] text-soft">
-                        <li><a href="{{ route('projects.server') }}" wire:navigate class="transition-colors hover:text-magma">Basalt Server</a></li>
-                        <li><a href="{{ route('projects.proxy') }}" wire:navigate class="transition-colors hover:text-magma">Basalt Proxy</a></li>
-                        <li><a href="{{ route('plugins') }}" wire:navigate class="transition-colors hover:text-magma">Plugins</a></li>
+                        <li><a href="{{ route('projects.server') }}" wire:navigate class="transition-colors hover:text-crimson">Basalt Server</a></li>
+                        <li><a href="{{ route('projects.proxy') }}" wire:navigate class="transition-colors hover:text-crimson">Basalt Proxy</a></li>
+                        <li><a href="{{ route('plugins') }}" wire:navigate class="transition-colors hover:text-crimson">Plugins</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Learn</h3>
                     <ul class="space-y-2.5 text-[.9rem] text-soft">
-                        <li><a href="{{ route('docs') }}" wire:navigate class="transition-colors hover:text-magma">Documentation</a></li>
-                        <li><a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-magma">Server docs</a></li>
-                        <li><a href="{{ route('docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-magma">Proxy docs</a></li>
+                        <li><a href="{{ route('docs') }}" wire:navigate class="transition-colors hover:text-crimson">Documentation</a></li>
+                        <li><a href="{{ route('docs.show', ['section' => 'server', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-crimson">Server docs</a></li>
+                        <li><a href="{{ route('docs.show', ['section' => 'proxy', 'slug' => 'introduction']) }}" wire:navigate class="transition-colors hover:text-crimson">Proxy docs</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Source</h3>
                     <ul class="space-y-2.5 text-[.9rem] text-soft">
-                        <li><a href="{{ config('basalt.repos.server') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">Server</a></li>
-                        <li><a href="{{ config('basalt.repos.proxy') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">Proxy</a></li>
-                        <li><a href="{{ config('basalt.repos.wire') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">Wire</a></li>
+                        <li><a href="{{ config('basalt.repos.server') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-crimson">Server</a></li>
+                        <li><a href="{{ config('basalt.repos.proxy') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-crimson">Proxy</a></li>
+                        <li><a href="{{ config('basalt.repos.wire') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-crimson">Wire</a></li>
                     </ul>
                 </div>
                 <div>
                     <h3 class="mb-3.5 text-[.9rem] font-semibold text-ink">Support</h3>
                     <ul class="space-y-2.5 text-[.9rem] text-soft">
-                        <li><a href="{{ route('donate') }}" wire:navigate class="transition-colors hover:text-magma">Donate</a></li>
-                        <li><a href="{{ config('basalt.donate.url') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">GitHub Sponsors</a></li>
-                        <li><a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-magma">GitHub</a></li>
+                        <li><a href="{{ route('donate') }}" wire:navigate class="transition-colors hover:text-crimson">Donate</a></li>
+                        <li><a href="{{ config('basalt.donate.url') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-crimson">GitHub Sponsors</a></li>
+                        <li><a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="transition-colors hover:text-crimson">GitHub</a></li>
                     </ul>
                 </div>
                 </div>

@@ -64,7 +64,7 @@ new class extends Component
     $sections = \App\Support\Docs::SECTIONS;
     $accent = $section === 'proxy'
         ? ['bar' => 'border-warped', 'tab' => 'border-b-warped', 'item' => 'border-l-warped', 'toc' => 'aria-[current=location]:border-l-warped']
-        : ['bar' => 'border-magma', 'tab' => 'border-b-magma', 'item' => 'border-l-magma', 'toc' => 'aria-[current=location]:border-l-magma'];
+        : ['bar' => 'border-crimson', 'tab' => 'border-b-crimson', 'item' => 'border-l-crimson', 'toc' => 'aria-[current=location]:border-l-crimson'];
     $headings = $this->rendered['headings'];
     $currentGroup = $this->page['group'];
 @endphp
@@ -91,7 +91,7 @@ new class extends Component
                         <a href="{{ $first['url'] ?? route('docs') }}" wire:navigate role="tab" aria-selected="{{ $key === $section ? 'true' : 'false' }}"
                            @class([
                                'rounded-md border-b-2 px-2 py-1.5 text-center text-sm font-medium transition-colors',
-                               'bg-raised text-ink '.($key === 'proxy' ? 'border-b-warped' : 'border-b-magma') => $key === $section,
+                               'bg-raised text-ink '.($key === 'proxy' ? 'border-b-warped' : 'border-b-crimson') => $key === $section,
                                'border-b-surface text-muted hover:text-ink' => $key !== $section,
                            ])>{{ str_replace('Basalt ', '', $info['title']) }}</a>
                     @endforeach

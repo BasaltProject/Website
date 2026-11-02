@@ -34,7 +34,7 @@
          style="aspect-ratio: 2400 / 120" viewBox="0 0 {{ $width }} 120" focusable="false">
         <defs>
             <linearGradient id="basalt-edge-line" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{{ $width }}" y2="0">
-                <stop offset="0" style="stop-color: var(--color-magma)"/>
+                <stop offset="0" style="stop-color: #ef5569"/>
                 <stop offset="1" style="stop-color: var(--color-warped)"/>
             </linearGradient>
         </defs>

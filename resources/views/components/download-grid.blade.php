@@ -1,9 +1,9 @@
-@props(['repo', 'accent' => 'magma', 'project' => null])
+@props(['repo', 'accent' => 'crimson', 'project' => null])
 
 @php
     $release = \App\Support\Releases::latest($repo);
     $platforms = config('basalt.platforms');
-    $accentText = $accent === 'warped' ? 'text-warped' : 'text-magma';
+    $accentText = $accent === 'warped' ? 'text-warped' : 'text-crimson';
     $accentButton = $accent === 'warped' ? 'btn-warped' : 'btn-primary';
 @endphp
 

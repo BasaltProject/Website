@@ -47,7 +47,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                 <span class="pill">C++23, no external JVM</span>
 
                 <h1 class="text-crystal mt-8 text-[clamp(2.4rem,5.6vw,4.2rem)] leading-[1.04] font-semibold tracking-[-.035em]">
-                    A Minecraft server<br>rewritten <span class="text-magma">from scratch.</span>
+                    A Minecraft server<br>rewritten <span class="text-crimson">from scratch.</span>
                 </h1>
 
                 <p class="mt-7 max-w-xl text-[clamp(1rem,2.1vw,1.18rem)] leading-relaxed text-soft">
@@ -88,7 +88,7 @@ chmod +x BasaltServer-*
         <div class="mx-auto max-w-6xl">
             <dl class="grid w-full grid-cols-2 gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-4">
                 @foreach ([
-                    ['Minecraft', config('basalt.minecraft.current'), 'Native, older versions supported', 'text-magma'],
+                    ['Minecraft', config('basalt.minecraft.current'), 'Native, older versions supported', 'text-crimson'],
                     ['Cross-play', 'Built in', 'Java and Bedrock', 'text-warped'],
                     ['Platforms', count(config('basalt.platforms')), 'macOS, Linux, Windows', 'text-ink'],
                     ['License', 'GPL-3.0', 'Open source', 'text-ink'],
@@ -108,7 +108,7 @@ chmod +x BasaltServer-*
             <div class="max-w-2xl">
                 <span class="pill">Two projects</span>
                 <h2 class="text-crystal mt-6 text-[clamp(1.9rem,4vw,2.9rem)] leading-tight font-semibold tracking-[-.025em]">
-                    The server and the <span class="text-warped">proxy.</span>
+                    The <span class="text-crimson">server</span> and the <span class="text-warped">proxy.</span>
                 </h2>
                 <p class="mt-5 text-lg leading-relaxed text-soft">
                     They share their entire network layer through
@@ -123,7 +123,7 @@ chmod +x BasaltServer-*
                         $proxy = $index === 1;
                     @endphp
                     <article class="glass card flex flex-col overflow-hidden p-8 md:p-10">
-                        <span class="absolute inset-x-0 top-0 h-0.5 {{ $proxy ? 'bg-warped' : 'bg-magma' }}" aria-hidden="true"></span>
+                        <span class="absolute inset-x-0 top-0 h-0.5 {{ $proxy ? 'bg-warped' : 'bg-crimson' }}" aria-hidden="true"></span>
                         <h3 class="text-2xl font-semibold tracking-tight text-ink">{{ $product['name'] }}</h3>
                         <p class="mt-1.5 text-sm text-muted">{{ $product['tagline'] }}</p>
                         <p class="mt-5 leading-relaxed text-soft">{{ $product['body'] }}</p>
@@ -131,7 +131,7 @@ chmod +x BasaltServer-*
                         <ul class="mt-7 space-y-3 text-sm text-soft">
                             @foreach ($product['points'] as $point)
                                 <li class="flex gap-3">
-                                    <x-icon.check class="mt-0.5 shrink-0 {{ $proxy ? 'text-warped' : 'text-magma' }}" />
+                                    <x-icon.check class="mt-0.5 shrink-0 {{ $proxy ? 'text-warped' : 'text-crimson' }}" />
                                     <span>{{ $point }}</span>
                                 </li>
                             @endforeach
@@ -152,7 +152,7 @@ chmod +x BasaltServer-*
             <div class="max-w-2xl">
                 <span class="pill">What you get</span>
                 <h2 class="text-crystal mt-6 text-[clamp(1.9rem,4vw,2.9rem)] leading-tight font-semibold tracking-[-.025em]">
-                    Native first, and <span class="text-magma">nothing left behind.</span>
+                    Native first, and <span class="text-crimson">nothing left behind.</span>
                 </h2>
                 <p class="mt-5 text-lg leading-relaxed text-soft">
                     The plugin API is Lua and it is the fast path. Everything else is here so
@@ -206,7 +206,7 @@ chmod +x BasaltServer-*
                     <article class="glass card p-7">
                         <span @class([
                             'mb-5 inline-flex size-10 items-center justify-center rounded-lg',
-                            'bg-[#392623] text-magma' => $index % 2 === 0,
+                            'bg-[#3a2229] text-crimson' => $index % 2 === 0,
                             'bg-[#1c3739] text-warped' => $index % 2 === 1,
                         ]) aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $feature['icon'] !!}</svg>
@@ -254,9 +254,9 @@ end)
 
     <section class="px-4 py-20">
         <div class="relative mx-auto max-w-4xl overflow-hidden rounded-2xl border border-line bg-surface px-6 py-14 text-center md:px-12">
-            <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-magma to-warped" aria-hidden="true"></span>
+            <span class="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-crimson to-warped" aria-hidden="true"></span>
             <h2 class="text-crystal text-[clamp(1.7rem,3.4vw,2.4rem)] leading-tight font-semibold tracking-[-.025em]">
-                Open source, <span class="text-magma">all of it.</span>
+                Open source, <span class="text-crimson">all of it.</span>
             </h2>
             <p class="mx-auto mt-5 max-w-2xl leading-relaxed text-soft">
                 The server, the proxy, the network layer they share and this site are all

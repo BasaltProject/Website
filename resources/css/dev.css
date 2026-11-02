@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./timings.css";
 
 @theme {
     --color-base: #111216;
@@ -9,11 +10,10 @@
     --color-ink: #f0f1f3;
     --color-soft: #b4b9c3;
     --color-muted: #949aa6;
-    --color-magma: #f0662f;
-    --color-magma-hover: #ff7a45;
+    --color-crimson: #ef5569;
+    --color-crimson-hover: #f96d80;
     --color-warped: #2dd4bf;
     --color-gold: #f2b84b;
-    --color-crimson: #e5484d;
     --color-slate: #5c6676;
     --color-stone: #544840;
     --color-ash: #7e848e;
@@ -36,7 +36,7 @@
     }
 
     ::selection {
-        background: #5f2f1f;
+        background: #5f1f2c;
     }
 
     /* The scrollbar is part of the surface, not a system artefact bolted on top. */
@@ -52,7 +52,7 @@
 
     [x-cloak] { display: none !important; }
 
-    :focus-visible { outline: 2px solid var(--color-magma); outline-offset: 3px; }
+    :focus-visible { outline: 2px solid var(--color-crimson); outline-offset: 3px; }
 }
 
 /* Solid surface. The class name is kept so views do not change. */
@@ -102,12 +102,12 @@
 }
 
 .btn-primary {
-    border-color: var(--color-magma);
-    background: var(--color-magma);
+    border-color: var(--color-crimson);
+    background: var(--color-crimson);
     color: #14100d;
 }
 
-.btn-primary:hover { border-color: var(--color-magma-hover); background: var(--color-magma-hover); }
+.btn-primary:hover { border-color: var(--color-crimson-hover); background: var(--color-crimson-hover); }
 
 /* Tier colour. Both stops arrive from config as custom properties, so a new
    tier is a config entry. After .btn-primary to override its fill. */
@@ -330,3 +330,9 @@ html { background: var(--color-base); }
         animation: none !important;
     }
 }
+
+/* Timings viewer: the caret turns when a frame is open, and the native marker stays out of the way. */
+.timings-row > summary::-webkit-details-marker, summary.timings-row::-webkit-details-marker { display: none; }
+details[open] > summary .timings-caret { transform: rotate(90deg); }
+.timings-caret { transition: transform .2s ease; }
+[x-cloak] { display: none !important; }

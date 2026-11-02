@@ -41,7 +41,7 @@ new #[Title('Documentation')] class extends Component
             <div class="grid gap-5 lg:grid-cols-2">
                 @foreach ($this->tree as $section)
                     @php
-                        $accent = $section['key'] === 'proxy' ? ['bar' => 'bg-warped', 'link' => 'hover:border-warped'] : ['bar' => 'bg-magma', 'link' => 'hover:border-magma'];
+                        $accent = $section['key'] === 'proxy' ? ['bar' => 'bg-warped', 'link' => 'hover:border-warped'] : ['bar' => 'bg-crimson', 'link' => 'hover:border-crimson'];
                         $intro = $section['pages']->first();
                     @endphp
                     <article class="overflow-hidden rounded-xl border border-line bg-surface">

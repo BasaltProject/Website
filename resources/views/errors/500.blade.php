@@ -31,17 +31,17 @@
             display: inline-block;
             margin-top: 2.25rem;
             padding: .8rem 1.5rem;
-            border: 1px solid #f0662f;
+            border: 1px solid #ef5569;
             border-radius: .5rem;
-            background: #f0662f;
+            background: #ef5569;
             color: #14100d;
             font-size: .92rem;
             font-weight: 600;
             text-decoration: none;
             transition: background-color .15s ease, border-color .15s ease;
         }
-        a.btn:hover { border-color: #ff7a45; background: #ff7a45; }
-        a.btn:focus-visible { outline: 2px solid #f0662f; outline-offset: 3px; }
+        a.btn:hover { border-color: #f96d80; background: #f96d80; }
+        a.btn:focus-visible { outline: 2px solid #ef5569; outline-offset: 3px; }
     </style>
 </head>
 <body>

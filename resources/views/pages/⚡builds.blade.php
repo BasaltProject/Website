@@ -26,7 +26,7 @@ new #[Title('Release history')] class extends Component
             'egg' => Eggs::history($this->project),
             'eggFile' => Eggs::blobUrl($this->project),
             'name' => $this->project === 'proxy' ? 'Basalt Proxy' : 'Basalt Server',
-            'accentText' => $this->project === 'proxy' ? 'text-warped' : 'text-magma',
+            'accentText' => $this->project === 'proxy' ? 'text-warped' : 'text-crimson',
         ];
     }
 };

@@ -90,6 +90,12 @@ function initScrollSpy() {
     update();
 }
 
+// The timings viewer is a page of its own with a lot of code, so only that page loads it.
+function mountTimings() {
+    const root = document.querySelector('[data-timings-viewer]');
+    if (root && !root.dataset.ready) import('./timings.js').then((module) => module.mount(root));
+}
+
 // Keep the sidebar where it was across wire:navigate; otherwise centre the active page.
 document.addEventListener('livewire:navigating', () => {
     stopScrollSpy();
@@ -121,6 +127,7 @@ function init() {
     addCopyButtons();
     initScrollSpy();
     restoreSidebar();
+    mountTimings();
 
     if (usesMac()) document.querySelectorAll('[data-kbd]').forEach((el) => (el.textContent = '⌘K'));
 }

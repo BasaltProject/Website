@@ -11,7 +11,7 @@ new #[Title('Basalt Server')] class extends Component
 <div>
     <section class="px-4">
         <div class="mx-auto max-w-6xl pt-10 pb-16">
-            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-magma">
+            <a href="{{ route('projects') }}" wire:navigate class="mb-8 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-crimson">
                 <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>
                 All projects
             </a>
@@ -19,7 +19,7 @@ new #[Title('Basalt Server')] class extends Component
             <div class="max-w-3xl">
                 <span class="pill">Basalt Server</span>
                 <h1 class="text-crystal mt-7 text-[clamp(2.3rem,5.5vw,3.8rem)] leading-[1.06] font-semibold tracking-[-.03em]">
-                    The Minecraft server, <span class="text-magma">rebuilt.</span>
+                    The Minecraft server, <span class="text-crimson">rebuilt.</span>
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-soft">
                     A complete reimplementation of the Minecraft server, written entirely in
@@ -55,7 +55,7 @@ new #[Title('Basalt Server')] class extends Component
                 </p>
             </div>
             <div class="mt-9">
-                <x-download-grid :repo="config('basalt.repos.server')" project="server" accent="magma" />
+                <x-download-grid :repo="config('basalt.repos.server')" project="server" accent="crimson" />
             </div>
         </div>
     </section>
@@ -233,7 +233,7 @@ plugins/
                             'Anvil regions are read and written back as Linear. Migrating a world is copy the folder and start, never run a converter first.',
                         ] as $point)
                             <li class="flex gap-3">
-                                <x-icon.check class="mt-0.5 shrink-0 text-magma" />
+                                <x-icon.check class="mt-0.5 shrink-0 text-crimson" />
                                 <span>{{ $point }}</span>
                             </li>
                         @endforeach
@@ -307,7 +307,7 @@ seed = 42
                                 'groups.toml says what a group is. players.db says who is in it.',
                             ] as $point)
                                 <li class="flex gap-3">
-                                    <x-icon.check class="mt-0.5 shrink-0 text-magma" />
+                                    <x-icon.check class="mt-0.5 shrink-0 text-crimson" />
                                     <span>{{ $point }}</span>
                                 </li>
                             @endforeach
@@ -457,7 +457,7 @@ enabled = false
                         ['Rewrite what it says', 'Replace any answer the server sends, keyed by the translation key it normally uses, with %1% and %2% for the values it was going to fill in.'],
                     ] as [$heading, $copy])
                         <li class="flex gap-3">
-                            <x-icon.check class="mt-0.5 shrink-0 text-magma" />
+                            <x-icon.check class="mt-0.5 shrink-0 text-crimson" />
                             <span><span class="text-ink">{{ $heading }}.</span> {{ $copy }}</span>
                         </li>
                     @endforeach

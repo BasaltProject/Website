@@ -49,7 +49,7 @@ new #[Title('Projects')] class extends Component
                 @foreach ($this->projects() as $index => $project)
                     @php $proxy = $index === 1; @endphp
                     <article class="glass card flex flex-col overflow-hidden p-8 md:p-10">
-                        <span class="absolute inset-x-0 top-0 h-0.5 {{ $proxy ? 'bg-warped' : 'bg-magma' }}" aria-hidden="true"></span>
+                        <span class="absolute inset-x-0 top-0 h-0.5 {{ $proxy ? 'bg-warped' : 'bg-crimson' }}" aria-hidden="true"></span>
                         <h2 class="text-2xl font-semibold tracking-tight text-ink">{{ $project['name'] }}</h2>
                         <p class="mt-1.5 text-sm text-muted">{{ $project['tagline'] }}</p>
                         <p class="mt-6 leading-relaxed text-soft">{{ $project['body'] }}</p>
