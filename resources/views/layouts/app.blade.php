@@ -34,7 +34,7 @@
             x-data="{ open: false }"
             x-on:keydown.escape.window="open = false"
             x-on:livewire:navigating.window="open = false">
-        <nav class="mx-auto flex h-[72px] max-w-6xl items-center gap-3 px-4" aria-label="Main">
+        <nav class="relative z-10 bg-base mx-auto flex h-[72px] max-w-6xl items-center gap-3 px-4" aria-label="Main">
             <a href="{{ route('home') }}" wire:navigate class="shrink-0" aria-label="Basalt home">
                 <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-11 w-auto">
             </a>
@@ -78,7 +78,14 @@
             </div>
         </nav>
 
-        <div id="mobile-menu" x-show="open" x-cloak class="border-t border-line bg-base md:hidden">
+        <div id="mobile-menu" x-show="open" x-cloak
+             x-transition:enter="transition-transform duration-200 ease-out motion-reduce:transition-none"
+             x-transition:enter-start="-translate-y-[calc(100%+80px)]"
+             x-transition:enter-end="translate-y-0"
+             x-transition:leave="transition-transform duration-150 ease-in motion-reduce:transition-none"
+             x-transition:leave-start="translate-y-0"
+             x-transition:leave-end="-translate-y-[calc(100%+80px)]"
+             class="relative border-t border-line bg-base md:hidden">
             <ul class="mx-auto max-w-6xl px-4 py-3">
                 @foreach ($nav as $item)
                     <li>
@@ -87,7 +94,11 @@
                                'block rounded-lg px-3 py-3 text-base',
                                'text-ink' => request()->routeIs($item['pattern']),
                                'text-soft' => ! request()->routeIs($item['pattern']),
-                           ])>{{ $item['label'] }}</a>
+                           ])><span @class([
+                                   'inline-block border-b-2 pb-1 transition-colors duration-150',
+                                   'border-crimson' => request()->routeIs($item['pattern']),
+                                   'border-transparent' => ! request()->routeIs($item['pattern']),
+                               ])>{{ $item['label'] }}</span></a>
                     </li>
                 @endforeach
                 <li>
@@ -96,12 +107,17 @@
                            'block rounded-lg px-3 py-3 text-base',
                            'text-ink' => request()->routeIs('donate'),
                            'text-soft' => ! request()->routeIs('donate'),
-                       ])>Donate</a>
+                       ])><span @class([
+                                   'inline-block border-b-2 pb-1 transition-colors duration-150',
+                                   'border-crimson' => request()->routeIs('donate'),
+                                   'border-transparent' => ! request()->routeIs('donate'),
+                               ])>Donate</span></a>
                 </li>
                 <li>
-                    <a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="block rounded-lg px-3 py-3 text-base text-soft">GitHub</a>
+                    <a href="{{ config('basalt.github') }}" target="_blank" rel="noopener noreferrer" class="block rounded-lg px-3 py-3 text-base text-soft"><span class="inline-block border-b-2 border-transparent pb-1">GitHub</span></a>
                 </li>
             </ul>
+            <div class="absolute inset-x-0 top-full"><x-basalt-edge gradient="basalt-edge-menu" /></div>
         </div>
     </header>
 

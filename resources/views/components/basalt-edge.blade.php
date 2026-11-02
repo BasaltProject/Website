@@ -1,3 +1,4 @@
+@props(['gradient' => 'basalt-edge-line'])
 @php
     // Deterministic LCG so the layout is identical on every render.
     $seed = 20240611;
@@ -33,7 +34,7 @@
     <svg {{ $attributes->merge(['class' => 'absolute left-1/2 top-0 block h-auto w-[max(100%,1600px)] -translate-x-1/2']) }}
          style="aspect-ratio: 2400 / 120" viewBox="0 0 {{ $width }} 120" focusable="false">
         <defs>
-            <linearGradient id="basalt-edge-line" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{{ $width }}" y2="0">
+            <linearGradient id="{{ $gradient }}" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{{ $width }}" y2="0">
                 <stop offset="0" style="stop-color: #ef5569"/>
                 <stop offset="1" style="stop-color: var(--color-warped)"/>
             </linearGradient>
@@ -42,6 +43,6 @@
         @foreach ($faces as $f)
             <polygon points="{{ $f }}" fill="#111216"/>
         @endforeach
-        <path d="{{ $d }}" fill="none" stroke="url(#basalt-edge-line)" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+        <path d="{{ $d }}" fill="none" stroke="url(#{{ $gradient }})" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
     </svg>
 </div>
