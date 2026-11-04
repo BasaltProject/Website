@@ -213,28 +213,38 @@ function flatNode(profile, name, value, calls, nodes, denominator, total) {
 
 const isPlugin = (node) => node.name.startsWith('plugin.');
 
-function sourceEntries(profile) {
-    const total = profile.total;
-    const plugins = new Map();
-    const collect = (node) => {
+function sourceEntries(profile, facts = []) {
+    const known = new Map(facts.map((f) => [f.id, f]));
+    // Native threads are the same work seen as C++ functions, so counting them here would count it twice.
+    const threads = profile.threads.filter((t) => !t.name.startsWith('Native '));
+    const total = sum(threads.map((t) => profile.rootValue(t)));
+    // A plugin seen by the sampler is read from there: it also covers its own threads, which the sections never
+    // enter. The sections are kept only for plugins nothing was sampled for, such as the Lua ones.
+    const seen = new Map();
+    const collect = (node, sampled) => {
         if (isPlugin(node)) {
             const id = node.name.slice('plugin.'.length);
-            if (!plugins.has(id)) plugins.set(id, []);
-            plugins.get(id).push(node);
+            if (!seen.has(id)) seen.set(id, { sampled: [], measured: [] });
+            seen.get(id)[sampled ? 'sampled' : 'measured'].push(node);
             return;
         }
-        for (const child of node.children || []) collect(child);
+        for (const child of node.children || []) collect(child, sampled);
     };
-    for (const thread of profile.threads) collect(thread.root);
+    for (const thread of threads) collect(thread.root, /^(Java|Lua) /.test(thread.name));
 
-    const entries = [...plugins.entries()].map(([id, nodes]) => {
-        const merged = mergeNodes(profile, nodes, total);
-        merged.name = id;
-        merged.label = 'plugin';
+    const dropped = new Set();
+    const entries = [...seen.entries()].map(([id, nodes]) => {
+        const sampled = nodes.sampled.length > 0;
+        if (sampled) nodes.measured.forEach((n) => dropped.add(n));
+        const merged = mergeNodes(profile, sampled ? nodes.sampled : nodes.measured, total);
+        const fact = known.get(id);
+        merged.name = fact ? fact.name : id;
+        merged.label = fact?.type === 'bukkit' ? 'Bukkit plugin' : fact?.type === 'lua' ? 'Lua plugin' : 'plugin';
         return merged;
     });
+    const counted = (node) => isPlugin(node) && !dropped.has(node);
     const pluginTotal = sum(entries.map((e) => e.value));
-    const roots = profile.threads.flatMap((t) => (t.root.children || []).filter((c) => !isPlugin(c)));
+    const roots = threads.flatMap((t) => (t.root.children || []).filter((c) => !counted(c)));
     if (roots.length) {
         const core = {
             name: 'Basalt (core)',
@@ -251,7 +261,7 @@ function sourceEntries(profile) {
         }
         core.children = () =>
             (core._kids ??= [...groups.values()]
-                .map((list) => mergeNodes(profile, list, total, isPlugin))
+                .map((list) => mergeNodes(profile, list, total, counted))
                 .filter((m) => m.value > 0)
                 .sort((a, b) => b.value - a.value));
         entries.push(core);
@@ -647,8 +657,8 @@ class Viewer {
 
         const plugins = this.data.plugins || [];
         const pluginsHtml = plugins.length
-            ? `<table class="tv-table"><thead><tr><th>Plugin</th><th>Id</th><th>Version</th><th>Errors</th></tr></thead><tbody>${plugins
-                  .map((p) => `<tr><td>${esc(p.name)}${p.disabled ? ' <span class="tv-bad">(disabled)</span>' : ''}</td><td>${esc(p.id)}</td><td>${esc(p.version)}</td><td>${num(p.errors)}</td></tr>`)
+            ? `<table class="tv-table"><thead><tr><th>Plugin</th><th>Type</th><th>Id</th><th>Version</th><th>Errors</th></tr></thead><tbody>${plugins
+                  .map((p) => `<tr><td>${esc(p.name)}${p.disabled ? ' <span class="tv-bad">(disabled)</span>' : ''}</td><td>${p.type === 'bukkit' ? 'Bukkit' : 'Lua'}</td><td>${esc(p.id)}</td><td>${esc(p.version)}</td><td>${num(p.errors)}</td></tr>`)
                   .join('')}</tbody></table>`
             : '<p class="tv-note">No plugins loaded.</p>';
 
@@ -783,7 +793,7 @@ class Viewer {
         const titles = {
             all: ['Profiler - All view', 'The whole profile as an expandable tree, one stack per thread. A frame is a section the server timed; its value is its share of its thread.'],
             flat: ['Profiler - Flat view', 'Frames ranked by the time spent in the frame itself. Expand one to see what called it, which is how a hot frame is followed back to its cause.'],
-            plugins: ['Profiler - Plugins view', 'Time grouped by where it was spent: each Lua plugin, and Basalt itself.'],
+            plugins: ['Profiler - Plugins view', 'Time grouped by where it was spent: each plugin, Lua or Bukkit, and Basalt itself.'],
             flame: ['Profiler - Flame graph', 'Width is time. Click a frame to zoom into it, and the top bar to go back out.'],
         }[view];
 
@@ -827,7 +837,7 @@ class Viewer {
         } else if (view === 'flat') {
             roots.push(...flatEntries(p).slice(0, 400));
         } else {
-            roots.push(...sourceEntries(p));
+            roots.push(...sourceEntries(p, this.data.plugins || []));
         }
 
         if (!roots.length) {
