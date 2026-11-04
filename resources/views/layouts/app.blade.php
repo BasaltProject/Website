@@ -1,9 +1,22 @@
 @props([
     'title' => null,
-    'description' => 'Basalt is a Minecraft: Java Edition server and proxy rewritten from scratch in C++23, with no JVM at runtime.',
+    'description' => null,
+    'noindex' => false,
 ])
 
 @php
+    $origin = rtrim(config('basalt.url'), '/');
+    $canonical = $origin.'/'.ltrim(request()->path(), '/');
+    $description ??= config('basalt.seo.'.request()->route()?->getName())
+        ?? 'Basalt is a Minecraft: Java Edition server and proxy rewritten from scratch in C++23, with no JVM at runtime.';
+    $fullTitle = $title ? $title.' - Basalt' : 'Basalt';
+    $ogPath = match (true) {
+        request()->routeIs('projects.server') => '/og/server.png',
+        request()->routeIs('projects.proxy') => '/og/proxy.png',
+        request()->routeIs('docs.show') => '/og/docs/'.request()->route('section').'/'.request()->route('slug').'.png',
+        default => '/og/home.png',
+    };
+    $noindex = $noindex || request()->routeIs('timings.*');
     $nav = [
         ['route' => 'home', 'label' => 'Home', 'pattern' => 'home'],
         ['route' => 'projects', 'label' => 'Projects', 'pattern' => 'projects*'],
@@ -19,10 +32,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#111216">
     <meta name="description" content="{{ $description }}">
+    <link rel="canonical" href="{{ $canonical }}">
+    @if ($noindex)
+        <meta name="robots" content="noindex, nofollow">
+    @else
+        <meta name="robots" content="index, follow, max-image-preview:large">
+    @endif
+    <meta property="og:site_name" content="Basalt">
+    <meta property="og:type" content="{{ request()->routeIs('docs.show') ? 'article' : 'website' }}">
+    <meta property="og:title" content="{{ $fullTitle }}">
+    <meta property="og:description" content="{{ $description }}">
+    <meta property="og:url" content="{{ $canonical }}">
+    <meta property="og:image" content="{{ $origin }}{{ $ogPath }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $fullTitle }}">
+    <meta name="twitter:description" content="{{ $description }}">
+    <meta name="twitter:image" content="{{ $origin }}{{ $ogPath }}">
+    @if (request()->routeIs('home'))
+        <script type="application/ld+json">{!! json_encode([
+            '@context' => 'https://schema.org',
+            '@graph' => [
+                [
+                    '@type' => 'Organization',
+                    '@id' => $origin.'/#organization',
+                    'name' => 'Basalt',
+                    'url' => $origin.'/',
+                    'logo' => $origin.'/apple-touch-icon.png',
+                    'sameAs' => [config('basalt.github')],
+                ],
+                [
+                    '@type' => 'WebSite',
+                    '@id' => $origin.'/#website',
+                    'name' => 'Basalt',
+                    'url' => $origin.'/',
+                    'description' => $description,
+                    'publisher' => ['@id' => $origin.'/#organization'],
+                ],
+            ],
+        ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
+    @endif
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <title>{{ $title ? $title.' - Basalt' : 'Basalt' }}</title>
+    <title>{{ $fullTitle }}</title>
     @fonts
     @vite(['resources/css/dev.css', 'resources/js/dev.js'])
     @livewireStyles

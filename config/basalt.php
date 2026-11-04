@@ -6,6 +6,9 @@
  */
 return [
 
+    // Canonical origin: canonical links, sitemap and structured data all build from it.
+    'url' => env('BASALT_URL', 'https://basaltmc.org'),
+
     'github' => 'https://github.com/BasaltProject',
 
     'repos' => [
@@ -103,6 +106,18 @@ return [
     'docs' => [
         'path' => base_path('documentation'),
         'edit_base' => 'https://github.com/BasaltProject/Documentation/edit/main',
+    ],
+
+    // Meta descriptions by route name. Pages without an entry fall back to the layout default.
+    'seo' => [
+        'home' => 'Basalt is a Minecraft: Java Edition server rewritten from scratch in C++23. Native binaries, no JVM at runtime, Lua plugins, and Java and Bedrock players in one world.',
+        'projects' => 'Basalt Server and Basalt Proxy: two native binaries for macOS, Linux and Windows, written in C++23 with no JVM at runtime.',
+        'projects.server' => 'Download Basalt Server: a Minecraft: Java Edition server in C++23 with vanilla parity, Lua plugins and an optional Bukkit plugin bridge.',
+        'projects.proxy' => 'Download Basalt Proxy: a native Minecraft proxy in C++23 with backend routing, version translation and Lua plugins.',
+        'projects.builds' => 'Every Basalt release, with changelogs and downloads for each platform.',
+        'docs' => 'Documentation for Basalt Server and Basalt Proxy: installation, configuration, plugins and operations.',
+        'plugins' => 'Community plugins for Basalt are coming soon.',
+        'donate' => 'Support Basalt development. Every supporter is credited, and every tier funds the open source server and proxy.',
     ],
 
 ];

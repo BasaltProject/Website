@@ -28,4 +28,33 @@ class PublicPagesTest extends TestCase
             'plugins' => ['/plugins'],
         ];
     }
+
+    public function test_sitemap_lists_pages_and_documentation(): void
+    {
+        $response = $this->get('/sitemap.xml')->assertOk();
+
+        $this->assertStringContainsString('application/xml', $response->headers->get('Content-Type'));
+        $response->assertSee('https://basaltmc.org/docs/server/introduction', false);
+        $response->assertDontSee('/timings', false);
+    }
+
+    public function test_robots_points_to_the_sitemap(): void
+    {
+        $this->get('/robots.txt')->assertOk()->assertSee('Sitemap: https://basaltmc.org/sitemap.xml');
+    }
+
+    public function test_pages_carry_a_canonical_link(): void
+    {
+        $this->get('/projects')->assertSee('<link rel="canonical" href="https://basaltmc.org/projects">', false);
+    }
+
+    public function test_social_images_are_served_as_png(): void
+    {
+        foreach (['/og/home.png', '/og/server.png', '/og/proxy.png', '/og/docs/server/introduction.png'] as $path) {
+            $this->get($path)->assertOk()->assertHeader('Content-Type', 'image/png');
+        }
+
+        $this->get('/og/unknown.png')->assertNotFound();
+        $this->get('/og/docs/server/missing-page.png')->assertNotFound();
+    }
 }

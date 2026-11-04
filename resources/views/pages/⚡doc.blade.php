@@ -56,6 +56,10 @@ new class extends Component
     public function rendering(\Illuminate\View\View $view): void
     {
         $view->title($this->page['title']);
+
+        if ($this->page['description'] !== '') {
+            $view->layoutData(['description' => $this->page['description']]);
+        }
     }
 };
 ?>

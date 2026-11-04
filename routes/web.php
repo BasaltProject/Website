@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SeoController;
 use App\Http\Controllers\TimingsController;
 use App\Support\Eggs;
 use Illuminate\Http\Request;
@@ -49,3 +50,10 @@ Route::livewire('/docs/{section}/{slug}', 'pages::doc')->name('docs.show');
 Route::livewire('/plugins', 'pages::plugins')->name('plugins');
 
 Route::livewire('/donate', 'pages::donate')->name('donate');
+
+// Both are generated, so new documentation pages are listed without touching anything.
+Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
+
+Route::get('/og/docs/{section}/{slug}.png', [SeoController::class, 'docCover'])->name('og.doc');
+Route::get('/og/{name}.png', [SeoController::class, 'cover'])->name('og.cover');
