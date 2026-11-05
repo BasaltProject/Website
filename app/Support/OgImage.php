@@ -2,7 +2,8 @@
 
 namespace App\Support;
 
-use RuntimeException;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /** Social preview images: fixed covers for the main pages, and a title drawn over a template for docs. */
 class OgImage
@@ -19,31 +20,43 @@ class OgImage
         return in_array($name, self::COVERS, true) ? resource_path("og/$name.png") : null;
     }
 
-    /** Draws the article title over the section template, cached by content so an edit refreshes it. */
+    /**
+     * Draws the article title over the section template, cached by content so an edit refreshes it.
+     * Any failure serves the bare template: a preview without the title beats a broken image.
+     */
     public static function doc(string $section, string $title): string
     {
-        $file = storage_path('app/og/'.$section.'-'.md5($title).'.png');
+        $template = resource_path("og/docs-$section.png");
+        $file = storage_path('framework/cache/og/'.$section.'-'.md5($title).'.png');
 
         if (is_file($file)) {
             return $file;
         }
 
-        $image = imagecreatefrompng(resource_path("og/docs-$section.png"));
+        try {
+            return self::render($template, $file, $title);
+        } catch (Throwable $e) {
+            Log::warning('OG image failed: '.$e->getMessage());
 
-        if ($image === false) {
-            throw new RuntimeException("Missing OG template for $section");
+            return $template;
         }
+    }
 
-        $font = resource_path('og/InstrumentSans-600.woff');
+    private static function render(string $template, string $file, string $title): string
+    {
+        $image = imagecreatefrompng($template);
+        $font = resource_path('og/InstrumentSans-600.ttf');
         $color = imagecolorallocate($image, 245, 246, 248);
         $size = 58;
-        $lines = self::wrap($title, $font, $size);
 
-        foreach ($lines as $i => $line) {
+        foreach (self::wrap($title, $font, $size) as $i => $line) {
             imagettftext($image, $size, 0, 80, 370 + $i * 76, $color, $font, $line);
         }
 
-        @mkdir(dirname($file), 0775, true);
+        if (! is_dir(dirname($file))) {
+            mkdir(dirname($file), 0775, true);
+        }
+
         imagepng($image, $file);
 
         return $file;
