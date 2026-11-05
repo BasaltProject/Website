@@ -53,6 +53,7 @@ Route::livewire('/donate', 'pages::donate')->name('donate');
 
 // Both are generated, so new documentation pages are listed without touching anything.
 Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('sitemap');
+Route::get('/llms.txt', [SeoController::class, 'llms'])->name('llms');
 Route::get('/robots.txt', [SeoController::class, 'robots'])->name('robots');
 
 Route::get('/og/docs/{section}/{slug}.png', [SeoController::class, 'docCover'])->name('og.doc');

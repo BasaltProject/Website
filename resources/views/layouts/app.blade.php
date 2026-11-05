@@ -16,7 +16,7 @@
         request()->routeIs('docs.show') => '/og/docs/'.request()->route('section').'/'.request()->route('slug').'.png',
         default => '/og/home.png',
     };
-    $noindex = $noindex || request()->routeIs('timings.*');
+    $noindex = $noindex || request()->routeIs('timings.*', 'plugins');
     $nav = [
         ['route' => 'home', 'label' => 'Home', 'pattern' => 'home'],
         ['route' => 'projects', 'label' => 'Projects', 'pattern' => 'projects*'],
@@ -51,10 +51,11 @@
     <meta name="twitter:title" content="{{ $fullTitle }}">
     <meta name="twitter:description" content="{{ $description }}">
     <meta name="twitter:image" content="{{ $origin }}{{ $ogPath }}">
-    @if (request()->routeIs('home'))
-        <script type="application/ld+json">{!! json_encode([
-            '@context' => 'https://schema.org',
-            '@graph' => [
+    @php
+        $graph = [];
+
+        if (request()->routeIs('home')) {
+            $graph = [
                 [
                     '@type' => 'Organization',
                     '@id' => $origin.'/#organization',
@@ -71,8 +72,44 @@
                     'description' => $description,
                     'publisher' => ['@id' => $origin.'/#organization'],
                 ],
-            ],
-        ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
+            ];
+        } elseif (request()->routeIs('projects.server', 'projects.proxy')) {
+            $graph = [[
+                '@type' => 'SoftwareApplication',
+                'name' => $title,
+                'description' => $description,
+                'url' => $canonical,
+                'applicationCategory' => 'DeveloperApplication',
+                'operatingSystem' => 'macOS, Linux, Windows',
+                'license' => 'https://www.gnu.org/licenses/gpl-3.0.html',
+                'offers' => ['@type' => 'Offer', 'price' => '0', 'priceCurrency' => 'EUR'],
+                'publisher' => ['@type' => 'Organization', 'name' => 'Basalt', 'url' => $origin.'/'],
+            ]];
+        } elseif (request()->routeIs('docs.show')) {
+            $docPage = \App\Support\Docs::find(request()->route('section'), request()->route('slug'));
+            $graph = [
+                [
+                    '@type' => 'TechArticle',
+                    'headline' => $title,
+                    'description' => $description,
+                    'url' => $canonical,
+                    'image' => $origin.$ogPath,
+                    'dateModified' => $docPage ? date('c', $docPage['modified']) : null,
+                    'publisher' => ['@type' => 'Organization', 'name' => 'Basalt', 'url' => $origin.'/'],
+                ],
+                [
+                    '@type' => 'BreadcrumbList',
+                    'itemListElement' => [
+                        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Docs', 'item' => $origin.'/docs'],
+                        ['@type' => 'ListItem', 'position' => 2, 'name' => \App\Support\Docs::SECTIONS[request()->route('section')]['title'] ?? 'Basalt'],
+                        ['@type' => 'ListItem', 'position' => 3, 'name' => $title, 'item' => $canonical],
+                    ],
+                ],
+            ];
+        }
+    @endphp
+    @if ($graph !== [])
+        <script type="application/ld+json">{!! json_encode(['@'.'context' => 'https://schema.org', '@graph' => $graph], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     @endif
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">

@@ -17,7 +17,6 @@ class SeoController extends Controller
         'projects.server' => 0.9,
         'projects.proxy' => 0.9,
         'docs' => 0.8,
-        'plugins' => 0.3,
         'donate' => 0.4,
     ];
 
@@ -56,6 +55,24 @@ class SeoController extends Controller
         }
 
         return response($xml.'</urlset>'."\n", 200, ['Content-Type' => 'application/xml; charset=UTF-8']);
+    }
+
+    /** A plain index of the documentation for tools that read text rather than render pages. */
+    public function llms(): Response
+    {
+        $origin = rtrim(config('basalt.url'), '/');
+        $body = "# Basalt\n\n> A Minecraft: Java Edition server and proxy rewritten from scratch in C++23, with no JVM at runtime.\n";
+
+        foreach (Docs::tree() as $section) {
+            $body .= "\n## {$section['title']}\n\n";
+
+            foreach ($section['pages'] as $page) {
+                $url = $origin.route('docs.show', [$page['section'], $page['slug']], absolute: false);
+                $body .= "- [{$page['title']}]({$url})".($page['description'] !== '' ? ": {$page['description']}" : '')."\n";
+            }
+        }
+
+        return response($body, 200, ['Content-Type' => 'text/markdown; charset=UTF-8']);
     }
 
     public function robots(): Response

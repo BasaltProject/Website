@@ -57,4 +57,27 @@ class PublicPagesTest extends TestCase
         $this->get('/og/unknown.png')->assertNotFound();
         $this->get('/og/docs/server/missing-page.png')->assertNotFound();
     }
+
+    public function test_structured_data_is_valid_json_ld(): void
+    {
+        foreach (['/', '/projects/server', '/docs/server/introduction'] as $path) {
+            preg_match('/<script type="application\/ld\+json">(.*?)<\/script>/s', $this->get($path)->getContent(), $match);
+
+            $data = json_decode($match[1] ?? '', true);
+
+            $this->assertSame('https://schema.org', $data['@context'] ?? null, $path);
+            $this->assertNotEmpty($data['@graph'] ?? [], $path);
+        }
+    }
+
+    public function test_security_headers_are_sent(): void
+    {
+        $this->get('/')->assertHeader('X-Content-Type-Options', 'nosniff')->assertHeader('X-Frame-Options', 'SAMEORIGIN');
+    }
+
+    public function test_plugins_page_is_noindex_and_left_out_of_the_sitemap(): void
+    {
+        $this->get('/plugins')->assertSee('noindex', false);
+        $this->get('/sitemap.xml')->assertDontSee('https://basaltmc.org/plugins</loc>', false);
+    }
 }
