@@ -80,11 +80,15 @@ class SeoController extends Controller
         $page = Docs::find($section, $slug);
         abort_if($page === null, 404);
 
-        return $this->image(OgImage::doc($section, $page['title']));
+        $failure = null;
+        $path = OgImage::doc($section, $page['title'], $failure);
+
+        // Lets a failure be read from the response headers when the server logs are out of reach.
+        return $this->image($path, $failure === null ? [] : ['X-Og-Fallback' => substr(preg_replace('/[^\x20-\x7e]/', '?', $failure), 0, 200)]);
     }
 
-    private function image(string $path): BinaryFileResponse
+    private function image(string $path, array $headers = []): BinaryFileResponse
     {
-        return response()->file($path, ['Content-Type' => 'image/png', 'Cache-Control' => 'public, max-age=86400']);
+        return response()->file($path, ['Content-Type' => 'image/png', 'Cache-Control' => 'public, max-age=86400'] + $headers);
     }
 }

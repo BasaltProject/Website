@@ -24,7 +24,7 @@ class OgImage
      * Draws the article title over the section template, cached by content so an edit refreshes it.
      * Any failure serves the bare template: a preview without the title beats a broken image.
      */
-    public static function doc(string $section, string $title): string
+    public static function doc(string $section, string $title, ?string &$failure = null): string
     {
         $template = resource_path("og/docs-$section.png");
         $file = storage_path('framework/cache/og/'.$section.'-'.md5($title).'.png');
@@ -37,6 +37,7 @@ class OgImage
             return self::render($template, $file, $title);
         } catch (Throwable $e) {
             Log::warning('OG image failed: '.$e->getMessage());
+            $failure = $e::class.': '.$e->getMessage();
 
             return $template;
         }
