@@ -640,10 +640,10 @@ class Viewer {
         const top = counts[0]?.[1] || 1;
         const worldsHtml = `<div class="tv-split"><div>
                 <h4 class="tv-h">Worlds (${num(ws.total_entities)} entities)</h4>
-                <table class="tv-table"><thead><tr><th>World</th><th>Chunks</th><th>Entities</th><th>Block entities</th><th>Players</th></tr></thead><tbody>${
+                <table class="tv-table"><thead><tr><th>World</th><th>Chunks</th><th>Entities</th><th>Block entities</th><th>Orphans</th><th>Players</th></tr></thead><tbody>${
                     worlds
-                        .map((w) => `<tr><td>${esc(w.name)}</td><td>${num(w.chunks)}</td><td>${num(w.entities)}</td><td>${num(w.block_entities)}</td><td>${num(w.players)}</td></tr>`)
-                        .join('') || '<tr><td colspan="5">No data</td></tr>'
+                        .map((w) => `<tr><td>${esc(w.name)}</td><td>${num(w.chunks)}</td><td>${num(w.entities)}</td><td>${num(w.block_entities)}</td><td>${w.orphan_entities > 0 ? `<span class="tv-bad">${num(w.orphan_entities)}</span>` : num(w.orphan_entities || 0)}</td><td>${num(w.players)}</td></tr>`)
+                        .join('') || '<tr><td colspan="6">No data</td></tr>'
                 }</tbody></table></div>
                 <div><h4 class="tv-h">Entity counts</h4><div class="tv-hbar">${
                     counts
