@@ -10,9 +10,9 @@ class OgImage
 {
     public const COVERS = ['home', 'server', 'proxy'];
 
-    private const WIDTH_MAX = 1040;
+    private const LEFT = 80;
 
-    private const LINES_MAX = 3;
+    private const RIGHT = 1120;
 
     /** Absolute path of a fixed cover, or null when the name is unknown. */
     public static function cover(string $name): ?string
@@ -21,20 +21,20 @@ class OgImage
     }
 
     /**
-     * Draws the article title over the section template, cached by content so an edit refreshes it.
-     * Any failure serves the bare template: a preview without the title beats a broken image.
+     * Draws the article title and description over the section template, cached by content so an edit
+     * refreshes it. Any failure serves the bare template: a preview without text beats a broken image.
      */
-    public static function doc(string $section, string $title, ?string &$failure = null): string
+    public static function doc(string $section, string $title, string $description = '', ?string &$failure = null): string
     {
         $template = resource_path("og/docs-$section.png");
-        $file = storage_path('framework/cache/og/'.$section.'-'.md5($title).'.png');
+        $file = storage_path('framework/cache/og/'.$section.'-'.md5($title."\n".$description).'.png');
 
         if (is_file($file)) {
             return $file;
         }
 
         try {
-            return self::render($template, $file, $title);
+            return self::render($template, $file, $title, $description);
         } catch (Throwable $e) {
             Log::warning('OG image failed: '.$e->getMessage());
             $failure = $e::class.': '.$e->getMessage();
@@ -43,15 +43,31 @@ class OgImage
         }
     }
 
-    private static function render(string $template, string $file, string $title): string
+    private static function render(string $template, string $file, string $title, string $description): string
     {
         $image = imagecreatefrompng($template);
         $font = resource_path('og/InstrumentSans-600.ttf');
-        $color = imagecolorallocate($image, 245, 246, 248);
-        $size = 58;
+        $white = imagecolorallocate($image, 246, 247, 249);
+        $muted = imagecolorallocate($image, 154, 160, 171);
 
-        foreach (self::wrap($title, $font, $size) as $i => $line) {
-            imagettftext($image, $size, 0, 80, 370 + $i * 76, $color, $font, $line);
+        // The decorative edges take the top and bottom ~80px, so the text block has to fit between them.
+        imagettftext($image, 26, 0, self::RIGHT - self::width('basaltmc.org/docs', $font, 26), 185, $muted, $font, 'basaltmc.org/docs');
+
+        $titleLines = self::wrap($title, $font, 78, 2);
+        $y = 388;
+
+        foreach ($titleLines as $line) {
+            imagettftext($image, 78, 0, self::LEFT, $y, $white, $font, $line);
+            $y += 92;
+        }
+
+        // A two line title leaves room for one line of description; a short one gets two.
+        $descLines = $description === '' ? [] : self::wrap($description, $font, 28, count($titleLines) > 1 ? 1 : 2);
+        $y += -92 + 58;
+
+        foreach ($descLines as $line) {
+            imagettftext($image, 28, 0, self::LEFT, $y, $muted, $font, $line);
+            $y += 40;
         }
 
         if (! is_dir(dirname($file))) {
@@ -64,7 +80,7 @@ class OgImage
     }
 
     /** @return list<string> */
-    private static function wrap(string $text, string $font, int $size): array
+    private static function wrap(string $text, string $font, int $size, int $maxLines): array
     {
         $lines = [];
         $current = '';
@@ -72,7 +88,7 @@ class OgImage
         foreach (preg_split('/\s+/', trim($text)) ?: [] as $word) {
             $try = $current === '' ? $word : "$current $word";
 
-            if ($current !== '' && self::width($try, $font, $size) > self::WIDTH_MAX) {
+            if ($current !== '' && self::width($try, $font, $size) > self::RIGHT - self::LEFT) {
                 $lines[] = $current;
                 $current = $word;
             } else {
@@ -82,9 +98,9 @@ class OgImage
 
         $lines[] = $current;
 
-        if (count($lines) > self::LINES_MAX) {
-            $lines = array_slice($lines, 0, self::LINES_MAX);
-            $lines[self::LINES_MAX - 1] = rtrim($lines[self::LINES_MAX - 1], '.,; ').'...';
+        if (count($lines) > $maxLines) {
+            $lines = array_slice($lines, 0, $maxLines);
+            $lines[$maxLines - 1] = rtrim($lines[$maxLines - 1], '.,; ').'...';
         }
 
         return $lines;

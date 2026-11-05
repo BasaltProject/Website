@@ -81,7 +81,7 @@ class SeoController extends Controller
         abort_if($page === null, 404);
 
         $failure = null;
-        $path = OgImage::doc($section, $page['title'], $failure);
+        $path = OgImage::doc($section, $page['title'], $page['description'], $failure);
 
         // Lets a failure be read from the response headers when the server logs are out of reach.
         return $this->image($path, $failure === null ? [] : ['X-Og-Fallback' => substr(preg_replace('/[^\x20-\x7e]/', '?', $failure), 0, 200)]);
