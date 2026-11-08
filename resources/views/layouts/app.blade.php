@@ -33,6 +33,7 @@
     <meta name="theme-color" content="#111216">
     <meta name="description" content="{{ $description }}">
     <link rel="canonical" href="{{ $canonical }}">
+    <link rel="me" href="https://mastodon.social/@basaltmc">
     @if ($noindex)
         <meta name="robots" content="noindex, nofollow">
     @else
