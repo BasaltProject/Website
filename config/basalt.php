@@ -46,20 +46,19 @@ return [
     ],
 
     // `icon` names a brand in resources/views/components/icon/brand.blade.php.
-    // `projects`, when set, limits a platform to those projects; without it every project has it.
     'platforms' => [
         ['target' => 'macOS-arm64', 'label' => 'macOS', 'arch' => 'Apple silicon', 'icon' => 'apple'],
         ['target' => 'macOS-x64', 'label' => 'macOS', 'arch' => 'Intel', 'icon' => 'apple'],
         ['target' => 'Linux-x64', 'label' => 'Linux', 'arch' => 'x86_64', 'icon' => 'linux'],
         ['target' => 'Linux-arm64', 'label' => 'Linux', 'arch' => 'aarch64', 'icon' => 'linux'],
-        ['target' => 'Linux-musl-x64', 'label' => 'Linux musl', 'arch' => 'x86_64', 'icon' => 'linux', 'projects' => ['server']],
-        ['target' => 'Linux-musl-arm64', 'label' => 'Linux musl', 'arch' => 'aarch64', 'icon' => 'linux', 'projects' => ['server']],
+        ['target' => 'Linux-musl-x64', 'label' => 'Linux musl', 'arch' => 'x86_64', 'icon' => 'linux'],
+        ['target' => 'Linux-musl-arm64', 'label' => 'Linux musl', 'arch' => 'aarch64', 'icon' => 'linux'],
         ['target' => 'Windows-x64', 'label' => 'Windows', 'arch' => 'x86_64', 'icon' => 'windows'],
-        ['target' => 'Windows-arm64', 'label' => 'Windows', 'arch' => 'arm64', 'icon' => 'windows', 'projects' => ['server']],
-        ['target' => 'Android-arm64', 'label' => 'Android', 'arch' => 'aarch64', 'icon' => 'android', 'projects' => ['server']],
-        ['target' => 'Android-x64', 'label' => 'Android', 'arch' => 'x86_64', 'icon' => 'android', 'projects' => ['server']],
-        ['target' => 'FreeBSD-x64', 'label' => 'FreeBSD', 'arch' => 'x86_64', 'icon' => 'freebsd', 'projects' => ['server']],
-        ['target' => 'FreeBSD-arm64', 'label' => 'FreeBSD', 'arch' => 'aarch64', 'icon' => 'freebsd', 'projects' => ['server']],
+        ['target' => 'Windows-arm64', 'label' => 'Windows', 'arch' => 'arm64', 'icon' => 'windows'],
+        ['target' => 'Android-arm64', 'label' => 'Android', 'arch' => 'aarch64', 'icon' => 'android'],
+        ['target' => 'Android-x64', 'label' => 'Android', 'arch' => 'x86_64', 'icon' => 'android'],
+        ['target' => 'FreeBSD-x64', 'label' => 'FreeBSD', 'arch' => 'x86_64', 'icon' => 'freebsd'],
+        ['target' => 'FreeBSD-arm64', 'label' => 'FreeBSD', 'arch' => 'aarch64', 'icon' => 'freebsd'],
     ],
 
     // `url` is where every button on the donate page sends people.
