@@ -2,7 +2,7 @@
 
 @php
     $release = \App\Support\Releases::latest($repo);
-    $platforms = config('basalt.platforms');
+    $platforms = array_values(array_filter(config('basalt.platforms'), fn ($p) => ! isset($p['projects']) || in_array($project, $p['projects'], true)));
     $accentText = $accent === 'warped' ? 'text-warped' : 'text-crimson';
     $accentButton = $accent === 'warped' ? 'btn-warped' : 'btn-primary';
 @endphp
