@@ -22,7 +22,7 @@ new #[Title('Basalt Proxy')] class extends Component
                     One address, <span class="text-warped">every server.</span>
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-soft">
-                    A native Minecraft proxy written in C++23, sharing its
+                    A native Minecraft proxy written in C++, sharing its
                     network library with Basalt Server.
                 </p>
 
@@ -72,8 +72,8 @@ new #[Title('Basalt Proxy')] class extends Component
                     It is young. Testing so far uses automated clients against vanilla, Paper and
                     Basalt backends, and graphical clients are not yet part of it. Older Java
                     clients and Bedrock are translated, with limits that the documentation lists.
-                    Velocity and BungeeCord plugin adapters are planned on top of Basalt Shim and
-                    do not exist yet.
+                    Velocity and BungeeCord plugin adapters on top of Basalt Shim exist but are
+                    early.
                 </p>
             </div>
         </div>

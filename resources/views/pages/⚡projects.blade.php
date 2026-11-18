@@ -11,7 +11,7 @@ new #[Title('Projects')] class extends Component
             [
                 'name' => 'Basalt Server',
                 'tagline' => 'The Minecraft server itself.',
-                'body' => 'A complete reimplementation of the Minecraft server. Vanilla
+                'body' => 'A complete reimplementation of the Minecraft server for Java and Bedrock. Vanilla
                     parity as the goal, a native Lua plugin API, and Bukkit plugins through
                     Basalt Shim.',
                 'route' => 'projects.server',
@@ -40,7 +40,7 @@ new #[Title('Projects')] class extends Component
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-soft">
                     Everything Basalt ships is a single native binary with no runtime to
-                    install beside it, built for macOS, Linux and Windows. Pick the one you
+                    install beside it, built for macOS, Linux, Windows, Android and FreeBSD. Pick the one you
                     need, or run both: the downloads are on each project's page.
                 </p>
             </div>

@@ -17,7 +17,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                 'points' => [
                     'Lua plugins in .bspkg packages, sandboxed',
                     'Bukkit plugins through Basalt Shim, no Java on the host',
-                    'Linear regions; Anvil regions are read and converted',
+                    'bsw regions by default; Anvil and Linear worlds are converted',
                 ],
                 'route' => 'projects.server',
                 'repo' => 'basalt.repos.server',
@@ -30,7 +30,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                 'points' => [
                     'Lua plugins in .bppkg packages',
                     'Velocity, BungeeCord, BungeeGuard and Basalt forwarding',
-                    'Velocity and BungeeCord plugin adapters planned after Shim',
+                    'Velocity and BungeeCord plugin adapters, early',
                 ],
                 'route' => 'projects.proxy',
                 'repo' => 'basalt.repos.proxy',
@@ -44,14 +44,14 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
     <section class="px-4">
         <div class="mx-auto grid max-w-6xl items-center gap-12 pt-10 pb-20 md:pt-16 lg:grid-cols-2 lg:gap-14 lg:pb-24">
             <div class="min-w-0">
-                <span class="pill">C++23, no external JVM</span>
+                <span class="pill">C++, no external JVM</span>
 
                 <h1 class="text-crystal mt-8 text-[clamp(2.4rem,5.6vw,4.2rem)] leading-[1.04] font-semibold tracking-[-.035em]">
                     A Minecraft server<br>rewritten <span class="text-crimson">from scratch.</span>
                 </h1>
 
                 <p class="mt-7 max-w-xl text-[clamp(1rem,2.1vw,1.18rem)] leading-relaxed text-soft">
-                    Written entirely in C++23 and shipped as one native binary per
+                    Written entirely in C++ and shipped as one native binary per
                     platform. No bundled JRE and no hidden Java process. It has no garbage
                     collector to pause, and Java and Bedrock players share the same world.
                 </p>
@@ -90,7 +90,7 @@ chmod +x BasaltServer-*
                 @foreach ([
                     ['Minecraft', config('basalt.minecraft.current'), 'Native, older versions supported', 'text-crimson'],
                     ['Cross-play', 'Built in', 'Java and Bedrock', 'text-warped'],
-                    ['Platforms', count(config('basalt.platforms')), 'macOS, Linux, Windows', 'text-ink'],
+                    ['Platforms', count(config('basalt.platforms')), 'macOS, Linux, Windows, Android, FreeBSD', 'text-ink'],
                     ['License', 'GPL-3.0', 'Open source', 'text-ink'],
                 ] as [$label, $value, $note, $tone])
                     <div class="bg-surface px-5 py-6">
@@ -172,7 +172,7 @@ chmod +x BasaltServer-*
                         [
                             'title' => 'Java and Bedrock together',
                             'icon' => '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/>',
-                            'body' => 'Both editions join the same world. Bedrock and older Java clients are translated at the edge, built in, with no proxy and no plugins to add. Bedrock support is newer and has known limits, listed in the documentation.',
+                            'body' => 'Both editions join the same world. Bedrock (1.26.60) is built in and older Java clients are translated at the edge, with no proxy and no plugins to add. Bedrock support is newer and has known limits, listed in the documentation.',
                             'info' => null,
                         ],
                         [
@@ -190,7 +190,7 @@ chmod +x BasaltServer-*
                         [
                             'title' => 'Bukkit plugins, without Java',
                             'icon' => '<path d="M12 3 3 8v8l9 5 9-5V8l-9-5Z"/><path d="M3 8l9 5 9-5M12 13v8"/>',
-                            'body' => 'Drop a Bukkit, Spigot or Paper jar into plugins/ and the server runs it on Basalt Shim, a Java machine embedded in the binary. Velocity and BungeeCord adapters for the proxy are planned.',
+                            'body' => 'Drop a Bukkit, Spigot or Paper jar into plugins/ and the server runs it on Basalt Shim, a Java machine embedded in the binary. Velocity and BungeeCord adapters for the proxy are in early development.',
                             'info' => 'Shim executes Java bytecode and is built into the server. It starts only when a jar is present, and compatibility is still growing, so check the documentation for what is known to work.',
                         ],
                         [

@@ -61,7 +61,7 @@ class SeoController extends Controller
     public function llms(): Response
     {
         $origin = rtrim(config('basalt.url'), '/');
-        $body = "# Basalt\n\n> A Minecraft: Java Edition server and proxy rewritten from scratch in C++23, with no JVM at runtime.\n";
+        $body = "# Basalt\n\n> A Minecraft server and proxy for Java and Bedrock, rewritten from scratch in C++, with no JVM at runtime.\n";
 
         foreach (Docs::tree() as $section) {
             $body .= "\n## {$section['title']}\n\n";

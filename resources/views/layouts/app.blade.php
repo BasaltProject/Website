@@ -8,7 +8,7 @@
     $origin = rtrim(config('basalt.url'), '/');
     $canonical = $origin.'/'.ltrim(request()->path(), '/');
     $description ??= config('basalt.seo.'.request()->route()?->getName())
-        ?? 'Basalt is a Minecraft: Java Edition server and proxy rewritten from scratch in C++23, with no JVM at runtime.';
+        ?? 'Basalt is a Minecraft server and proxy for Java and Bedrock, rewritten from scratch in C++, with no JVM at runtime.';
     $fullTitle = $title ? $title.' - Basalt' : 'Basalt';
     $ogPath = match (true) {
         request()->routeIs('projects.server') => '/og/server.png',
@@ -225,8 +225,8 @@
                 <div class="max-w-sm">
                     <img src="/basalt-logo.svg" alt="Basalt" width="1220" height="450" class="h-12 w-auto">
                     <p class="mt-5 text-sm leading-relaxed text-soft">
-                        A Minecraft: Java Edition server and proxy rewritten from scratch in
-                        C++23. No JVM at runtime.
+                        A Minecraft server and proxy for Java and Bedrock, rewritten from scratch in
+                        C++. No JVM at runtime.
                     </p>
                     <span class="mt-4 inline-block rounded-full border border-line bg-raised px-2.5 py-1 text-xs text-muted">Minecraft {{ config('basalt.minecraft.current') }}</span>
                     <div class="mt-5 flex flex-wrap gap-2.5">
