@@ -43,6 +43,7 @@ return [
     'minecraft' => [
         'current' => '26.3',
         'protocol' => '777',
+        'bedrock' => '1.26.60',
     ],
 
     // `icon` names a brand in resources/views/components/icon/brand.blade.php.

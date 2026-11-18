@@ -22,9 +22,10 @@ new #[Title('Basalt Server')] class extends Component
                     The Minecraft server, <span class="text-crimson">rebuilt.</span>
                 </h1>
                 <p class="mt-6 text-lg leading-relaxed text-soft">
-                    A complete reimplementation of the Minecraft server, written entirely in
-                    C++23 and shipped as a native binary for each platform. It aims to play
-                    exactly like vanilla, and it has no garbage collector to pause the tick.
+                    A complete reimplementation of the Minecraft server for Java and Bedrock
+                    players, written entirely in C++ and shipped as a native binary for each
+                    platform. It aims to play exactly like vanilla, and it has no garbage
+                    collector to pause the tick.
                 </p>
 
                 <div class="mt-9 flex flex-wrap gap-3">
@@ -89,7 +90,7 @@ new #[Title('Basalt Server')] class extends Component
                             @foreach ([
                                 ['Current Java Edition', 'Direct, no translation'],
                                 ['Older Java Edition', 'Translated at the edge'],
-                                ['Bedrock Edition', 'Translated at the edge'],
+                                ['Bedrock Edition', 'Built in, no proxy or extra plugin needed'],
                             ] as [$client, $how])
                                 <li class="flex items-center gap-4 px-6 py-3.5">
                                     <span class="text-soft">{{ $client }}</span>
@@ -102,14 +103,15 @@ new #[Title('Basalt Server')] class extends Component
 
                 <dl class="glass divide-y divide-line self-start overflow-hidden rounded-2xl text-sm">
                     @foreach ([
-                        ['Language', 'C++23'],
-                        ['Minecraft', config('basalt.minecraft.current').' native, older versions supported'],
-                        ['Clients', 'Java Edition and Bedrock Edition'],
-                        ['Distribution', 'Native binaries per platform'],
-                        ['World storage', 'Linear regions; Anvil regions read and converted'],
+                        ['Language', 'C++'],
+                        ['Java Edition', config('basalt.minecraft.current').' native, older versions supported'],
+                        ['Bedrock Edition', config('basalt.minecraft.bedrock').', on the same worlds as Java'],
+                        ['Distribution', 'Native binaries for Linux, macOS, Windows, Android and FreeBSD'],
+                        ['World storage', 'bsw regions by default; Anvil and Linear worlds are read and converted'],
                         ['Plugin API', 'Lua, .bspkg packages'],
                         ['Bukkit plugins', 'Optional, through Basalt Shim'],
                         ['Configuration', 'config/, one TOML file per domain'],
+                        ['Management', 'REST and WebSocket API, and vanilla\'s management protocol, with token auth'],
                         ['License', 'GPL-3.0'],
                     ] as [$label, $value])
                         <div class="flex flex-col gap-1 px-6 py-4 sm:flex-row sm:items-baseline sm:gap-6">
@@ -230,7 +232,7 @@ plugins/
                             'Remove a table and it stops loading. The files stay put, and putting the table back loads it exactly as it was.',
                             'linked_to gives one server several complete sets of dimensions, each with its own Nether and End, portals included, with nothing rewriting portal travel.',
                             'Every world carries its own settings.toml inside its directory, so it is copied, moved and deleted along with the world it describes.',
-                            'Anvil regions are read and written back as Linear. Migrating a world is copy the folder and start, never run a converter first.',
+                            'Anvil and Linear worlds are converted to bsw, Basalt\'s own region format, on start, checking every chunk and keeping the original. Migrating a world is copy the folder and start, never run a converter first.',
                         ] as $point)
                             <li class="flex gap-3">
                                 <x-icon.check class="mt-0.5 shrink-0 text-crimson" />
