@@ -15,6 +15,7 @@ class Mdx
     public static function render(string $source): string
     {
         [$source, $blocks] = self::liftCodeBlocks($source);
+        $source = self::shieldInlineCode($source);
 
         $html = Str::markdown(
             Blade::render($source, [], deleteCachedView: true),
@@ -67,6 +68,16 @@ class Mdx
         [$source] = self::liftCodeBlocks($source);
 
         return trim(html_entity_decode(strip_tags(Str::markdown($source))));
+    }
+
+    /** Blade must not read the `@directive(` or `{{` that inline code shows, so they are escaped for it. */
+    protected static function shieldInlineCode(string $source): string
+    {
+        return preg_replace_callback(
+            '/(`+)(?!`)(.+?)(?<!`)\1(?!`)/s',
+            fn (array $m) => $m[1].str_replace(['@', '{{'], ['@@', '@{{'], $m[2]).$m[1],
+            $source,
+        ) ?? $source;
     }
 
     /** @return array{0: string, 1: array<string, string>} */
