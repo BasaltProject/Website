@@ -194,6 +194,30 @@
 
 .soon-pill { display: inline-block; white-space: nowrap; padding: .7rem 1.6rem; border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-surface); color: var(--color-soft); font-size: clamp(.72rem, 1.5vw, .86rem); font-weight: 500; letter-spacing: .34em; text-indent: .34em; text-transform: uppercase; }
 
+/* Charts: bars drawn in HTML from a fenced chart block, see app/Support/Chart.php. */
+.chart { --c0: var(--color-warped); --c1: var(--color-crimson); --c2: var(--color-gold); --c3: #8b9ad9; --c4: var(--color-ash); --c5: #d58bc7; --c6: #6fb3e0; --c7: #a3d977; --c8: #e0916b; --c9: #b59cf0; margin: 1.75rem 0; padding: 1.1rem 1.25rem 1.2rem; border: 1px solid var(--color-line); border-radius: .6rem; background: var(--color-surface); }
+.chart-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem 1rem; margin-bottom: .9rem; }
+.chart-title { color: var(--color-ink); font-size: .95rem; font-weight: 600; line-height: 1.4; }
+.chart-note { color: var(--color-muted); font-size: .8rem; line-height: 1.4; }
+.prose-basalt .chart-legend { display: flex; flex-wrap: wrap; gap: .3rem 1.1rem; margin: 0 0 1rem; padding: 0; list-style: none; color: var(--color-soft); font-size: .82rem; }
+.prose-basalt .chart-legend li { display: flex; align-items: center; gap: .4rem; margin: 0; padding: 0; }
+.chart-swatch { width: .7rem; height: .7rem; border-radius: .2rem; }
+.chart-group + .chart-group { margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid var(--color-line); }
+.chart-group-name { margin-bottom: .45rem; color: var(--color-ink); font-size: .85rem; font-weight: 600; }
+.chart-row { display: grid; grid-template-columns: minmax(6.5rem, 14rem) minmax(0, 1fr) 8.6rem; align-items: center; gap: .15rem .8rem; padding: .18rem 0; }
+.chart-label { color: var(--color-soft); font-size: .82rem; line-height: 1.35; }
+.chart-track { display: block; height: .95rem; border-radius: .3rem; background: var(--color-raised); overflow: hidden; }
+.chart-bar { display: block; height: 100%; border-radius: .3rem; }
+.chart-value { color: var(--color-ink); font-family: var(--font-mono); font-size: .8rem; text-align: right; white-space: nowrap; }
+.chart-c0 { background: var(--c0); } .chart-c1 { background: var(--c1); } .chart-c2 { background: var(--c2); }
+.chart-c3 { background: var(--c3); } .chart-c4 { background: var(--c4); } .chart-c5 { background: var(--c5); }
+.chart-c6 { background: var(--c6); } .chart-c7 { background: var(--c7); } .chart-c8 { background: var(--c8); } .chart-c9 { background: var(--c9); }
+@media (max-width: 560px) {
+    .chart { padding: .95rem .9rem 1rem; }
+    .chart-row { grid-template-columns: minmax(0, 1fr) 7.6rem; }
+    .chart-label { grid-column: 1 / -1; }
+}
+
 /* Code blocks. One presentation whether they come from MDX or from a page. */
 .code-block { position: relative; max-width: 100%; margin: 1.5rem 0; border: 1px solid var(--color-line); border-radius: .6rem; background: #0c0d10; }
 .code-block pre { max-width: 100%; overflow-x: auto; margin: 0; padding: 1.1rem 1.3rem; }

@@ -89,7 +89,8 @@ class Mdx
             '/^```([\w-]*)\n(.*?)^```/ms',
             function (array $matches) use (&$blocks) {
                 $key = 'MDXCODE'.count($blocks).'ENDMDXCODE';
-                $blocks[$key] = self::codeBlock($matches[2], $matches[1] ?: null);
+                $blocks[$key] = ($matches[1] === 'chart' ? Chart::render($matches[2]) : null)
+                    ?? self::codeBlock($matches[2], $matches[1] ?: null);
 
                 return $key;
             },
