@@ -11,15 +11,20 @@ concurrency:
 
 jobs:
   deploy:
+    if: github.ref == 'refs/heads/main'
     runs-on: [self-hosted, basalt]
+    defaults:
+      run:
+        working-directory: /var/www/basalt
+        shell: bash
     steps:
       - name: Pull and deploy
         run: |
-          set -e
-          cd /srv/apps/basaltmc/repo/Website
-          git pull --ff-only
+          test "$(git branch --show-current)" = main
+          git pull --ff-only origin main
           git submodule sync --recursive
-          git submodule update --init --recursive
+          git -c url."https://github.com/BasaltProject/".insteadOf="git@github.com:BasaltProject/" \
+            submodule update --init --recursive
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
           npm ci
           npm run build
