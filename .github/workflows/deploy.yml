@@ -18,13 +18,19 @@ jobs:
         working-directory: /var/www/basalt
         shell: bash
     steps:
-      - name: Pull and deploy
+      - name: Sync and deploy
         run: |
           test "$(git branch --show-current)" = main
-          git pull --ff-only origin main
+          test -z "$(git status --porcelain --untracked-files=no --ignore-submodules=all)"
+          git submodule foreach --recursive 'git diff --quiet HEAD --ignore-submodules=all'
+
+          git fetch --no-recurse-submodules origin +refs/heads/main:refs/remotes/origin/main
+          git reset --keep origin/main
+
           git submodule sync --recursive
           git -c url."https://github.com/BasaltProject/".insteadOf="git@github.com:BasaltProject/" \
             submodule update --init --recursive
+
           composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
           npm ci
           npm run build
