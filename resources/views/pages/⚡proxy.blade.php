@@ -65,7 +65,7 @@ new #[Title('Basalt Proxy')] class extends Component
                     The proxy listens on one address, authenticates players, and relays them to
                     your backends with the identity forwarding each one expects: Basalt's own
                     signed scheme, Velocity, BungeeCord, BungeeGuard or none. Routing, forced
-                    hosts, fallback, moving players between backends and Lua plugins are
+                    hosts, fallback, moving players between backends and WASM plugins are
                     implemented.
                 </p>
                 <p class="mt-4 leading-relaxed text-soft">

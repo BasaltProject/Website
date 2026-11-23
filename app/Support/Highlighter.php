@@ -9,7 +9,9 @@ namespace App\Support;
  */
 class Highlighter
 {
-    protected const LUA_KEYWORDS = 'and|break|do|elseif|else|end|false|for|function|goto|if|in|local|nil|not|or|repeat|return|then|true|until|while';
+    protected const CPP_KEYWORDS = 'auto|bool|break|case|char|class|const|constexpr|continue|default|delete|do|double|else|enum|false|float|for|if|inline|int|long|namespace|new|nullptr|return|short|signed|sizeof|static|struct|switch|template|true|typedef|typename|union|unsigned|using|void|while';
+
+    protected const RUST_KEYWORDS = 'as|break|const|continue|crate|else|enum|extern|false|fn|for|if|impl|in|let|loop|match|mod|move|mut|pub|ref|return|self|static|struct|trait|true|type|unsafe|use|where|while';
 
     protected const SHELL_KEYWORDS = 'if|then|elif|else|fi|for|while|until|do|done|case|esac|function|return|export|local|set|cd';
 
@@ -17,14 +19,23 @@ class Highlighter
     protected static function grammar(string $language): array
     {
         return match ($language) {
-            'lua' => [
-                'comment' => '--\[\[.*?\]\]|--[^\n]*',
-                'string' => '\[\[.*?\]\]|"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'',
-                'number' => '\b0[xX][0-9a-fA-F]+\b|\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b',
-                'keyword' => '\b(?:'.self::LUA_KEYWORDS.')\b',
+            'cpp', 'c++', 'c', 'h', 'hpp' => [
+                'comment' => '\/\/[^\n]*|\/\*.*?\*\/',
+                'string' => '"(?:\\\\.|[^"\\\\])*"|\'(?:\\\\.|[^\'\\\\])*\'',
+                'keyword' => '^\s*#\s*\w+|\b(?:'.self::CPP_KEYWORDS.')\b',
+                'number' => '\b0[xX][0-9a-fA-F]+\b|\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?[fFuUlL]*\b',
                 'function' => '\b[A-Za-z_]\w*(?=\s*\()',
-                'property' => '(?<=[.:])[A-Za-z_]\w*',
-                'operator' => '\.\.|[=~<>]=|[-+*\/%#^<>=]',
+                'property' => '(?<=\.|->|::)[A-Za-z_]\w*',
+                'operator' => '->|::|[=!<>]=|&&|\|\||[-+*\/%<>=&|^!]',
+            ],
+            'rust', 'rs' => [
+                'comment' => '\/\/[^\n]*|\/\*.*?\*\/',
+                'string' => '"(?:\\\\.|[^"\\\\])*"',
+                'keyword' => '\b(?:'.self::RUST_KEYWORDS.')\b',
+                'number' => '\b0[xX][0-9a-fA-F]+\b|\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b',
+                'function' => '\b[A-Za-z_]\w*!?(?=\s*\()',
+                'property' => '(?<=\.|::)[A-Za-z_]\w*',
+                'operator' => '->|=>|::|[=!<>]=|&&|\|\||[-+*\/%<>=&|^!]',
             ],
             'bash', 'sh', 'shell' => [
                 'comment' => '#[^\n]*',

@@ -12,7 +12,7 @@ new #[Title('Projects')] class extends Component
                 'name' => 'Basalt Server',
                 'tagline' => 'The Minecraft server itself.',
                 'body' => 'A complete reimplementation of the Minecraft server for Java and Bedrock. Vanilla
-                    parity as the goal, a native Lua plugin API, and Bukkit plugins through
+                    parity as the goal, a native WASM plugin API, and Bukkit plugins through
                     Basalt Shim.',
                 'route' => 'projects.server',
                 'repo' => config('basalt.repos.server'),
@@ -21,7 +21,7 @@ new #[Title('Projects')] class extends Component
                 'name' => 'Basalt Proxy',
                 'tagline' => 'One address in front of many servers.',
                 'body' => 'A native proxy sharing Wire with the server. Backends, forwarding,
-                    Java and Bedrock clients and Lua plugins.',
+                    Java and Bedrock clients and WASM plugins.',
                 'route' => 'projects.proxy',
                 'repo' => config('basalt.repos.proxy'),
             ],

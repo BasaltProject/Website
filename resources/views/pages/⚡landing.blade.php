@@ -15,7 +15,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                     same drops, same redstone, same mobs, bugs included. Then a plugin
                     platform on top of it.',
                 'points' => [
-                    'Lua plugins in .bspkg packages, sandboxed',
+                    'WASM plugins in .bspkg packages, in any language, sandboxed',
                     'Bukkit plugins through Basalt Shim, no Java on the host',
                     'bsw regions by default; Anvil and Linear worlds are converted',
                 ],
@@ -28,7 +28,7 @@ new #[Title('A Minecraft server rewritten from scratch')] class extends Componen
                 'body' => 'A native proxy sharing Wire with the server: backends, forced hosts,
                     fallback, forwarding and Java and Bedrock clients.',
                 'points' => [
-                    'Lua plugins in .bppkg packages',
+                    'WASM plugins in .bppkg packages',
                     'Velocity, BungeeCord, BungeeGuard and Basalt forwarding',
                     'Velocity and BungeeCord plugin adapters, early',
                 ],
@@ -155,7 +155,7 @@ chmod +x BasaltServer-*
                     Native first, and <span class="text-crimson">nothing left behind.</span>
                 </h2>
                 <p class="mt-5 text-lg leading-relaxed text-soft">
-                    The plugin API is Lua and it is the fast path. Everything else is here so
+                    Plugins are WASM and they are the fast path. Everything else is here so
                     that moving to Basalt does not cost you what your server already runs on.
                 </p>
             </div>
@@ -164,10 +164,10 @@ chmod +x BasaltServer-*
                 @php
                     $features = [
                         [
-                            'title' => 'Plugins in Lua, natively',
+                            'title' => 'Plugins in any language, natively',
                             'icon' => '<path d="M8 6 3 12l5 6M16 6l5 6-5 6M14 4l-4 16"/>',
-                            'body' => 'The plugin API is Lua, packaged and versioned, running in a sandbox with an instruction budget and a memory ceiling. No process boundary, no serialisation, no second heap.',
-                            'info' => 'This is the fast path and the official API. Native plugins talk to the server directly, so anything performance sensitive belongs here.',
+                            'body' => 'Plugins are WASM modules, written in C++, Rust, Zig, Go, Kotlin, C#, Java or AssemblyScript, packaged and versioned, running in a sandbox with a time budget and a memory ceiling. No process boundary and no second heap.',
+                            'info' => 'This is the fast path and the official API. The module is compiled to machine code and a call between it and the server costs nanoseconds, so anything performance sensitive belongs here.',
                         ],
                         [
                             'title' => 'Java and Bedrock together',
@@ -226,12 +226,13 @@ chmod +x BasaltServer-*
                 <div class="min-w-0">
                     <span class="pill">Plugins</span>
                     <h2 class="text-crystal mt-6 text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-semibold tracking-[-.025em]">
-                        Written in <span class="text-warped">Lua,</span> sandboxed by default.
+                        Written in <span class="text-warped">any language,</span> sandboxed by default.
                     </h2>
                     <p class="mt-5 leading-relaxed text-soft">
-                        Plugins are packaged with a manifest, code, resources and metadata,
-                        and run inside a sandbox with an instruction budget. A
-                        broken plugin is stopped without taking the server down.
+                        Plugins are WASM modules, packaged with a manifest, resources
+                        and metadata, and run inside a sandbox with a time budget and a
+                        memory ceiling. A broken plugin is stopped without taking the
+                        server down.
                     </p>
                     <p class="mt-4 leading-relaxed text-soft">
                         Text is authored in MiniMessage and rendered through the component
@@ -241,11 +242,18 @@ chmod +x BasaltServer-*
                 </div>
 
                 <div class="min-w-0">
-                    <x-code lang="lua" file="hello.lua">
+                    <x-code lang="cpp" file="main.cpp">
 
-on("player.join", function(e)
-    e.player:send("<gradient:aqua:green>Welcome!</gradient>")
-end)
+namespace bs = basalt::server;
+
+static void on_join(bs::core::Ctx ctx) {
+    const auto player = bs::events::event_player(ctx);
+    bs::players::send(player, "<gradient:aqua:green>Welcome!</gradient>");
+}
+
+void plugin_init() {
+    bs::events::on("player.join", bs::core::kNormal, on_join);
+}
                     </x-code>
                 </div>
             </div>

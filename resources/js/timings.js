@@ -219,7 +219,7 @@ function sourceEntries(profile, facts = []) {
     const threads = profile.threads.filter((t) => !t.name.startsWith('Native '));
     const total = sum(threads.map((t) => profile.rootValue(t)));
     // A plugin seen by the sampler is read from there: it also covers its own threads, which the sections never
-    // enter. The sections are kept only for plugins nothing was sampled for, such as the Lua ones.
+    // enter. The sections are kept only for plugins nothing was sampled for, such as the WASM ones.
     const seen = new Map();
     const collect = (node, sampled) => {
         if (isPlugin(node)) {
@@ -230,7 +230,7 @@ function sourceEntries(profile, facts = []) {
         }
         for (const child of node.children || []) collect(child, sampled);
     };
-    for (const thread of threads) collect(thread.root, /^(Java|Lua) /.test(thread.name));
+    for (const thread of threads) collect(thread.root, /^Java /.test(thread.name));
 
     const dropped = new Set();
     const entries = [...seen.entries()].map(([id, nodes]) => {
@@ -239,7 +239,7 @@ function sourceEntries(profile, facts = []) {
         const merged = mergeNodes(profile, sampled ? nodes.sampled : nodes.measured, total);
         const fact = known.get(id);
         merged.name = fact ? fact.name : id;
-        merged.label = fact?.type === 'bukkit' ? 'Bukkit plugin' : fact?.type === 'lua' ? 'Lua plugin' : 'plugin';
+        merged.label = fact?.type === 'bukkit' ? 'Bukkit plugin' : fact?.type === 'wasm' ? 'WASM plugin' : 'plugin';
         return merged;
     });
     const counted = (node) => isPlugin(node) && !dropped.has(node);
@@ -658,7 +658,7 @@ class Viewer {
         const plugins = this.data.plugins || [];
         const pluginsHtml = plugins.length
             ? `<table class="tv-table"><thead><tr><th>Plugin</th><th>Type</th><th>Id</th><th>Version</th><th>Errors</th></tr></thead><tbody>${plugins
-                  .map((p) => `<tr><td>${esc(p.name)}${p.disabled ? ' <span class="tv-bad">(disabled)</span>' : ''}</td><td>${p.type === 'bukkit' ? 'Bukkit' : 'Lua'}</td><td>${esc(p.id)}</td><td>${esc(p.version)}</td><td>${num(p.errors)}</td></tr>`)
+                  .map((p) => `<tr><td>${esc(p.name)}${p.disabled ? ' <span class="tv-bad">(disabled)</span>' : ''}</td><td>${p.type === 'bukkit' ? 'Bukkit' : 'WASM'}</td><td>${esc(p.id)}</td><td>${esc(p.version)}</td><td>${num(p.errors)}</td></tr>`)
                   .join('')}</tbody></table>`
             : '<p class="tv-note">No plugins loaded.</p>';
 
@@ -793,7 +793,7 @@ class Viewer {
         const titles = {
             all: ['Profiler - All view', 'The whole profile as an expandable tree, one stack per thread. A frame is a section the server timed; its value is its share of its thread.'],
             flat: ['Profiler - Flat view', 'Frames ranked by the time spent in the frame itself. Expand one to see what called it, which is how a hot frame is followed back to its cause.'],
-            plugins: ['Profiler - Plugins view', 'Time grouped by where it was spent: each plugin, Lua or Bukkit, and Basalt itself.'],
+            plugins: ['Profiler - Plugins view', 'Time grouped by where it was spent: each plugin, WASM or Bukkit, and Basalt itself.'],
             flame: ['Profiler - Flame graph', 'Width is time. Click a frame to zoom into it, and the top bar to go back out.'],
         }[view];
 

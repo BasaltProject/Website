@@ -108,7 +108,7 @@ new #[Title('Basalt Server')] class extends Component
                         ['Bedrock Edition', config('basalt.minecraft.bedrock').', on the same worlds as Java'],
                         ['Distribution', 'Native binaries for Linux, macOS, Windows, Android and FreeBSD'],
                         ['World storage', 'bsw regions by default; Anvil and Linear worlds are read and converted'],
-                        ['Plugin API', 'Lua, .bspkg packages'],
+                        ['Plugin API', 'WASM, .bspkg packages'],
                         ['Bukkit plugins', 'Optional, through Basalt Shim'],
                         ['Configuration', 'config/, one TOML file per domain'],
                         ['Management', 'REST and WebSocket API, and vanilla\'s management protocol, with token auth'],
@@ -130,29 +130,36 @@ new #[Title('Basalt Server')] class extends Component
                 <div class="grid gap-12 md:grid-cols-2">
                     <div>
                         <span class="pill">Plugins</span>
-                        <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">Lua, sandboxed, packaged</h2>
+                        <h2 class="text-crystal mt-6 text-[clamp(1.6rem,3.2vw,2.2rem)] font-semibold tracking-[-.025em]">WASM, sandboxed, packaged</h2>
                         <p class="mt-5 leading-relaxed text-soft">
-                            Plugins are written in Lua and packaged as
+                            Plugins are WASM modules, written in the language you
+                            prefer (C++, Rust and Zig are the recommended ones) and packaged as
                             <code class="rounded border border-line bg-raised px-1.5 py-0.5 font-mono text-[.8em] text-soft">.bspkg</code>
-                            files, each with a manifest, code, resources and metadata. They run
-                            inside a sandbox with a instruction budget and a memory ceiling, so a
+                            files, each with a manifest, the module and its resources. They run
+                            inside a sandbox with a time budget and a memory ceiling, so a
                             broken plugin is stopped without taking the server down.
                         </p>
                         <p class="mt-4 leading-relaxed text-soft">
-                            The Lua runtime is the official Lua 5.5.1, built from source into
-                            the binary, so it is the same runtime everywhere Basalt runs with no
-                            Lua to install alongside it and no per-platform build of your plugin.
+                            Kiln, the plugin command line, creates, builds, checks and packs
+                            them, and downloads the compiler it needs the first time. A module
+                            is portable: the same file runs on every platform Basalt runs on,
+                            and each server compiles it once and caches the result.
                         </p>
                     </div>
 
                     <div class="self-center">
-                        <x-code lang="lua" file="hello.lua">
+                        <x-code lang="cpp" file="main.cpp">
 
-basalt.on("player_join", function(event)
-    event.player:send(
-        "<gradient:aqua:green>Welcome!</gradient>"
-    )
-end)
+namespace bs = basalt::server;
+
+static void on_join(bs::core::Ctx ctx) {
+    const auto player = bs::events::event_player(ctx);
+    bs::players::send(player, "<gradient:aqua:green>Welcome!</gradient>");
+}
+
+void plugin_init() {
+    bs::events::on("player.join", bs::core::kNormal, on_join);
+}
                         </x-code>
                         <p class="mt-5 text-sm leading-relaxed text-muted">
                             Text is authored in MiniMessage and rendered through the component
@@ -186,14 +193,14 @@ end)
                 <div class="self-center">
                     <x-code file="plugins/">
 plugins/
-  my-lua-plugin/
+  my-plugin/
   other.bspkg
   WorldEdit.jar
                     </x-code>
                     <div class="glass mt-4 overflow-hidden rounded-2xl">
                         <ul class="divide-y divide-line text-sm">
                             @foreach ([
-                                ['Maximum performance, no JVM at all', 'Native Lua plugins'],
+                                ['Maximum performance, no JVM at all', 'WASM plugins'],
                                 ['A plugin that already exists', 'A Bukkit jar'],
                                 ['Both at once', 'They run side by side'],
                             ] as [$want, $use])
